@@ -379,7 +379,15 @@ function CadastroPage() {
         </TabsContent>
       </Tabs>
 
-      <ColabDialog open={!!editing} onClose={() => setEditing(null)} initial={editing} onSave={handleSaveEdit} title="Editar colaborador" allColabs={list} />
+      <ColabDialog
+        open={!!editing}
+        onClose={() => setEditing(null)}
+        initial={editing}
+        onSave={handleSaveEdit}
+        title="Editar colaborador"
+        allColabs={list}
+        onDemitirClick={(c) => { setEditing(null); setDemitindo(c); }}
+      />
       <ColabDialog open={creating} onClose={() => setCreating(false)} initial={null} onSave={handleCreate} title="Novo colaborador" allColabs={list} />
       <DemissaoDialog
         open={!!demitindo}
@@ -554,11 +562,12 @@ function ColabTable({
 }
 
 function ColabDialog({
-  open, onClose, initial, onSave, title, allColabs,
+  open, onClose, initial, onSave, title, allColabs, onDemitirClick,
 }: {
   open: boolean; onClose: () => void; initial: ColabFull | null;
   onSave: (c: Partial<ColabFull>) => Promise<void>; title: string;
   allColabs: ColabFull[];
+  onDemitirClick?: (c: ColabFull) => void;
 }) {
   const [form, setForm] = useState<Partial<ColabFull>>({});
   const [saving, setSaving] = useState(false);
