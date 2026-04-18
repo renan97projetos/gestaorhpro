@@ -14,8 +14,9 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from "@/components/ui/dialog";
 import { Plus, Search, Pencil, Trash2, Loader2, Filter, Users, UserX, Download, RotateCcw, UserMinus } from "lucide-react";
 import { toast } from "sonner";
-import { ColabFull, tempoDeEmpresa } from "@/lib/dashboard-helpers";
+import { ColabFull, tempoDeEmpresa, tempoExperiencia } from "@/lib/dashboard-helpers";
 import { DemissaoDialog, DemissaoData } from "@/components/DemissaoDialog";
+import { Clock } from "lucide-react";
 
 export const Route = createFileRoute("/cadastro")({
   component: () => (
@@ -490,18 +491,30 @@ function ColabTable({
                           ? <Badge className="bg-primary text-primary-foreground">Sim</Badge>
                           : <Badge variant="outline">Não</Badge>}
                       </td>
-                      <td className="p-3 text-xs">
+                      <td className="p-3 text-xs whitespace-nowrap">
                         {c.admissao ? new Date(c.admissao).toLocaleDateString("pt-BR") : "—"}
                       </td>
                       <td className="p-3 text-xs">
-                        <Badge variant="outline" className="bg-amber-50 text-amber-700 border-amber-200 dark:bg-amber-950/30">
-                          {tempoDeEmpresa(c.admissao)}
-                        </Badge>
+                        <div className="flex flex-col gap-1">
+                          <div className="flex items-center gap-1.5 text-foreground font-medium">
+                            <Clock className="h-3.5 w-3.5 text-muted-foreground" />
+                            {tempoDeEmpresa(c.admissao)}
+                          </div>
+                          {(() => {
+                            const t = tempoExperiencia(c.admissao);
+                            const cls = t.tone === "experiente"
+                              ? "bg-amber-100 text-amber-800 border-amber-200 dark:bg-amber-950/30 dark:text-amber-300"
+                              : "bg-blue-100 text-blue-700 border-blue-200 dark:bg-blue-950/30 dark:text-blue-300";
+                            return (
+                              <Badge variant="outline" className={`${cls} w-fit`}>{t.label}</Badge>
+                            );
+                          })()}
+                        </div>
                       </td>
                     </>
                   ) : (
                     <>
-                      <td className="p-3 text-xs">
+                      <td className="p-3 text-xs whitespace-nowrap">
                         {c.data_demissao ? new Date(c.data_demissao).toLocaleDateString("pt-BR") : "—"}
                       </td>
                       <td className="p-3 text-xs">{c.tipo_demissao ?? "—"}</td>
@@ -509,13 +522,14 @@ function ColabTable({
                   )}
                   <td className="p-3 text-right">
                     {isGestor && (
-                      <div className="flex justify-end gap-1">
-                        <Button size="icon" variant="ghost" onClick={() => onEdit(c)} title="Editar">
-                          <Pencil className="h-4 w-4 text-primary" />
+                      <div className="flex justify-end gap-2">
+                        <Button size="sm" variant="outline" onClick={() => onEdit(c)} className="gap-1.5">
+                          <Pencil className="h-3.5 w-3.5" /> Editar
                         </Button>
                         {mode === "ativos" && onDemitir && (
-                          <Button size="icon" variant="ghost" onClick={() => onDemitir(c)} title="Demitir">
-                            <UserMinus className="h-4 w-4 text-destructive" />
+                          <Button size="sm" variant="outline" onClick={() => onDemitir(c)} title="Demitir"
+                            className="gap-1.5 text-destructive border-destructive/30 hover:bg-destructive/10 hover:text-destructive">
+                            <UserMinus className="h-3.5 w-3.5" /> Demitir
                           </Button>
                         )}
                         {mode === "demitidos" && (
