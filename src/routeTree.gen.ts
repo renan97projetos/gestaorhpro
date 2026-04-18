@@ -9,6 +9,7 @@
 // Additionally, you should also exclude this file from your linter and/or formatter to prevent it from being checked or modified.
 
 import { Route as rootRouteImport } from './routes/__root'
+import { Route as UsuariosRouteImport } from './routes/usuarios'
 import { Route as SolicitacaoMovimentacaoRouteImport } from './routes/solicitacao-movimentacao'
 import { Route as ResetPasswordRouteImport } from './routes/reset-password'
 import { Route as InicioRouteImport } from './routes/inicio'
@@ -16,6 +17,11 @@ import { Route as DashboardRouteImport } from './routes/dashboard'
 import { Route as CadastroRouteImport } from './routes/cadastro'
 import { Route as IndexRouteImport } from './routes/index'
 
+const UsuariosRoute = UsuariosRouteImport.update({
+  id: '/usuarios',
+  path: '/usuarios',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const SolicitacaoMovimentacaoRoute = SolicitacaoMovimentacaoRouteImport.update({
   id: '/solicitacao-movimentacao',
   path: '/solicitacao-movimentacao',
@@ -54,6 +60,7 @@ export interface FileRoutesByFullPath {
   '/inicio': typeof InicioRoute
   '/reset-password': typeof ResetPasswordRoute
   '/solicitacao-movimentacao': typeof SolicitacaoMovimentacaoRoute
+  '/usuarios': typeof UsuariosRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
@@ -62,6 +69,7 @@ export interface FileRoutesByTo {
   '/inicio': typeof InicioRoute
   '/reset-password': typeof ResetPasswordRoute
   '/solicitacao-movimentacao': typeof SolicitacaoMovimentacaoRoute
+  '/usuarios': typeof UsuariosRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
@@ -71,6 +79,7 @@ export interface FileRoutesById {
   '/inicio': typeof InicioRoute
   '/reset-password': typeof ResetPasswordRoute
   '/solicitacao-movimentacao': typeof SolicitacaoMovimentacaoRoute
+  '/usuarios': typeof UsuariosRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
@@ -81,6 +90,7 @@ export interface FileRouteTypes {
     | '/inicio'
     | '/reset-password'
     | '/solicitacao-movimentacao'
+    | '/usuarios'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
@@ -89,6 +99,7 @@ export interface FileRouteTypes {
     | '/inicio'
     | '/reset-password'
     | '/solicitacao-movimentacao'
+    | '/usuarios'
   id:
     | '__root__'
     | '/'
@@ -97,6 +108,7 @@ export interface FileRouteTypes {
     | '/inicio'
     | '/reset-password'
     | '/solicitacao-movimentacao'
+    | '/usuarios'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
@@ -106,10 +118,18 @@ export interface RootRouteChildren {
   InicioRoute: typeof InicioRoute
   ResetPasswordRoute: typeof ResetPasswordRoute
   SolicitacaoMovimentacaoRoute: typeof SolicitacaoMovimentacaoRoute
+  UsuariosRoute: typeof UsuariosRoute
 }
 
 declare module '@tanstack/react-router' {
   interface FileRoutesByPath {
+    '/usuarios': {
+      id: '/usuarios'
+      path: '/usuarios'
+      fullPath: '/usuarios'
+      preLoaderRoute: typeof UsuariosRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/solicitacao-movimentacao': {
       id: '/solicitacao-movimentacao'
       path: '/solicitacao-movimentacao'
@@ -162,6 +182,7 @@ const rootRouteChildren: RootRouteChildren = {
   InicioRoute: InicioRoute,
   ResetPasswordRoute: ResetPasswordRoute,
   SolicitacaoMovimentacaoRoute: SolicitacaoMovimentacaoRoute,
+  UsuariosRoute: UsuariosRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)

@@ -4,7 +4,7 @@ import { useAuth } from "@/lib/auth-context";
 import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import {
-  Building2, Home, Users, UserPlus, UserCog, FileText, LogOut, User,
+  Building2, Home, Users, UserPlus, UserCog, FileText, LogOut, User, ShieldCheck,
 } from "lucide-react";
 
 export const Route = createFileRoute("/inicio")({
@@ -15,16 +15,21 @@ export const Route = createFileRoute("/inicio")({
   ),
 });
 
-const items = [
+const baseItems = [
   { to: "/dashboard", label: "Início", sub: "Dashboard e indicadores", icon: Home, tone: "from-blue-500 to-blue-600" },
   { to: "/cadastro", label: "Lista de Colaboradores", sub: "Visualizar e gerenciar", icon: Users, tone: "from-emerald-500 to-emerald-600" },
-  { to: "/cadastro?novo=1", label: "Cadastro", sub: "Cadastrar colaboradores", icon: UserPlus, tone: "from-violet-500 to-violet-600" },
-  { to: "/inicio", label: "Conta", sub: "Perfil e preferências", icon: UserCog, tone: "from-slate-600 to-slate-700" },
+  { to: "/cadastro", label: "Cadastro", sub: "Cadastrar colaboradores", icon: UserPlus, tone: "from-violet-500 to-violet-600" },
   { to: "/solicitacao-movimentacao", label: "Solicitações", sub: "Movimentações", icon: FileText, tone: "from-amber-500 to-orange-500" },
 ];
 
 function InicioPage() {
-  const { user, signOut } = useAuth();
+  const { user, signOut, isAdmin } = useAuth();
+  const items = isAdmin
+    ? [
+        ...baseItems,
+        { to: "/usuarios", label: "Usuários", sub: "Permissões e acessos", icon: ShieldCheck, tone: "from-rose-500 to-rose-600" },
+      ]
+    : baseItems;
   const navigate = useNavigate();
 
   const handleLogout = async () => {
