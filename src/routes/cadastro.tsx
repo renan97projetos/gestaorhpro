@@ -134,7 +134,7 @@ function CadastroPage() {
     });
 
     const { error } = await supabase.from("colaboradores").update(updated).eq("id", editing.id);
-    if (error) return toast.error(error.message);
+    if (error) { toast.error(error.message); return; }
 
     if (changes.length && user) {
       await supabase.from("movimentacoes").insert(
@@ -163,7 +163,7 @@ function CadastroPage() {
       .insert({ ...newC, created_by: user.id } as never)
       .select()
       .single();
-    if (error) return toast.error(error.message);
+    if (error) { toast.error(error.message); return; }
     await supabase.from("movimentacoes").insert({
       colaborador_id: data.id,
       matricula: data.matricula,

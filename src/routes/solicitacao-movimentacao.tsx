@@ -115,7 +115,7 @@ function Page() {
         decided_at: new Date().toISOString(),
       })
       .eq("id", sol.id);
-    if (error) return toast.error(error.message);
+    if (error) { toast.error(error.message); return; }
     toast.success(novoStatus === "aprovada" ? "Solicitação aprovada" : "Solicitação rejeitada");
     load();
   };
