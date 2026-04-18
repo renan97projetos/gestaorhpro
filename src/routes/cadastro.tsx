@@ -12,9 +12,10 @@ import { Badge } from "@/components/ui/badge";
 import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from "@/components/ui/dialog";
-import { Plus, Search, Pencil, Trash2, Loader2, Filter, Users, UserX, Download, RotateCcw } from "lucide-react";
+import { Plus, Search, Pencil, Trash2, Loader2, Filter, Users, UserX, Download, RotateCcw, UserMinus } from "lucide-react";
 import { toast } from "sonner";
 import { ColabFull, tempoDeEmpresa } from "@/lib/dashboard-helpers";
+import { DemissaoDialog, DemissaoData } from "@/components/DemissaoDialog";
 
 export const Route = createFileRoute("/cadastro")({
   component: () => (
@@ -56,6 +57,7 @@ function CadastroPage() {
   const [tab, setTab] = useState("ativos");
   const [editing, setEditing] = useState<ColabFull | null>(null);
   const [creating, setCreating] = useState(false);
+  const [demitindo, setDemitindo] = useState<ColabFull | null>(null);
 
   // Filtros aba ATIVOS
   const [q, setQ] = useState("");
@@ -187,10 +189,31 @@ function CadastroPage() {
   };
 
   const handleDelete = async (c: ColabFull) => {
-    if (!confirm(`Excluir ${c.colaborador}?`)) return;
+    if (!confirm(`Excluir permanentemente ${c.colaborador}?`)) return;
     const { error } = await supabase.from("colaboradores").delete().eq("id", c.id);
     if (error) return toast.error(error.message);
     toast.success("Excluído"); load();
+  };
+
+  const handleDemitir = async (c: ColabFull, info: DemissaoData) => {
+    if (!user) return;
+    const { error } = await supabase
+      .from("colaboradores")
+      .update({
+        status: "Demitido",
+        data_demissao: info.data_demissao,
+        tipo_demissao: info.tipo_demissao,
+      } as never)
+      .eq("id", c.id);
+    if (error) { toast.error(error.message); return; }
+    await supabase.from("movimentacoes").insert({
+      colaborador_id: c.id, matricula: c.matricula, colaborador_nome: c.colaborador,
+      campo: "Demissão", valor_anterior: c.status,
+      valor_novo: `${info.tipo_demissao} em ${info.data_demissao}`,
+      tipo: "demissao", user_id: user.id, user_nome: user.email ?? null,
+    });
+    toast.success("Colaborador demitido");
+    load();
   };
 
   const exportCsv = (rows: ColabFull[], filename: string) => {
@@ -306,7 +329,7 @@ function CadastroPage() {
           </Card>
 
           <ColabTable rows={filteredAtivos} loading={loading} isGestor={isGestor}
-            onEdit={setEditing} onDelete={handleDelete} mode="ativos" />
+            onEdit={setEditing} onDelete={handleDelete} onDemitir={setDemitindo} mode="ativos" />
         </TabsContent>
 
         {/* ABA DEMITIDOS */}
@@ -355,8 +378,14 @@ function CadastroPage() {
         </TabsContent>
       </Tabs>
 
-      <ColabDialog open={!!editing} onClose={() => setEditing(null)} initial={editing} onSave={handleSaveEdit} title="Editar colaborador" />
-      <ColabDialog open={creating} onClose={() => setCreating(false)} initial={null} onSave={handleCreate} title="Novo colaborador" />
+      <ColabDialog open={!!editing} onClose={() => setEditing(null)} initial={editing} onSave={handleSaveEdit} title="Editar colaborador" allColabs={list} />
+      <ColabDialog open={creating} onClose={() => setCreating(false)} initial={null} onSave={handleCreate} title="Novo colaborador" allColabs={list} />
+      <DemissaoDialog
+        open={!!demitindo}
+        onClose={() => setDemitindo(null)}
+        colaboradorNome={demitindo?.colaborador ?? ""}
+        onConfirm={async (info) => { if (demitindo) await handleDemitir(demitindo, info); }}
+      />
     </div>
   );
 }
@@ -397,10 +426,12 @@ function StatusBadge({ s }: { s: ColabFull["status"] }) {
 }
 
 function ColabTable({
-  rows, loading, isGestor, onEdit, onDelete, mode,
+  rows, loading, isGestor, onEdit, onDelete, onDemitir, mode,
 }: {
   rows: ColabFull[]; loading: boolean; isGestor: boolean;
-  onEdit: (c: ColabFull) => void; onDelete: (c: ColabFull) => void;
+  onEdit: (c: ColabFull) => void;
+  onDelete: (c: ColabFull) => void;
+  onDemitir?: (c: ColabFull) => void;
   mode: "ativos" | "demitidos";
 }) {
   return (
@@ -418,12 +449,12 @@ function ColabTable({
                 <th className="text-left p-3">Status</th>
                 <th className="text-left p-3">Cargo</th>
                 <th className="text-left p-3">Setor</th>
-                <th className="text-left p-3">Subsetor</th>
                 <th className="text-left p-3">Liderança</th>
                 {mode === "ativos" ? (
                   <>
                     <th className="text-left p-3">Turno</th>
                     <th className="text-left p-3">Sábado</th>
+                    <th className="text-left p-3">Admissão</th>
                     <th className="text-left p-3">Tempo</th>
                   </>
                 ) : (
@@ -450,7 +481,6 @@ function ColabTable({
                   <td className="p-3"><StatusBadge s={c.status} /></td>
                   <td className="p-3">{c.cargo ?? "—"}</td>
                   <td className="p-3">{c.setor ?? "—"}</td>
-                  <td className="p-3 text-muted-foreground">{c.subsetor ?? "—"}</td>
                   <td className="p-3 text-muted-foreground">{c.lideranca ?? "—"}</td>
                   {mode === "ativos" ? (
                     <>
@@ -460,30 +490,46 @@ function ColabTable({
                           ? <Badge className="bg-primary text-primary-foreground">Sim</Badge>
                           : <Badge variant="outline">Não</Badge>}
                       </td>
-                      <td className="p-3 text-xs text-muted-foreground">{tempoDeEmpresa(c.admissao)}</td>
+                      <td className="p-3 text-xs">
+                        {c.admissao ? new Date(c.admissao).toLocaleDateString("pt-BR") : "—"}
+                      </td>
+                      <td className="p-3 text-xs">
+                        <Badge variant="outline" className="bg-amber-50 text-amber-700 border-amber-200 dark:bg-amber-950/30">
+                          {tempoDeEmpresa(c.admissao)}
+                        </Badge>
+                      </td>
                     </>
                   ) : (
                     <>
-                      <td className="p-3 text-xs">{c.data_demissao ?? "—"}</td>
+                      <td className="p-3 text-xs">
+                        {c.data_demissao ? new Date(c.data_demissao).toLocaleDateString("pt-BR") : "—"}
+                      </td>
                       <td className="p-3 text-xs">{c.tipo_demissao ?? "—"}</td>
                     </>
                   )}
                   <td className="p-3 text-right">
                     {isGestor && (
                       <div className="flex justify-end gap-1">
-                        <Button size="icon" variant="ghost" onClick={() => onEdit(c)}>
-                          <Pencil className="h-4 w-4" />
+                        <Button size="icon" variant="ghost" onClick={() => onEdit(c)} title="Editar">
+                          <Pencil className="h-4 w-4 text-primary" />
                         </Button>
-                        <Button size="icon" variant="ghost" onClick={() => onDelete(c)}>
-                          <Trash2 className="h-4 w-4 text-destructive" />
-                        </Button>
+                        {mode === "ativos" && onDemitir && (
+                          <Button size="icon" variant="ghost" onClick={() => onDemitir(c)} title="Demitir">
+                            <UserMinus className="h-4 w-4 text-destructive" />
+                          </Button>
+                        )}
+                        {mode === "demitidos" && (
+                          <Button size="icon" variant="ghost" onClick={() => onDelete(c)} title="Excluir permanente">
+                            <Trash2 className="h-4 w-4 text-destructive" />
+                          </Button>
+                        )}
                       </div>
                     )}
                   </td>
                 </tr>
               ))}
               {rows.length === 0 && (
-                <tr><td colSpan={mode === "ativos" ? 12 : 11} className="p-8 text-center text-muted-foreground">Nenhum resultado</td></tr>
+                <tr><td colSpan={mode === "ativos" ? 12 : 10} className="p-8 text-center text-muted-foreground">Nenhum resultado</td></tr>
               )}
             </tbody>
           </table>
@@ -494,23 +540,42 @@ function ColabTable({
 }
 
 function ColabDialog({
-  open, onClose, initial, onSave, title,
+  open, onClose, initial, onSave, title, allColabs,
 }: {
   open: boolean; onClose: () => void; initial: ColabFull | null;
   onSave: (c: Partial<ColabFull>) => Promise<void>; title: string;
+  allColabs: ColabFull[];
 }) {
   const [form, setForm] = useState<Partial<ColabFull>>({});
   const [saving, setSaving] = useState(false);
 
   useEffect(() => {
-    setForm(initial ?? { status: "Ativo" });
+    setForm(initial ?? { status: "Ativo", sabado_trabalho: "Não" });
   }, [initial, open]);
 
   const set = <K extends keyof ColabFull>(k: K, v: ColabFull[K]) => setForm((f) => ({ ...f, [k]: v }));
 
+  // Sugestões dinâmicas a partir dos dados existentes
+  const sugestoes = useMemo(() => {
+    const uniq = (k: keyof ColabFull) =>
+      Array.from(new Set(allColabs.map((c) => c[k]).filter(Boolean) as string[])).sort();
+    return {
+      cargos: uniq("cargo"),
+      setores: uniq("setor"),
+      subsetores: uniq("subsetor"),
+      liderancas: uniq("lideranca"),
+      turnos: uniq("turno"),
+      almocos: uniq("horario_almoco"),
+      cafes: uniq("horario_cafe"),
+      sabadoHorarios: uniq("sabado_horario"),
+    };
+  }, [allColabs]);
+
   const submit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!form.matricula || !form.colaborador) return toast.error("Matrícula e nome são obrigatórios");
+    if (!form.sexo) return toast.error("Selecione o sexo");
+    if (!form.status) return toast.error("Selecione o status");
     setSaving(true);
     await onSave(form);
     setSaving(false);
@@ -521,41 +586,72 @@ function ColabDialog({
   return (
     <Dialog open={open} onOpenChange={(o) => !o && onClose()}>
       <DialogContent className="max-w-3xl max-h-[90vh] overflow-y-auto">
-        <DialogHeader><DialogTitle>{title}</DialogTitle></DialogHeader>
+        <DialogHeader>
+          <DialogTitle>{title}</DialogTitle>
+          <p className="text-sm text-muted-foreground">
+            Preencha as informações básicas do colaborador. Os campos sugerem opções existentes para manter consistência.
+          </p>
+        </DialogHeader>
         <form onSubmit={submit} className="space-y-4">
           <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
-            <Field label="Matrícula *"><Input value={form.matricula ?? ""} onChange={(e) => set("matricula", e.target.value)} required /></Field>
-            <Field label="Colaborador *"><Input value={form.colaborador ?? ""} onChange={(e) => set("colaborador", e.target.value)} required /></Field>
-            <Field label="Sexo">
+            <Field label="Matrícula *">
+              <Input value={form.matricula ?? ""} onChange={(e) => set("matricula", e.target.value)} placeholder="Ex: 12345" required />
+            </Field>
+            <Field label="Nome do Colaborador *">
+              <Input value={form.colaborador ?? ""} onChange={(e) => set("colaborador", e.target.value)} placeholder="Ex: João Silva" required />
+            </Field>
+            <Field label="Sexo *">
               <Select value={form.sexo ?? ""} onValueChange={(v) => set("sexo", v as ColabFull["sexo"])}>
-                <SelectTrigger><SelectValue placeholder="Selecione" /></SelectTrigger>
+                <SelectTrigger><SelectValue placeholder="Selecione o sexo" /></SelectTrigger>
                 <SelectContent>{SEXO_OPTS.map((s) => <SelectItem key={s} value={s}>{s}</SelectItem>)}</SelectContent>
               </Select>
             </Field>
-            <Field label="Status">
+            <Field label="Status *">
               <Select value={form.status ?? "Ativo"} onValueChange={(v) => set("status", v as ColabFull["status"])}>
-                <SelectTrigger><SelectValue /></SelectTrigger>
+                <SelectTrigger><SelectValue placeholder="Selecione o status" /></SelectTrigger>
                 <SelectContent>{STATUS_OPTS.map((s) => <SelectItem key={s} value={s}>{s}</SelectItem>)}</SelectContent>
               </Select>
             </Field>
-            <Field label="Cargo"><Input value={form.cargo ?? ""} onChange={(e) => set("cargo", e.target.value)} /></Field>
-            <Field label="Setor"><Input value={form.setor ?? ""} onChange={(e) => set("setor", e.target.value)} /></Field>
-            <Field label="Subsetor"><Input value={form.subsetor ?? ""} onChange={(e) => set("subsetor", e.target.value)} /></Field>
-            <Field label="Liderança"><Input value={form.lideranca ?? ""} onChange={(e) => set("lideranca", e.target.value)} /></Field>
-            <Field label="Turno"><Input value={form.turno ?? ""} onChange={(e) => set("turno", e.target.value)} placeholder="08:00 - 17:15" /></Field>
-            <Field label="Sábado trabalha?">
+            <Field label="Setor *">
+              <ComboInput value={form.setor ?? ""} onChange={(v) => set("setor", v)} options={sugestoes.setores} placeholder="Selecione o setor" />
+            </Field>
+            <Field label="Subsetor (opcional)">
+              <ComboInput value={form.subsetor ?? ""} onChange={(v) => set("subsetor", v)} options={sugestoes.subsetores} placeholder="Selecione o subsetor" />
+            </Field>
+            <Field label="Liderança *">
+              <ComboInput value={form.lideranca ?? ""} onChange={(v) => set("lideranca", v)} options={sugestoes.liderancas} placeholder="Selecione a liderança" />
+            </Field>
+            <Field label="Cargo *">
+              <ComboInput value={form.cargo ?? ""} onChange={(v) => set("cargo", v)} options={sugestoes.cargos} placeholder="Selecione o cargo" />
+            </Field>
+            <Field label="Turno *">
+              <ComboInput value={form.turno ?? ""} onChange={(v) => set("turno", v)} options={sugestoes.turnos} placeholder="Ex: 08:00 - 17:15" />
+            </Field>
+            <Field label="Sábado trabalho *">
               <Select value={form.sabado_trabalho ?? ""} onValueChange={(v) => set("sabado_trabalho", v)}>
-                <SelectTrigger><SelectValue placeholder="..." /></SelectTrigger>
+                <SelectTrigger><SelectValue placeholder="Selecione" /></SelectTrigger>
                 <SelectContent><SelectItem value="Sim">Sim</SelectItem><SelectItem value="Não">Não</SelectItem></SelectContent>
               </Select>
             </Field>
-            <Field label="Horário sábado"><Input value={form.sabado_horario ?? ""} onChange={(e) => set("sabado_horario", e.target.value)} /></Field>
-            <Field label="Horário almoço"><Input value={form.horario_almoco ?? ""} onChange={(e) => set("horario_almoco", e.target.value)} /></Field>
-            <Field label="Horário café"><Input value={form.horario_cafe ?? ""} onChange={(e) => set("horario_cafe", e.target.value)} /></Field>
-            <Field label="Admissão"><Input type="date" value={form.admissao ?? ""} onChange={(e) => set("admissao", e.target.value)} /></Field>
+            {form.sabado_trabalho === "Sim" && (
+              <Field label="Horário sábado">
+                <ComboInput value={form.sabado_horario ?? ""} onChange={(v) => set("sabado_horario", v)} options={sugestoes.sabadoHorarios} placeholder="Ex: 07:00 - 12:00" />
+              </Field>
+            )}
+            <Field label="Horário almoço *">
+              <ComboInput value={form.horario_almoco ?? ""} onChange={(v) => set("horario_almoco", v)} options={sugestoes.almocos} placeholder="Selecione o horário" />
+            </Field>
+            <Field label="Horário café *">
+              <ComboInput value={form.horario_cafe ?? ""} onChange={(v) => set("horario_cafe", v)} options={sugestoes.cafes} placeholder="Selecione o horário" />
+            </Field>
+            <Field label="Admissão *">
+              <Input type="date" value={form.admissao ?? ""} onChange={(e) => set("admissao", e.target.value)} />
+            </Field>
             {isDemitido && (
               <>
-                <Field label="Data demissão"><Input type="date" value={form.data_demissao ?? ""} onChange={(e) => set("data_demissao", e.target.value)} /></Field>
+                <Field label="Data demissão">
+                  <Input type="date" value={form.data_demissao ?? ""} onChange={(e) => set("data_demissao", e.target.value)} />
+                </Field>
                 <Field label="Tipo de demissão">
                   <Select value={form.tipo_demissao ?? ""} onValueChange={(v) => set("tipo_demissao", v)}>
                     <SelectTrigger><SelectValue placeholder="Selecione" /></SelectTrigger>
@@ -568,13 +664,36 @@ function ColabDialog({
           <DialogFooter>
             <Button type="button" variant="outline" onClick={onClose}>Cancelar</Button>
             <Button type="submit" disabled={saving} className="bg-[image:var(--gradient-primary)]">
-              {saving ? <Loader2 className="h-4 w-4 animate-spin" /> : "Salvar"}
+              {saving ? <Loader2 className="h-4 w-4 animate-spin" /> : initial ? "Salvar alterações" : "Salvar Colaborador"}
             </Button>
           </DialogFooter>
         </form>
       </DialogContent>
     </Dialog>
   );
+}
+
+function ComboInput({
+  value, onChange, options, placeholder,
+}: {
+  value: string; onChange: (v: string) => void;
+  options: string[]; placeholder?: string;
+}) {
+  // Se há sugestões, usa Select; senão, Input livre.
+  if (options.length > 0) {
+    const has = value && !options.includes(value);
+    return (
+      <Select value={value || "__none"} onValueChange={(v) => onChange(v === "__none" ? "" : v)}>
+        <SelectTrigger><SelectValue placeholder={placeholder} /></SelectTrigger>
+        <SelectContent className="max-h-72">
+          <SelectItem value="__none">— Nenhum —</SelectItem>
+          {has && <SelectItem value={value}>{value}</SelectItem>}
+          {options.map((o) => <SelectItem key={o} value={o}>{o}</SelectItem>)}
+        </SelectContent>
+      </Select>
+    );
+  }
+  return <Input value={value} onChange={(e) => onChange(e.target.value)} placeholder={placeholder} />;
 }
 
 function Field({ label, children }: { label: string; children: React.ReactNode }) {
