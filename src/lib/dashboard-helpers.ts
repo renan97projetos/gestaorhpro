@@ -107,10 +107,23 @@ export function tempoDeEmpresa(admissao: string | null): string {
   if (!admissao) return "—";
   const ini = new Date(admissao);
   const hoje = new Date();
-  const meses = (hoje.getFullYear() - ini.getFullYear()) * 12 + (hoje.getMonth() - ini.getMonth());
+  let meses = (hoje.getFullYear() - ini.getFullYear()) * 12 + (hoje.getMonth() - ini.getMonth());
+  if (hoje.getDate() < ini.getDate()) meses -= 1;
   if (meses < 1) return "menos de 1 mês";
   if (meses < 12) return `${meses} ${meses === 1 ? "mês" : "meses"}`;
   const anos = Math.floor(meses / 12);
   const restoMeses = meses % 12;
-  return `${anos}a ${restoMeses}m`;
+  const partAnos = `${anos} ${anos === 1 ? "ano" : "anos"}`;
+  if (restoMeses === 0) return partAnos;
+  return `${partAnos} e ${restoMeses} ${restoMeses === 1 ? "mês" : "meses"}`;
+}
+
+export function tempoExperiencia(admissao: string | null): { label: string; tone: "novo" | "experiente" | "veterano" } {
+  if (!admissao) return { label: "—", tone: "novo" };
+  const ini = new Date(admissao);
+  const hoje = new Date();
+  const meses = (hoje.getFullYear() - ini.getFullYear()) * 12 + (hoje.getMonth() - ini.getMonth());
+  if (meses < 6) return { label: "Novo", tone: "novo" };
+  if (meses < 24) return { label: "Em adaptação", tone: "novo" };
+  return { label: "Experiente", tone: "experiente" };
 }
