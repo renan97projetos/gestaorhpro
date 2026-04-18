@@ -12,9 +12,10 @@ import { Badge } from "@/components/ui/badge";
 import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from "@/components/ui/dialog";
-import { Plus, Search, Pencil, Trash2, Loader2, Filter, Users, UserX, Download, RotateCcw } from "lucide-react";
+import { Plus, Search, Pencil, Trash2, Loader2, Filter, Users, UserX, Download, RotateCcw, UserMinus } from "lucide-react";
 import { toast } from "sonner";
 import { ColabFull, tempoDeEmpresa } from "@/lib/dashboard-helpers";
+import { DemissaoDialog, DemissaoData } from "@/components/DemissaoDialog";
 
 export const Route = createFileRoute("/cadastro")({
   component: () => (
@@ -56,6 +57,7 @@ function CadastroPage() {
   const [tab, setTab] = useState("ativos");
   const [editing, setEditing] = useState<ColabFull | null>(null);
   const [creating, setCreating] = useState(false);
+  const [demitindo, setDemitindo] = useState<ColabFull | null>(null);
 
   // Filtros aba ATIVOS
   const [q, setQ] = useState("");
@@ -187,10 +189,31 @@ function CadastroPage() {
   };
 
   const handleDelete = async (c: ColabFull) => {
-    if (!confirm(`Excluir ${c.colaborador}?`)) return;
+    if (!confirm(`Excluir permanentemente ${c.colaborador}?`)) return;
     const { error } = await supabase.from("colaboradores").delete().eq("id", c.id);
     if (error) return toast.error(error.message);
     toast.success("Excluído"); load();
+  };
+
+  const handleDemitir = async (c: ColabFull, info: DemissaoData) => {
+    if (!user) return;
+    const { error } = await supabase
+      .from("colaboradores")
+      .update({
+        status: "Demitido",
+        data_demissao: info.data_demissao,
+        tipo_demissao: info.tipo_demissao,
+      } as never)
+      .eq("id", c.id);
+    if (error) { toast.error(error.message); return; }
+    await supabase.from("movimentacoes").insert({
+      colaborador_id: c.id, matricula: c.matricula, colaborador_nome: c.colaborador,
+      campo: "Demissão", valor_anterior: c.status,
+      valor_novo: `${info.tipo_demissao} em ${info.data_demissao}`,
+      tipo: "demissao", user_id: user.id, user_nome: user.email ?? null,
+    });
+    toast.success("Colaborador demitido");
+    load();
   };
 
   const exportCsv = (rows: ColabFull[], filename: string) => {
@@ -306,7 +329,7 @@ function CadastroPage() {
           </Card>
 
           <ColabTable rows={filteredAtivos} loading={loading} isGestor={isGestor}
-            onEdit={setEditing} onDelete={handleDelete} mode="ativos" />
+            onEdit={setEditing} onDelete={handleDelete} onDemitir={setDemitindo} mode="ativos" />
         </TabsContent>
 
         {/* ABA DEMITIDOS */}
@@ -355,8 +378,14 @@ function CadastroPage() {
         </TabsContent>
       </Tabs>
 
-      <ColabDialog open={!!editing} onClose={() => setEditing(null)} initial={editing} onSave={handleSaveEdit} title="Editar colaborador" />
-      <ColabDialog open={creating} onClose={() => setCreating(false)} initial={null} onSave={handleCreate} title="Novo colaborador" />
+      <ColabDialog open={!!editing} onClose={() => setEditing(null)} initial={editing} onSave={handleSaveEdit} title="Editar colaborador" allColabs={list} />
+      <ColabDialog open={creating} onClose={() => setCreating(false)} initial={null} onSave={handleCreate} title="Novo colaborador" allColabs={list} />
+      <DemissaoDialog
+        open={!!demitindo}
+        onClose={() => setDemitindo(null)}
+        colaboradorNome={demitindo?.colaborador ?? ""}
+        onConfirm={async (info) => { if (demitindo) await handleDemitir(demitindo, info); }}
+      />
     </div>
   );
 }
