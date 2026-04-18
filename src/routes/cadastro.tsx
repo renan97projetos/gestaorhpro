@@ -684,11 +684,25 @@ function ColabDialog({
               </>
             )}
           </div>
-          <DialogFooter>
-            <Button type="button" variant="outline" onClick={onClose}>Cancelar</Button>
-            <Button type="submit" disabled={saving} className="bg-[image:var(--gradient-primary)]">
-              {saving ? <Loader2 className="h-4 w-4 animate-spin" /> : initial ? "Salvar alterações" : "Salvar Colaborador"}
-            </Button>
+          <DialogFooter className="gap-2 flex-wrap sm:justify-between">
+            <div>
+              {initial && initial.status !== "Demitido" && onDemitirClick && (
+                <Button
+                  type="button"
+                  variant="outline"
+                  onClick={() => onDemitirClick(initial)}
+                  className="gap-1.5 text-destructive border-destructive/30 hover:bg-destructive/10 hover:text-destructive"
+                >
+                  <UserMinus className="h-4 w-4" /> Demitir colaborador
+                </Button>
+              )}
+            </div>
+            <div className="flex gap-2">
+              <Button type="button" variant="outline" onClick={onClose}>Cancelar</Button>
+              <Button type="submit" disabled={saving} className="bg-[image:var(--gradient-primary)]">
+                {saving ? <Loader2 className="h-4 w-4 animate-spin" /> : initial ? "Salvar alterações" : "Salvar Colaborador"}
+              </Button>
+            </div>
           </DialogFooter>
         </form>
       </DialogContent>
