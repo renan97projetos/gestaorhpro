@@ -426,10 +426,12 @@ function StatusBadge({ s }: { s: ColabFull["status"] }) {
 }
 
 function ColabTable({
-  rows, loading, isGestor, onEdit, onDelete, mode,
+  rows, loading, isGestor, onEdit, onDelete, onDemitir, mode,
 }: {
   rows: ColabFull[]; loading: boolean; isGestor: boolean;
-  onEdit: (c: ColabFull) => void; onDelete: (c: ColabFull) => void;
+  onEdit: (c: ColabFull) => void;
+  onDelete: (c: ColabFull) => void;
+  onDemitir?: (c: ColabFull) => void;
   mode: "ativos" | "demitidos";
 }) {
   return (
@@ -447,12 +449,12 @@ function ColabTable({
                 <th className="text-left p-3">Status</th>
                 <th className="text-left p-3">Cargo</th>
                 <th className="text-left p-3">Setor</th>
-                <th className="text-left p-3">Subsetor</th>
                 <th className="text-left p-3">Liderança</th>
                 {mode === "ativos" ? (
                   <>
                     <th className="text-left p-3">Turno</th>
                     <th className="text-left p-3">Sábado</th>
+                    <th className="text-left p-3">Admissão</th>
                     <th className="text-left p-3">Tempo</th>
                   </>
                 ) : (
@@ -479,7 +481,6 @@ function ColabTable({
                   <td className="p-3"><StatusBadge s={c.status} /></td>
                   <td className="p-3">{c.cargo ?? "—"}</td>
                   <td className="p-3">{c.setor ?? "—"}</td>
-                  <td className="p-3 text-muted-foreground">{c.subsetor ?? "—"}</td>
                   <td className="p-3 text-muted-foreground">{c.lideranca ?? "—"}</td>
                   {mode === "ativos" ? (
                     <>
@@ -489,30 +490,46 @@ function ColabTable({
                           ? <Badge className="bg-primary text-primary-foreground">Sim</Badge>
                           : <Badge variant="outline">Não</Badge>}
                       </td>
-                      <td className="p-3 text-xs text-muted-foreground">{tempoDeEmpresa(c.admissao)}</td>
+                      <td className="p-3 text-xs">
+                        {c.admissao ? new Date(c.admissao).toLocaleDateString("pt-BR") : "—"}
+                      </td>
+                      <td className="p-3 text-xs">
+                        <Badge variant="outline" className="bg-amber-50 text-amber-700 border-amber-200 dark:bg-amber-950/30">
+                          {tempoDeEmpresa(c.admissao)}
+                        </Badge>
+                      </td>
                     </>
                   ) : (
                     <>
-                      <td className="p-3 text-xs">{c.data_demissao ?? "—"}</td>
+                      <td className="p-3 text-xs">
+                        {c.data_demissao ? new Date(c.data_demissao).toLocaleDateString("pt-BR") : "—"}
+                      </td>
                       <td className="p-3 text-xs">{c.tipo_demissao ?? "—"}</td>
                     </>
                   )}
                   <td className="p-3 text-right">
                     {isGestor && (
                       <div className="flex justify-end gap-1">
-                        <Button size="icon" variant="ghost" onClick={() => onEdit(c)}>
-                          <Pencil className="h-4 w-4" />
+                        <Button size="icon" variant="ghost" onClick={() => onEdit(c)} title="Editar">
+                          <Pencil className="h-4 w-4 text-primary" />
                         </Button>
-                        <Button size="icon" variant="ghost" onClick={() => onDelete(c)}>
-                          <Trash2 className="h-4 w-4 text-destructive" />
-                        </Button>
+                        {mode === "ativos" && onDemitir && (
+                          <Button size="icon" variant="ghost" onClick={() => onDemitir(c)} title="Demitir">
+                            <UserMinus className="h-4 w-4 text-destructive" />
+                          </Button>
+                        )}
+                        {mode === "demitidos" && (
+                          <Button size="icon" variant="ghost" onClick={() => onDelete(c)} title="Excluir permanente">
+                            <Trash2 className="h-4 w-4 text-destructive" />
+                          </Button>
+                        )}
                       </div>
                     )}
                   </td>
                 </tr>
               ))}
               {rows.length === 0 && (
-                <tr><td colSpan={mode === "ativos" ? 12 : 11} className="p-8 text-center text-muted-foreground">Nenhum resultado</td></tr>
+                <tr><td colSpan={mode === "ativos" ? 12 : 10} className="p-8 text-center text-muted-foreground">Nenhum resultado</td></tr>
               )}
             </tbody>
           </table>
