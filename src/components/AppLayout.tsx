@@ -1,11 +1,12 @@
 import { Link, useLocation, useNavigate } from "@tanstack/react-router";
 import { useAuth } from "@/lib/auth-context";
 import { Button } from "@/components/ui/button";
-import { LayoutDashboard, Users, History, LogOut, Menu, X } from "lucide-react";
+import { LayoutDashboard, Users, History, LogOut, Menu, X, LayoutGrid } from "lucide-react";
 import { useState } from "react";
 import { cn } from "@/lib/utils";
 
 const nav = [
+  { to: "/inicio", label: "Menu", icon: LayoutGrid },
   { to: "/dashboard", label: "Dashboard", icon: LayoutDashboard },
   { to: "/cadastro", label: "Colaboradores", icon: Users },
   { to: "/solicitacao-movimentacao", label: "Movimentações", icon: History },

@@ -19,7 +19,7 @@ function AuthPage() {
   const [tab, setTab] = useState<"login" | "cadastro">("login");
 
   useEffect(() => {
-    if (!loading && user) navigate({ to: "/dashboard" });
+    if (!loading && user) navigate({ to: "/inicio" });
   }, [user, loading, navigate]);
 
   return (
