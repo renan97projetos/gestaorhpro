@@ -21,6 +21,7 @@ export type Database = {
           colaborador: string
           created_at: string
           created_by: string | null
+          data_demissao: string | null
           horario_almoco: string | null
           horario_cafe: string | null
           id: string
@@ -30,8 +31,10 @@ export type Database = {
           sabado_horario: string | null
           sabado_trabalho: string | null
           setor: string | null
+          sexo: Database["public"]["Enums"]["sexo_tipo"] | null
           status: Database["public"]["Enums"]["colaborador_status"]
           subsetor: string | null
+          tipo_demissao: Database["public"]["Enums"]["tipo_demissao"] | null
           turno: string | null
           updated_at: string
         }
@@ -41,6 +44,7 @@ export type Database = {
           colaborador: string
           created_at?: string
           created_by?: string | null
+          data_demissao?: string | null
           horario_almoco?: string | null
           horario_cafe?: string | null
           id?: string
@@ -50,8 +54,10 @@ export type Database = {
           sabado_horario?: string | null
           sabado_trabalho?: string | null
           setor?: string | null
+          sexo?: Database["public"]["Enums"]["sexo_tipo"] | null
           status?: Database["public"]["Enums"]["colaborador_status"]
           subsetor?: string | null
+          tipo_demissao?: Database["public"]["Enums"]["tipo_demissao"] | null
           turno?: string | null
           updated_at?: string
         }
@@ -61,6 +67,7 @@ export type Database = {
           colaborador?: string
           created_at?: string
           created_by?: string | null
+          data_demissao?: string | null
           horario_almoco?: string | null
           horario_cafe?: string | null
           id?: string
@@ -70,8 +77,10 @@ export type Database = {
           sabado_horario?: string | null
           sabado_trabalho?: string | null
           setor?: string | null
+          sexo?: Database["public"]["Enums"]["sexo_tipo"] | null
           status?: Database["public"]["Enums"]["colaborador_status"]
           subsetor?: string | null
+          tipo_demissao?: Database["public"]["Enums"]["tipo_demissao"] | null
           turno?: string | null
           updated_at?: string
         }
@@ -260,6 +269,7 @@ export type Database = {
     Enums: {
       app_role: "admin" | "gestor" | "usuario"
       colaborador_status: "Ativo" | "Demitido" | "Afastado" | "Ferias"
+      sexo_tipo: "Masculino" | "Feminino"
       solicitacao_status: "pendente" | "aprovada" | "rejeitada" | "cancelada"
       solicitacao_tipo:
         | "transferencia_setor"
@@ -268,6 +278,12 @@ export type Database = {
         | "mudanca_lideranca"
         | "desligamento"
         | "outro"
+      tipo_demissao:
+        | "Pedido de demissao"
+        | "Sem justa causa"
+        | "Com justa causa"
+        | "Acordo"
+        | "Fim de contrato"
     }
     CompositeTypes: {
       [_ in never]: never
@@ -397,6 +413,7 @@ export const Constants = {
     Enums: {
       app_role: ["admin", "gestor", "usuario"],
       colaborador_status: ["Ativo", "Demitido", "Afastado", "Ferias"],
+      sexo_tipo: ["Masculino", "Feminino"],
       solicitacao_status: ["pendente", "aprovada", "rejeitada", "cancelada"],
       solicitacao_tipo: [
         "transferencia_setor",
@@ -405,6 +422,13 @@ export const Constants = {
         "mudanca_lideranca",
         "desligamento",
         "outro",
+      ],
+      tipo_demissao: [
+        "Pedido de demissao",
+        "Sem justa causa",
+        "Com justa causa",
+        "Acordo",
+        "Fim de contrato",
       ],
     },
   },
