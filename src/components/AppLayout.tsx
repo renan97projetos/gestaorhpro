@@ -1,11 +1,11 @@
 import { Link, useLocation, useNavigate } from "@tanstack/react-router";
 import { useAuth } from "@/lib/auth-context";
 import { Button } from "@/components/ui/button";
-import { LayoutDashboard, Users, History, LogOut, Menu, X, LayoutGrid } from "lucide-react";
+import { LayoutDashboard, Users, History, LogOut, Menu, X, LayoutGrid, UserCog } from "lucide-react";
 import { useState } from "react";
 import { cn } from "@/lib/utils";
 
-const nav = [
+const baseNav = [
   { to: "/inicio", label: "Menu", icon: LayoutGrid },
   { to: "/dashboard", label: "Dashboard", icon: LayoutDashboard },
   { to: "/cadastro", label: "Colaboradores", icon: Users },
@@ -13,7 +13,10 @@ const nav = [
 ];
 
 export function AppLayout({ children }: { children: React.ReactNode }) {
-  const { user, signOut } = useAuth();
+  const { user, signOut, isAdmin } = useAuth();
+  const nav = isAdmin
+    ? [...baseNav, { to: "/usuarios", label: "Usuários", icon: UserCog }]
+    : baseNav;
   const navigate = useNavigate();
   const location = useLocation();
   const [open, setOpen] = useState(false);
