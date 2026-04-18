@@ -1,26 +1,172 @@
-import { createFileRoute } from "@tanstack/react-router";
+import { createFileRoute, useNavigate } from "@tanstack/react-router";
+import { useEffect, useState } from "react";
+import { useAuth } from "@/lib/auth-context";
+import { Card } from "@/components/ui/card";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import { Button } from "@/components/ui/button";
+import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
+import { Eye, EyeOff, Loader2 } from "lucide-react";
+import { toast } from "sonner";
 
 export const Route = createFileRoute("/")({
-  component: Index,
+  component: AuthPage,
 });
 
-// IMPORTANT: Replace this placeholder. For sites with multiple pages (About, Services, Contact, etc.),
-// create separate route files (about.tsx, services.tsx, contact.tsx) — don't put all pages in this file.
-function PlaceholderIndex() {
+function AuthPage() {
+  const { user, loading, signIn, signUp, resetPassword } = useAuth();
+  const navigate = useNavigate();
+  const [tab, setTab] = useState<"login" | "cadastro">("login");
+
+  useEffect(() => {
+    if (!loading && user) navigate({ to: "/dashboard" });
+  }, [user, loading, navigate]);
+
   return (
-    <div
-      className="flex min-h-screen items-center justify-center"
-      style={{ backgroundColor: "#fcfbf8" }}
-    >
-      <img
-        data-lovable-blank-page-placeholder="REMOVE_THIS"
-        src="https://cdn.gpteng.co/blank-app-v1.svg"
-        alt="Your app will live here!"
-      />
+    <div className="min-h-screen flex items-center justify-center px-4 bg-[image:var(--gradient-soft)] relative overflow-hidden">
+      <div className="absolute -top-32 -left-32 h-96 w-96 rounded-full bg-primary/15 blur-3xl" />
+      <div className="absolute -bottom-32 -right-32 h-96 w-96 rounded-full bg-primary-glow/20 blur-3xl" />
+
+      <Card className="relative w-full max-w-md p-8 shadow-[var(--shadow-elegant)]">
+        <div className="flex flex-col items-center mb-6">
+          <div className="h-20 w-20 rounded-full bg-card border-4 border-background shadow-[var(--shadow-card)] flex items-center justify-center mb-4">
+            <div className="h-14 w-14 rounded-full bg-[image:var(--gradient-primary)] flex items-center justify-center text-primary-foreground text-xl font-bold">
+              GR
+            </div>
+          </div>
+          <h1 className="text-2xl font-bold bg-[image:var(--gradient-primary)] bg-clip-text text-transparent">
+            Gestão de Colaboradores
+          </h1>
+          <p className="text-sm text-muted-foreground text-center mt-1">
+            Sistema Inteligente de Gestão de Colaboradores
+          </p>
+        </div>
+
+        <Tabs value={tab} onValueChange={(v) => setTab(v as "login" | "cadastro")}>
+          <TabsList className="grid grid-cols-2 w-full">
+            <TabsTrigger value="login">Login</TabsTrigger>
+            <TabsTrigger value="cadastro">Cadastro</TabsTrigger>
+          </TabsList>
+          <TabsContent value="login" className="mt-6">
+            <LoginForm onSubmit={signIn} onForgot={resetPassword} />
+          </TabsContent>
+          <TabsContent value="cadastro" className="mt-6">
+            <SignupForm onSubmit={signUp} onSuccess={() => setTab("login")} />
+          </TabsContent>
+        </Tabs>
+      </Card>
     </div>
   );
 }
 
-function Index() {
-  return <PlaceholderIndex />;
+function LoginForm({
+  onSubmit,
+  onForgot,
+}: {
+  onSubmit: (email: string, password: string) => Promise<{ error: string | null }>;
+  onForgot: (email: string) => Promise<{ error: string | null }>;
+}) {
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+  const [show, setShow] = useState(false);
+  const [loading, setLoading] = useState(false);
+
+  const submit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setLoading(true);
+    const { error } = await onSubmit(email, password);
+    setLoading(false);
+    if (error) toast.error("Falha no login", { description: error });
+  };
+
+  const forgot = async () => {
+    if (!email) return toast.error("Digite o email primeiro");
+    const { error } = await onForgot(email);
+    if (error) toast.error(error);
+    else toast.success("Email de recuperação enviado");
+  };
+
+  return (
+    <form onSubmit={submit} className="space-y-4">
+      <div className="space-y-2">
+        <Label>Email</Label>
+        <Input type="email" placeholder="seu@email.com" value={email} onChange={(e) => setEmail(e.target.value)} required />
+      </div>
+      <div className="space-y-2">
+        <Label>Senha</Label>
+        <div className="relative">
+          <Input
+            type={show ? "text" : "password"}
+            placeholder="Sua senha"
+            value={password}
+            onChange={(e) => setPassword(e.target.value)}
+            required
+          />
+          <button
+            type="button"
+            onClick={() => setShow(!show)}
+            className="absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground"
+          >
+            {show ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
+          </button>
+        </div>
+      </div>
+      <Button type="submit" className="w-full bg-[image:var(--gradient-primary)] hover:opacity-90" disabled={loading}>
+        {loading ? <Loader2 className="h-4 w-4 animate-spin" /> : "Entrar"}
+      </Button>
+      <button
+        type="button"
+        onClick={forgot}
+        className="block w-full text-sm text-muted-foreground hover:text-primary text-center"
+      >
+        Esqueci minha senha
+      </button>
+    </form>
+  );
+}
+
+function SignupForm({
+  onSubmit,
+  onSuccess,
+}: {
+  onSubmit: (email: string, password: string, nome: string) => Promise<{ error: string | null }>;
+  onSuccess: () => void;
+}) {
+  const [nome, setNome] = useState("");
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+  const [loading, setLoading] = useState(false);
+
+  const submit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (password.length < 6) return toast.error("Senha precisa ter pelo menos 6 caracteres");
+    setLoading(true);
+    const { error } = await onSubmit(email, password, nome);
+    setLoading(false);
+    if (error) toast.error("Erro no cadastro", { description: error });
+    else {
+      toast.success("Cadastro realizado!", { description: "Você já pode fazer login." });
+      onSuccess();
+    }
+  };
+
+  return (
+    <form onSubmit={submit} className="space-y-4">
+      <div className="space-y-2">
+        <Label>Nome</Label>
+        <Input value={nome} onChange={(e) => setNome(e.target.value)} required />
+      </div>
+      <div className="space-y-2">
+        <Label>Email</Label>
+        <Input type="email" value={email} onChange={(e) => setEmail(e.target.value)} required />
+      </div>
+      <div className="space-y-2">
+        <Label>Senha</Label>
+        <Input type="password" value={password} onChange={(e) => setPassword(e.target.value)} required minLength={6} />
+      </div>
+      <Button type="submit" className="w-full bg-[image:var(--gradient-primary)] hover:opacity-90" disabled={loading}>
+        {loading ? <Loader2 className="h-4 w-4 animate-spin" /> : "Criar conta"}
+      </Button>
+    </form>
+  );
 }
