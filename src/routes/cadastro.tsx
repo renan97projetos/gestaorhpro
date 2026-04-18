@@ -157,7 +157,7 @@ function CadastroPage() {
         });
       }
     });
-    const { error } = await supabase.from("colaboradores").update(updated).eq("id", editing.id);
+    const { error } = await supabase.from("colaboradores").update(updated as never).eq("id", editing.id);
     if (error) { toast.error(error.message); return; }
     if (changes.length && user) {
       await supabase.from("movimentacoes").insert(
