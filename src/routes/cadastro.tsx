@@ -449,60 +449,65 @@ function ColabTable({
         <div className="p-8 text-center"><Loader2 className="h-5 w-5 animate-spin inline" /></div>
       ) : (
         <div className="overflow-x-auto">
-          <table className="w-full text-sm">
-            <thead className="bg-muted/50 text-xs uppercase text-muted-foreground">
+          <table className="w-full text-sm table-fixed lg:table-auto min-w-[720px]">
+            <thead className="bg-muted/50 text-[11px] uppercase text-muted-foreground">
               <tr>
-                <th className="text-left p-3">Matrícula</th>
-                <th className="text-left p-3">Nome</th>
-                <th className="text-left p-3">Sexo</th>
-                <th className="text-left p-3">Status</th>
-                <th className="text-left p-3">Cargo</th>
-                <th className="text-left p-3">Setor</th>
-                <th className="text-left p-3">Liderança</th>
+                <th className="text-left p-2 w-[70px]">Mat.</th>
+                <th className="text-left p-2">Colaborador</th>
+                <th className="text-left p-2 hidden md:table-cell w-[90px]">Sexo</th>
+                <th className="text-left p-2 w-[90px]">Status</th>
+                <th className="text-left p-2 hidden lg:table-cell">Cargo</th>
+                <th className="text-left p-2 hidden md:table-cell">Setor</th>
+                <th className="text-left p-2 hidden xl:table-cell">Liderança</th>
                 {mode === "ativos" ? (
                   <>
-                    <th className="text-left p-3">Turno</th>
-                    <th className="text-left p-3">Sábado</th>
-                    <th className="text-left p-3">Admissão</th>
-                    <th className="text-left p-3">Tempo</th>
+                    <th className="text-left p-2 hidden xl:table-cell w-[110px]">Turno</th>
+                    <th className="text-left p-2 hidden lg:table-cell w-[70px]">Sáb.</th>
+                    <th className="text-left p-2 hidden lg:table-cell w-[100px]">Admissão</th>
+                    <th className="text-left p-2 hidden xl:table-cell w-[140px]">Tempo</th>
                   </>
                 ) : (
                   <>
-                    <th className="text-left p-3">Demissão</th>
-                    <th className="text-left p-3">Tipo</th>
+                    <th className="text-left p-2 hidden md:table-cell w-[100px]">Demissão</th>
+                    <th className="text-left p-2 hidden lg:table-cell">Tipo</th>
                   </>
                 )}
-                <th className="text-right p-3">Ações</th>
+                <th className="text-right p-2 w-[90px]">Ações</th>
               </tr>
             </thead>
             <tbody>
               {rows.map((c) => (
-                <tr key={c.id} className="border-t hover:bg-muted/30">
-                  <td className="p-3 font-mono text-xs">{c.matricula}</td>
-                  <td className="p-3 font-medium">{c.colaborador}</td>
-                  <td className="p-3 text-xs">
+                <tr key={c.id} className="border-t hover:bg-muted/30 align-top">
+                  <td className="p-2 font-mono text-xs">{c.matricula}</td>
+                  <td className="p-2">
+                    <div className="font-medium leading-tight">{c.colaborador}</div>
+                    <div className="md:hidden text-[11px] text-muted-foreground mt-0.5 truncate">
+                      {[c.cargo, c.setor].filter(Boolean).join(" • ") || "—"}
+                    </div>
+                  </td>
+                  <td className="p-2 text-xs hidden md:table-cell">
                     {c.sexo === "Feminino" ? (
                       <span className="text-pink-600">Feminino</span>
                     ) : c.sexo === "Masculino" ? (
                       <span className="text-blue-600">Masculino</span>
                     ) : "—"}
                   </td>
-                  <td className="p-3"><StatusBadge s={c.status} /></td>
-                  <td className="p-3">{c.cargo ?? "—"}</td>
-                  <td className="p-3">{c.setor ?? "—"}</td>
-                  <td className="p-3 text-muted-foreground">{c.lideranca ?? "—"}</td>
+                  <td className="p-2"><StatusBadge s={c.status} /></td>
+                  <td className="p-2 hidden lg:table-cell text-sm truncate max-w-[180px]">{c.cargo ?? "—"}</td>
+                  <td className="p-2 hidden md:table-cell text-sm truncate max-w-[160px]">{c.setor ?? "—"}</td>
+                  <td className="p-2 hidden xl:table-cell text-muted-foreground truncate max-w-[160px]">{c.lideranca ?? "—"}</td>
                   {mode === "ativos" ? (
                     <>
-                      <td className="p-3 text-xs">{c.turno ?? "—"}</td>
-                      <td className="p-3 text-xs">
+                      <td className="p-2 text-xs hidden xl:table-cell">{c.turno ?? "—"}</td>
+                      <td className="p-2 text-xs hidden lg:table-cell">
                         {c.sabado_trabalho === "Sim"
                           ? <Badge className="bg-primary text-primary-foreground">Sim</Badge>
                           : <Badge variant="outline">Não</Badge>}
                       </td>
-                      <td className="p-3 text-xs whitespace-nowrap">
+                      <td className="p-2 text-xs hidden lg:table-cell whitespace-nowrap">
                         {c.admissao ? new Date(c.admissao).toLocaleDateString("pt-BR") : "—"}
                       </td>
-                      <td className="p-3 text-xs">
+                      <td className="p-2 text-xs hidden xl:table-cell">
                         <div className="flex flex-col gap-1">
                           <div className="flex items-center gap-1.5 text-foreground font-medium">
                             <Clock className="h-3.5 w-3.5 text-muted-foreground" />
@@ -511,8 +516,8 @@ function ColabTable({
                           {(() => {
                             const t = tempoExperiencia(c.admissao);
                             const cls = t.tone === "experiente"
-                              ? "bg-amber-100 text-amber-800 border-amber-200 dark:bg-amber-950/30 dark:text-amber-300"
-                              : "bg-blue-100 text-blue-700 border-blue-200 dark:bg-blue-950/30 dark:text-blue-300";
+                              ? "bg-amber-100 text-amber-800 border-amber-200"
+                              : "bg-blue-100 text-blue-700 border-blue-200";
                             return (
                               <Badge variant="outline" className={`${cls} w-fit`}>{t.label}</Badge>
                             );
@@ -522,26 +527,26 @@ function ColabTable({
                     </>
                   ) : (
                     <>
-                      <td className="p-3 text-xs whitespace-nowrap">
+                      <td className="p-2 text-xs hidden md:table-cell whitespace-nowrap">
                         {c.data_demissao ? new Date(c.data_demissao).toLocaleDateString("pt-BR") : "—"}
                       </td>
-                      <td className="p-3 text-xs">{c.tipo_demissao ?? "—"}</td>
+                      <td className="p-2 text-xs hidden lg:table-cell truncate max-w-[160px]">{c.tipo_demissao ?? "—"}</td>
                     </>
                   )}
-                  <td className="p-3 text-right">
+                  <td className="p-2 text-right">
                     {isGestor && (
-                      <div className="flex justify-end gap-2">
-                        <Button size="sm" variant="outline" onClick={() => onEdit(c)} className="gap-1.5">
-                          <Pencil className="h-3.5 w-3.5" /> Editar
+                      <div className="flex justify-end gap-1">
+                        <Button size="icon" variant="ghost" onClick={() => onEdit(c)} title="Editar" className="h-8 w-8">
+                          <Pencil className="h-4 w-4" />
                         </Button>
                         {mode === "ativos" && onDemitir && (
-                          <Button size="sm" variant="outline" onClick={() => onDemitir(c)} title="Demitir"
-                            className="gap-1.5 text-destructive border-destructive/30 hover:bg-destructive/10 hover:text-destructive">
-                            <UserMinus className="h-3.5 w-3.5" /> Demitir
+                          <Button size="icon" variant="ghost" onClick={() => onDemitir(c)} title="Demitir"
+                            className="h-8 w-8 text-destructive hover:bg-destructive/10 hover:text-destructive">
+                            <UserMinus className="h-4 w-4" />
                           </Button>
                         )}
                         {mode === "demitidos" && (
-                          <Button size="icon" variant="ghost" onClick={() => onDelete(c)} title="Excluir permanente">
+                          <Button size="icon" variant="ghost" onClick={() => onDelete(c)} title="Excluir permanente" className="h-8 w-8">
                             <Trash2 className="h-4 w-4 text-destructive" />
                           </Button>
                         )}
