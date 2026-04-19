@@ -426,12 +426,12 @@ function SimpleSelect({
 
 function StatusBadge({ s }: { s: ColabFull["status"] }) {
   const variants: Record<string, string> = {
-    Ativo: "bg-success/15 text-success border-success/30",
-    Demitido: "bg-destructive/15 text-destructive border-destructive/30",
-    Afastado: "bg-warning/15 text-warning-foreground border-warning/30",
-    Ferias: "bg-primary/15 text-primary border-primary/30",
+    Ativo: "bg-status-active text-status-active-fg border-transparent",
+    Demitido: "bg-status-inactive text-status-inactive-fg border-transparent",
+    Afastado: "bg-status-warning text-status-warning-fg border-transparent",
+    Ferias: "bg-status-info text-status-info-fg border-transparent",
   };
-  return <Badge variant="outline" className={variants[s]}>{s}</Badge>;
+  return <Badge variant="outline" className={`${variants[s]} rounded-full px-2.5 py-0.5 font-medium`}>{s}</Badge>;
 }
 
 function ColabTable({
