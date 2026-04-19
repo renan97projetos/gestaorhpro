@@ -32,14 +32,26 @@ function Dashboard() {
   const [anoContratacao, setAnoContratacao] = useState<number>(new Date().getFullYear());
   const [anoTurnover, setAnoTurnover] = useState<number>(new Date().getFullYear());
 
+  const fetchData = async () => {
+    const { data } = await supabase.from("colaboradores").select("*");
+    setData((data as ColabFull[]) ?? []);
+    setLoading(false);
+  };
+
   useEffect(() => {
-    supabase
-      .from("colaboradores")
-      .select("*")
-      .then(({ data }) => {
-        setData((data as ColabFull[]) ?? []);
-        setLoading(false);
-      });
+    fetchData();
+    // Atualiza automaticamente quando algum colaborador é demitido / editado / criado
+    const channel = supabase
+      .channel("dashboard-colaboradores")
+      .on(
+        "postgres_changes",
+        { event: "*", schema: "public", table: "colaboradores" },
+        () => fetchData(),
+      )
+      .subscribe();
+    return () => {
+      supabase.removeChannel(channel);
+    };
   }, []);
 
   const total = data.length;
