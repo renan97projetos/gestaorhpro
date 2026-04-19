@@ -85,7 +85,7 @@ function Dashboard() {
 
       {/* KPIs principais */}
       <div className="grid grid-cols-2 lg:grid-cols-4 gap-3">
-        <Kpi icon={Users} label="Total de Colaboradores" value={total} sub="Todos os colaboradores" tone="primary" />
+        <Kpi icon={Users} label="Total de Colaboradores" value={ativosOuAfastados} sub="Ativos + afastados (sem demitidos)" tone="primary" />
         <Kpi icon={UserCheck} label="Colaboradores Ativos" value={ativos} sub="Trabalhando no sistema" tone="success" />
         <Kpi icon={UserX} label="Colaboradores Afastados" value={afastados} sub="Temporariamente ausentes" tone="warning" />
         <Kpi icon={TrendingUp} label="Turnover" value={`${turnover.taxa}%`} sub={`Taxa de rotatividade ${anoTurnover}`} tone="destructive" />
