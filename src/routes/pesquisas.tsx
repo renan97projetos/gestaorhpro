@@ -45,7 +45,7 @@ const INTRO_PADRAO =
 type Resposta = {
   id: string;
   pesquisa_id: string;
-  nota: number;
+  nota: number | null;
   comentario: string | null;
   setor: string | null;
   lideranca: string | null;
@@ -507,18 +507,19 @@ function Kpi({
 
 // ===== helpers =====
 function calcEnps(arr: Resposta[]) {
-  const total = arr.length;
-  const promotores = arr.filter((r) => r.nota >= 9).length;
-  const neutros = arr.filter((r) => r.nota >= 7 && r.nota <= 8).length;
-  const detratores = arr.filter((r) => r.nota <= 6).length;
+  const comNota = arr.filter((r) => r.nota !== null && r.nota !== undefined) as (Resposta & { nota: number })[];
+  const total = comNota.length;
+  const promotores = comNota.filter((r) => r.nota >= 9).length;
+  const neutros = comNota.filter((r) => r.nota >= 7 && r.nota <= 8).length;
+  const detratores = comNota.filter((r) => r.nota <= 6).length;
   const promotoresPct = total ? Math.round((promotores / total) * 100) : 0;
   const detratoresPct = total ? Math.round((detratores / total) * 100) : 0;
   const enps = total ? Math.round(promotoresPct - detratoresPct) : 0;
   const distribuicao = Array.from({ length: 11 }, (_, n) => ({
     nota: n,
-    qtd: arr.filter((r) => r.nota === n).length,
+    qtd: comNota.filter((r) => r.nota === n).length,
   }));
-  return { total, promotores, neutros, detratores, promotoresPct, detratoresPct, enps, distribuicao };
+  return { total: arr.length, promotores, neutros, detratores, promotoresPct, detratoresPct, enps, distribuicao };
 }
 
 function groupBy(arr: Resposta[], key: "setor" | "lideranca") {
