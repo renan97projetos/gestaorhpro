@@ -341,8 +341,11 @@ function PesquisaDetail({
         <Kpi label="Detratores" value={`${stats.detratoresPct}%`} sub={`${stats.detratores}`} />
       </div>
 
-      <Tabs defaultValue="distribuicao">
-        <TabsList>
+      <Tabs defaultValue="perguntas">
+        <TabsList className="flex-wrap h-auto">
+          <TabsTrigger value="perguntas">
+            <ListChecks className="h-4 w-4 mr-1" /> Perguntas
+          </TabsTrigger>
           <TabsTrigger value="distribuicao">
             <BarChart3 className="h-4 w-4 mr-1" /> Distribuição
           </TabsTrigger>
@@ -350,6 +353,20 @@ function PesquisaDetail({
           <TabsTrigger value="lideranca">Por liderança</TabsTrigger>
           <TabsTrigger value="comentarios">Comentários ({respostas.filter((r) => r.comentario).length})</TabsTrigger>
         </TabsList>
+
+        <TabsContent value="perguntas">
+          <Card className="p-4">
+            <div className="mb-3">
+              <h3 className="text-sm font-semibold">Perguntas da pesquisa</h3>
+              <p className="text-xs text-muted-foreground">
+                Adicione, edite e reordene as perguntas. Marque as que devem ser de preenchimento
+                obrigatório.
+              </p>
+            </div>
+            <PerguntasBuilder pesquisaId={pesquisa.id} />
+          </Card>
+        </TabsContent>
+
 
         <TabsContent value="distribuicao">
           <Card className="p-4">
