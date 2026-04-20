@@ -164,9 +164,9 @@ function PesquisasPage() {
               <Plus className="h-4 w-4 mr-2" /> Nova pesquisa
             </Button>
           </DialogTrigger>
-          <DialogContent>
+          <DialogContent className="max-h-[90vh] overflow-y-auto">
             <DialogHeader>
-              <DialogTitle>Nova pesquisa eNPS</DialogTitle>
+              <DialogTitle>Nova pesquisa</DialogTitle>
             </DialogHeader>
             <div className="space-y-3">
               <div>
@@ -174,20 +174,32 @@ function PesquisasPage() {
                 <Input value={titulo} onChange={(e) => setTitulo(e.target.value)} />
               </div>
               <div>
-                <Label>Descrição (opcional)</Label>
-                <Textarea value={descricao} onChange={(e) => setDescricao(e.target.value)} rows={3} />
+                <Label>Descrição curta (opcional)</Label>
+                <Textarea value={descricao} onChange={(e) => setDescricao(e.target.value)} rows={2} />
+              </div>
+              <div>
+                <Label>Introdução / Mensagem inicial</Label>
+                <Textarea
+                  value={introducao}
+                  onChange={(e) => setIntroducao(e.target.value)}
+                  rows={5}
+                  placeholder="Explique o objetivo da pesquisa e por que ela é importante."
+                />
+                <p className="text-[11px] text-muted-foreground mt-1">
+                  Será mostrada no topo do formulário público para o colaborador.
+                </p>
               </div>
               <div className="rounded-md bg-muted/50 p-3 text-xs text-muted-foreground">
-                <strong>eNPS</strong> — Pergunta única: "De 0 a 10, o quanto você recomendaria a empresa
-                como lugar para trabalhar?" + comentário opcional. Setor e liderança serão informados pelo
-                respondente para análise por área.
+                Após criar, você poderá adicionar quantas perguntas quiser na aba <strong>Perguntas</strong>{" "}
+                (nota 0–10, escolha única, múltipla, texto curto ou dissertativa) e definir quais são
+                obrigatórias.
               </div>
             </div>
             <DialogFooter>
               <Button variant="outline" onClick={() => setOpenCreate(false)}>
                 Cancelar
               </Button>
-              <Button onClick={handleCreate}>Criar e gerar link</Button>
+              <Button onClick={handleCreate}>Criar e configurar perguntas</Button>
             </DialogFooter>
           </DialogContent>
         </Dialog>
