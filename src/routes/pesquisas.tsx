@@ -13,8 +13,9 @@ import { Badge } from "@/components/ui/badge";
 import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger, DialogFooter } from "@/components/ui/dialog";
 import { toast } from "sonner";
-import { Copy, Plus, BarChart3, Link2, Lock, Unlock, Trash2 } from "lucide-react";
+import { Copy, Plus, BarChart3, Link2, Lock, Unlock, Trash2, ListChecks } from "lucide-react";
 import { BarChart, Bar, XAxis, YAxis, ResponsiveContainer, Tooltip, CartesianGrid, Cell } from "recharts";
+import { PerguntasBuilder } from "@/components/PerguntasBuilder";
 
 export const Route = createFileRoute("/pesquisas")({
   component: () => (
@@ -30,12 +31,16 @@ type Pesquisa = {
   id: string;
   titulo: string;
   descricao: string | null;
+  introducao: string | null;
   tipo: "enps" | "clima" | "lideranca" | "pulse";
   status: "aberta" | "fechada";
   token: string;
   created_at: string;
   closed_at: string | null;
 };
+
+const INTRO_PADRAO =
+  "Esta pesquisa tem como objetivo ouvir você e gerar melhorias contínuas no nosso ambiente, nos setores e na liderança. Suas respostas são 100% anônimas e serão usadas para construir um lugar melhor para todos trabalharem.";
 
 type Resposta = {
   id: string;
@@ -56,8 +61,9 @@ function PesquisasPage() {
 
   // create dialog
   const [openCreate, setOpenCreate] = useState(false);
-  const [titulo, setTitulo] = useState("Pesquisa eNPS");
+  const [titulo, setTitulo] = useState("Pesquisa de Clima");
   const [descricao, setDescricao] = useState("Sua opinião é anônima e nos ajuda a melhorar.");
+  const [introducao, setIntroducao] = useState(INTRO_PADRAO);
 
   const fetchAll = async () => {
     setLoading(true);
@@ -94,11 +100,26 @@ function PesquisasPage() {
     if (!titulo.trim()) return toast.error("Informe o título");
     const { data, error } = await supabase
       .from("pesquisas")
-      .insert({ titulo: titulo.trim(), descricao: descricao.trim() || null, tipo: "enps" })
+      .insert({
+        titulo: titulo.trim(),
+        descricao: descricao.trim() || null,
+        introducao: introducao.trim() || null,
+        tipo: "enps",
+      })
       .select()
       .single();
     if (error) return toast.error(error.message);
-    toast.success("Pesquisa criada!");
+
+    // pergunta padrão eNPS para começar
+    await supabase.from("pesquisa_perguntas").insert({
+      pesquisa_id: (data as any).id,
+      texto: "De 0 a 10, o quanto você recomendaria a empresa como lugar para trabalhar?",
+      tipo: "nota_0_10",
+      obrigatoria: true,
+      ordem: 0,
+    });
+
+    toast.success("Pesquisa criada! Configure as perguntas na aba 'Perguntas'.");
     setOpenCreate(false);
     setSelected(data as Pesquisa);
   };
