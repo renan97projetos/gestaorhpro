@@ -13,8 +13,9 @@ import { Badge } from "@/components/ui/badge";
 import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger, DialogFooter } from "@/components/ui/dialog";
 import { toast } from "sonner";
-import { Copy, Plus, BarChart3, Link2, Lock, Unlock, Trash2 } from "lucide-react";
+import { Copy, Plus, BarChart3, Link2, Lock, Unlock, Trash2, ListChecks } from "lucide-react";
 import { BarChart, Bar, XAxis, YAxis, ResponsiveContainer, Tooltip, CartesianGrid, Cell } from "recharts";
+import { PerguntasBuilder } from "@/components/PerguntasBuilder";
 
 export const Route = createFileRoute("/pesquisas")({
   component: () => (
@@ -30,6 +31,7 @@ type Pesquisa = {
   id: string;
   titulo: string;
   descricao: string | null;
+  introducao: string | null;
   tipo: "enps" | "clima" | "lideranca" | "pulse";
   status: "aberta" | "fechada";
   token: string;
@@ -37,10 +39,13 @@ type Pesquisa = {
   closed_at: string | null;
 };
 
+const INTRO_PADRAO =
+  "Esta pesquisa tem como objetivo ouvir você e gerar melhorias contínuas no nosso ambiente, nos setores e na liderança. Suas respostas são 100% anônimas e serão usadas para construir um lugar melhor para todos trabalharem.";
+
 type Resposta = {
   id: string;
   pesquisa_id: string;
-  nota: number;
+  nota: number | null;
   comentario: string | null;
   setor: string | null;
   lideranca: string | null;
@@ -56,8 +61,9 @@ function PesquisasPage() {
 
   // create dialog
   const [openCreate, setOpenCreate] = useState(false);
-  const [titulo, setTitulo] = useState("Pesquisa eNPS");
+  const [titulo, setTitulo] = useState("Pesquisa de Clima");
   const [descricao, setDescricao] = useState("Sua opinião é anônima e nos ajuda a melhorar.");
+  const [introducao, setIntroducao] = useState(INTRO_PADRAO);
 
   const fetchAll = async () => {
     setLoading(true);
@@ -94,11 +100,26 @@ function PesquisasPage() {
     if (!titulo.trim()) return toast.error("Informe o título");
     const { data, error } = await supabase
       .from("pesquisas")
-      .insert({ titulo: titulo.trim(), descricao: descricao.trim() || null, tipo: "enps" })
+      .insert({
+        titulo: titulo.trim(),
+        descricao: descricao.trim() || null,
+        introducao: introducao.trim() || null,
+        tipo: "enps",
+      })
       .select()
       .single();
     if (error) return toast.error(error.message);
-    toast.success("Pesquisa criada!");
+
+    // pergunta padrão eNPS para começar
+    await supabase.from("pesquisa_perguntas").insert({
+      pesquisa_id: (data as any).id,
+      texto: "De 0 a 10, o quanto você recomendaria a empresa como lugar para trabalhar?",
+      tipo: "nota_0_10",
+      obrigatoria: true,
+      ordem: 0,
+    });
+
+    toast.success("Pesquisa criada! Configure as perguntas na aba 'Perguntas'.");
     setOpenCreate(false);
     setSelected(data as Pesquisa);
   };
@@ -143,9 +164,9 @@ function PesquisasPage() {
               <Plus className="h-4 w-4 mr-2" /> Nova pesquisa
             </Button>
           </DialogTrigger>
-          <DialogContent>
+          <DialogContent className="max-h-[90vh] overflow-y-auto">
             <DialogHeader>
-              <DialogTitle>Nova pesquisa eNPS</DialogTitle>
+              <DialogTitle>Nova pesquisa</DialogTitle>
             </DialogHeader>
             <div className="space-y-3">
               <div>
@@ -153,20 +174,32 @@ function PesquisasPage() {
                 <Input value={titulo} onChange={(e) => setTitulo(e.target.value)} />
               </div>
               <div>
-                <Label>Descrição (opcional)</Label>
-                <Textarea value={descricao} onChange={(e) => setDescricao(e.target.value)} rows={3} />
+                <Label>Descrição curta (opcional)</Label>
+                <Textarea value={descricao} onChange={(e) => setDescricao(e.target.value)} rows={2} />
+              </div>
+              <div>
+                <Label>Introdução / Mensagem inicial</Label>
+                <Textarea
+                  value={introducao}
+                  onChange={(e) => setIntroducao(e.target.value)}
+                  rows={5}
+                  placeholder="Explique o objetivo da pesquisa e por que ela é importante."
+                />
+                <p className="text-[11px] text-muted-foreground mt-1">
+                  Será mostrada no topo do formulário público para o colaborador.
+                </p>
               </div>
               <div className="rounded-md bg-muted/50 p-3 text-xs text-muted-foreground">
-                <strong>eNPS</strong> — Pergunta única: "De 0 a 10, o quanto você recomendaria a empresa
-                como lugar para trabalhar?" + comentário opcional. Setor e liderança serão informados pelo
-                respondente para análise por área.
+                Após criar, você poderá adicionar quantas perguntas quiser na aba <strong>Perguntas</strong>{" "}
+                (nota 0–10, escolha única, múltipla, texto curto ou dissertativa) e definir quais são
+                obrigatórias.
               </div>
             </div>
             <DialogFooter>
               <Button variant="outline" onClick={() => setOpenCreate(false)}>
                 Cancelar
               </Button>
-              <Button onClick={handleCreate}>Criar e gerar link</Button>
+              <Button onClick={handleCreate}>Criar e configurar perguntas</Button>
             </DialogFooter>
           </DialogContent>
         </Dialog>
@@ -308,8 +341,11 @@ function PesquisaDetail({
         <Kpi label="Detratores" value={`${stats.detratoresPct}%`} sub={`${stats.detratores}`} />
       </div>
 
-      <Tabs defaultValue="distribuicao">
-        <TabsList>
+      <Tabs defaultValue="perguntas">
+        <TabsList className="flex-wrap h-auto">
+          <TabsTrigger value="perguntas">
+            <ListChecks className="h-4 w-4 mr-1" /> Perguntas
+          </TabsTrigger>
           <TabsTrigger value="distribuicao">
             <BarChart3 className="h-4 w-4 mr-1" /> Distribuição
           </TabsTrigger>
@@ -317,6 +353,20 @@ function PesquisaDetail({
           <TabsTrigger value="lideranca">Por liderança</TabsTrigger>
           <TabsTrigger value="comentarios">Comentários ({respostas.filter((r) => r.comentario).length})</TabsTrigger>
         </TabsList>
+
+        <TabsContent value="perguntas">
+          <Card className="p-4">
+            <div className="mb-3">
+              <h3 className="text-sm font-semibold">Perguntas da pesquisa</h3>
+              <p className="text-xs text-muted-foreground">
+                Adicione, edite e reordene as perguntas. Marque as que devem ser de preenchimento
+                obrigatório.
+              </p>
+            </div>
+            <PerguntasBuilder pesquisaId={pesquisa.id} />
+          </Card>
+        </TabsContent>
+
 
         <TabsContent value="distribuicao">
           <Card className="p-4">
@@ -362,12 +412,14 @@ function PesquisaDetail({
               .map((r) => (
                 <div key={r.id} className="border rounded-md p-3">
                   <div className="flex items-center gap-2 mb-1">
-                    <span
-                      className="h-6 w-6 rounded-full text-xs font-semibold flex items-center justify-center text-white"
-                      style={{ background: notaColor(r.nota) }}
-                    >
-                      {r.nota}
-                    </span>
+                    {r.nota !== null && r.nota !== undefined && (
+                      <span
+                        className="h-6 w-6 rounded-full text-xs font-semibold flex items-center justify-center text-white"
+                        style={{ background: notaColor(r.nota) }}
+                      >
+                        {r.nota}
+                      </span>
+                    )}
                     <span className="text-xs text-muted-foreground">
                       {r.setor || "Setor —"} • {r.lideranca || "Liderança —"}
                     </span>
@@ -457,18 +509,19 @@ function Kpi({
 
 // ===== helpers =====
 function calcEnps(arr: Resposta[]) {
-  const total = arr.length;
-  const promotores = arr.filter((r) => r.nota >= 9).length;
-  const neutros = arr.filter((r) => r.nota >= 7 && r.nota <= 8).length;
-  const detratores = arr.filter((r) => r.nota <= 6).length;
+  const comNota = arr.filter((r) => r.nota !== null && r.nota !== undefined) as (Resposta & { nota: number })[];
+  const total = comNota.length;
+  const promotores = comNota.filter((r) => r.nota >= 9).length;
+  const neutros = comNota.filter((r) => r.nota >= 7 && r.nota <= 8).length;
+  const detratores = comNota.filter((r) => r.nota <= 6).length;
   const promotoresPct = total ? Math.round((promotores / total) * 100) : 0;
   const detratoresPct = total ? Math.round((detratores / total) * 100) : 0;
   const enps = total ? Math.round(promotoresPct - detratoresPct) : 0;
   const distribuicao = Array.from({ length: 11 }, (_, n) => ({
     nota: n,
-    qtd: arr.filter((r) => r.nota === n).length,
+    qtd: comNota.filter((r) => r.nota === n).length,
   }));
-  return { total, promotores, neutros, detratores, promotoresPct, detratoresPct, enps, distribuicao };
+  return { total: arr.length, promotores, neutros, detratores, promotoresPct, detratoresPct, enps, distribuicao };
 }
 
 function groupBy(arr: Resposta[], key: "setor" | "lideranca") {

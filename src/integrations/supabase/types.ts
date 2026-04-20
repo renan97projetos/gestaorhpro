@@ -136,6 +136,47 @@ export type Database = {
           },
         ]
       }
+      pesquisa_perguntas: {
+        Row: {
+          created_at: string
+          id: string
+          obrigatoria: boolean
+          opcoes: Json | null
+          ordem: number
+          pesquisa_id: string
+          texto: string
+          tipo: Database["public"]["Enums"]["pergunta_tipo"]
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          obrigatoria?: boolean
+          opcoes?: Json | null
+          ordem?: number
+          pesquisa_id: string
+          texto: string
+          tipo?: Database["public"]["Enums"]["pergunta_tipo"]
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          obrigatoria?: boolean
+          opcoes?: Json | null
+          ordem?: number
+          pesquisa_id?: string
+          texto?: string
+          tipo?: Database["public"]["Enums"]["pergunta_tipo"]
+        }
+        Relationships: [
+          {
+            foreignKeyName: "pesquisa_perguntas_pesquisa_id_fkey"
+            columns: ["pesquisa_id"]
+            isOneToOne: false
+            referencedRelation: "pesquisas"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       pesquisas: {
         Row: {
           closed_at: string | null
@@ -143,6 +184,7 @@ export type Database = {
           created_by: string | null
           descricao: string | null
           id: string
+          introducao: string | null
           status: Database["public"]["Enums"]["pesquisa_status"]
           tipo: Database["public"]["Enums"]["pesquisa_tipo"]
           titulo: string
@@ -154,6 +196,7 @@ export type Database = {
           created_by?: string | null
           descricao?: string | null
           id?: string
+          introducao?: string | null
           status?: Database["public"]["Enums"]["pesquisa_status"]
           tipo?: Database["public"]["Enums"]["pesquisa_tipo"]
           titulo: string
@@ -165,6 +208,7 @@ export type Database = {
           created_by?: string | null
           descricao?: string | null
           id?: string
+          introducao?: string | null
           status?: Database["public"]["Enums"]["pesquisa_status"]
           tipo?: Database["public"]["Enums"]["pesquisa_tipo"]
           titulo?: string
@@ -199,13 +243,58 @@ export type Database = {
         }
         Relationships: []
       }
+      respostas_item: {
+        Row: {
+          created_at: string
+          id: string
+          pergunta_id: string
+          resposta_id: string
+          valor_nota: number | null
+          valor_opcoes: Json | null
+          valor_texto: string | null
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          pergunta_id: string
+          resposta_id: string
+          valor_nota?: number | null
+          valor_opcoes?: Json | null
+          valor_texto?: string | null
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          pergunta_id?: string
+          resposta_id?: string
+          valor_nota?: number | null
+          valor_opcoes?: Json | null
+          valor_texto?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "respostas_item_pergunta_id_fkey"
+            columns: ["pergunta_id"]
+            isOneToOne: false
+            referencedRelation: "pesquisa_perguntas"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "respostas_item_resposta_id_fkey"
+            columns: ["resposta_id"]
+            isOneToOne: false
+            referencedRelation: "respostas_pesquisa"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       respostas_pesquisa: {
         Row: {
           comentario: string | null
           created_at: string
           id: string
           lideranca: string | null
-          nota: number
+          nota: number | null
           pesquisa_id: string
           setor: string | null
         }
@@ -214,7 +303,7 @@ export type Database = {
           created_at?: string
           id?: string
           lideranca?: string | null
-          nota: number
+          nota?: number | null
           pesquisa_id: string
           setor?: string | null
         }
@@ -223,7 +312,7 @@ export type Database = {
           created_at?: string
           id?: string
           lideranca?: string | null
-          nota?: number
+          nota?: number | null
           pesquisa_id?: string
           setor?: string | null
         }
@@ -343,6 +432,12 @@ export type Database = {
     Enums: {
       app_role: "admin" | "gestor" | "usuario"
       colaborador_status: "Ativo" | "Demitido" | "Afastado" | "Ferias"
+      pergunta_tipo:
+        | "nota_0_10"
+        | "escolha_unica"
+        | "escolha_multipla"
+        | "texto_curto"
+        | "texto_longo"
       pesquisa_status: "aberta" | "fechada"
       pesquisa_tipo: "enps" | "clima" | "lideranca" | "pulse"
       sexo_tipo: "Masculino" | "Feminino"
@@ -489,6 +584,13 @@ export const Constants = {
     Enums: {
       app_role: ["admin", "gestor", "usuario"],
       colaborador_status: ["Ativo", "Demitido", "Afastado", "Ferias"],
+      pergunta_tipo: [
+        "nota_0_10",
+        "escolha_unica",
+        "escolha_multipla",
+        "texto_curto",
+        "texto_longo",
+      ],
       pesquisa_status: ["aberta", "fechada"],
       pesquisa_tipo: ["enps", "clima", "lideranca", "pulse"],
       sexo_tipo: ["Masculino", "Feminino"],
