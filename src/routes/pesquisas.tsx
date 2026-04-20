@@ -412,12 +412,14 @@ function PesquisaDetail({
               .map((r) => (
                 <div key={r.id} className="border rounded-md p-3">
                   <div className="flex items-center gap-2 mb-1">
-                    <span
-                      className="h-6 w-6 rounded-full text-xs font-semibold flex items-center justify-center text-white"
-                      style={{ background: notaColor(r.nota) }}
-                    >
-                      {r.nota}
-                    </span>
+                    {r.nota !== null && r.nota !== undefined && (
+                      <span
+                        className="h-6 w-6 rounded-full text-xs font-semibold flex items-center justify-center text-white"
+                        style={{ background: notaColor(r.nota) }}
+                      >
+                        {r.nota}
+                      </span>
+                    )}
                     <span className="text-xs text-muted-foreground">
                       {r.setor || "Setor —"} • {r.lideranca || "Liderança —"}
                     </span>
