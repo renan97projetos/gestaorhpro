@@ -3,6 +3,7 @@ import { RequireAuth } from "@/components/RequireAuth";
 import { useAuth } from "@/lib/auth-context";
 import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
+import { ThemeToggle } from "@/components/ThemeToggle";
 import {
   Building2, Home, Users, UserPlus, UserCog, FileText, LogOut, User, ShieldCheck, ClipboardList, UserCheck,
 } from "lucide-react";
@@ -58,6 +59,7 @@ function InicioPage() {
               <User className="h-4 w-4 text-muted-foreground" />
               <span className="text-xs md:text-sm truncate max-w-[180px]">{user?.email}</span>
             </div>
+            <ThemeToggle />
             <Button variant="ghost" size="icon" onClick={handleLogout} className="text-destructive hover:text-destructive hover:bg-destructive/10">
               <LogOut className="h-5 w-5" />
             </Button>
