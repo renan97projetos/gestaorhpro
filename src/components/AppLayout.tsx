@@ -4,6 +4,7 @@ import { Button } from "@/components/ui/button";
 import { LayoutDashboard, Users, History, LogOut, Menu, X, LayoutGrid, UserCog, ClipboardList, UserCheck } from "lucide-react";
 import { useState } from "react";
 import { cn } from "@/lib/utils";
+import { ThemeToggle } from "@/components/ThemeToggle";
 
 const baseNav = [
   { to: "/inicio", label: "Menu", icon: LayoutGrid },
@@ -64,9 +65,12 @@ export function AppLayout({ children }: { children: React.ReactNode }) {
           })}
         </nav>
         <div className="p-3 border-t border-sidebar-border">
-          <div className="px-3 py-2 mb-2">
-            <p className="text-xs text-sidebar-foreground/60">Conectado como</p>
-            <p className="text-sm font-medium truncate text-sidebar-foreground">{user?.email}</p>
+          <div className="px-3 py-2 mb-2 flex items-center justify-between gap-2">
+            <div className="min-w-0">
+              <p className="text-xs text-sidebar-foreground/60">Conectado como</p>
+              <p className="text-sm font-medium truncate text-sidebar-foreground">{user?.email}</p>
+            </div>
+            <ThemeToggle className="text-sidebar-foreground/80 hover:bg-sidebar-accent hover:text-sidebar-accent-foreground shrink-0" />
           </div>
           <Button
             variant="ghost"
@@ -87,14 +91,17 @@ export function AppLayout({ children }: { children: React.ReactNode }) {
             </div>
             <span className="font-semibold text-sm">Gestão Colaboradores</span>
           </div>
-          <Button
-            variant="ghost"
-            size="icon"
-            className="text-sidebar-foreground hover:bg-sidebar-accent hover:text-sidebar-accent-foreground"
-            onClick={() => setOpen(!open)}
-          >
-            {open ? <X className="h-5 w-5" /> : <Menu className="h-5 w-5" />}
-          </Button>
+          <div className="flex items-center gap-1">
+            <ThemeToggle className="text-sidebar-foreground hover:bg-sidebar-accent hover:text-sidebar-accent-foreground" />
+            <Button
+              variant="ghost"
+              size="icon"
+              className="text-sidebar-foreground hover:bg-sidebar-accent hover:text-sidebar-accent-foreground"
+              onClick={() => setOpen(!open)}
+            >
+              {open ? <X className="h-5 w-5" /> : <Menu className="h-5 w-5" />}
+            </Button>
+          </div>
         </header>
         {open && (
           <nav className="md:hidden border-b border-sidebar-border bg-sidebar text-sidebar-foreground px-3 py-3 space-y-1">
