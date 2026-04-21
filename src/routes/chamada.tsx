@@ -111,7 +111,7 @@ function ChamadaPage() {
   async function load() {
     setLoading(true);
     const [c, ch, de] = await Promise.all([
-      supabase.from("colaboradores").select("id,matricula,colaborador,setor,subsetor,lideranca,turno,sexo,sabado_trabalho,status").eq("status", "Ativo").order("colaborador"),
+      supabase.from("colaboradores").select("id,matricula,colaborador,setor,subsetor,lideranca,turno,sexo,sabado_trabalho,status").in("status", ["Ativo", "Afastado"]).order("colaborador"),
       supabase.from("chamadas").select("id,colaborador_id,data,status,registrado_por_nome,updated_at").eq("data", data),
       supabase.from("domingos_especiais").select("data"),
     ]);
