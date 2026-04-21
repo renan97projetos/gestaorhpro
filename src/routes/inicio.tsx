@@ -4,7 +4,7 @@ import { useAuth } from "@/lib/auth-context";
 import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import {
-  Building2, Home, Users, UserPlus, UserCog, FileText, LogOut, User, ShieldCheck, ClipboardList,
+  Building2, Home, Users, UserPlus, UserCog, FileText, LogOut, User, ShieldCheck, ClipboardList, UserCheck,
 } from "lucide-react";
 
 export const Route = createFileRoute("/inicio")({
@@ -19,6 +19,7 @@ const baseItems = [
   { to: "/dashboard", label: "Início", sub: "Dashboard e indicadores", icon: Home, tone: "from-blue-500 to-blue-600" },
   { to: "/cadastro", label: "Lista de Colaboradores", sub: "Visualizar e gerenciar", icon: Users, tone: "from-emerald-500 to-emerald-600" },
   { to: "/cadastro", label: "Cadastro", sub: "Cadastrar colaboradores", icon: UserPlus, tone: "from-violet-500 to-violet-600" },
+  { to: "/chamada", label: "Chamada", sub: "Controle de presença diária", icon: UserCheck, tone: "from-cyan-500 to-cyan-600" },
   { to: "/solicitacao-movimentacao", label: "Solicitações", sub: "Movimentações", icon: FileText, tone: "from-amber-500 to-orange-500" },
   { to: "/pesquisas", label: "Pesquisas", sub: "Clima e eNPS", icon: ClipboardList, tone: "from-pink-500 to-pink-600" },
 ];

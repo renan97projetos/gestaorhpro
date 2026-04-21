@@ -14,6 +14,50 @@ export type Database = {
   }
   public: {
     Tables: {
+      chamadas: {
+        Row: {
+          colaborador_id: string
+          created_at: string
+          data: string
+          id: string
+          observacao: string | null
+          registrado_por: string | null
+          registrado_por_nome: string | null
+          status: Database["public"]["Enums"]["chamada_status"]
+          updated_at: string
+        }
+        Insert: {
+          colaborador_id: string
+          created_at?: string
+          data: string
+          id?: string
+          observacao?: string | null
+          registrado_por?: string | null
+          registrado_por_nome?: string | null
+          status: Database["public"]["Enums"]["chamada_status"]
+          updated_at?: string
+        }
+        Update: {
+          colaborador_id?: string
+          created_at?: string
+          data?: string
+          id?: string
+          observacao?: string | null
+          registrado_por?: string | null
+          registrado_por_nome?: string | null
+          status?: Database["public"]["Enums"]["chamada_status"]
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "chamadas_colaborador_id_fkey"
+            columns: ["colaborador_id"]
+            isOneToOne: false
+            referencedRelation: "colaboradores"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       colaboradores: {
         Row: {
           admissao: string | null
@@ -83,6 +127,30 @@ export type Database = {
           tipo_demissao?: Database["public"]["Enums"]["tipo_demissao"] | null
           turno?: string | null
           updated_at?: string
+        }
+        Relationships: []
+      }
+      domingos_especiais: {
+        Row: {
+          created_at: string
+          created_by: string | null
+          data: string
+          descricao: string | null
+          id: string
+        }
+        Insert: {
+          created_at?: string
+          created_by?: string | null
+          data: string
+          descricao?: string | null
+          id?: string
+        }
+        Update: {
+          created_at?: string
+          created_by?: string | null
+          data?: string
+          descricao?: string | null
+          id?: string
         }
         Relationships: []
       }
@@ -431,6 +499,14 @@ export type Database = {
     }
     Enums: {
       app_role: "admin" | "gestor" | "usuario"
+      chamada_status:
+        | "Presente"
+        | "Folga"
+        | "Falta"
+        | "Atestado"
+        | "Ferias"
+        | "Afastado"
+        | "Licenca"
       colaborador_status: "Ativo" | "Demitido" | "Afastado" | "Ferias"
       pergunta_tipo:
         | "nota_0_10"
@@ -583,6 +659,15 @@ export const Constants = {
   public: {
     Enums: {
       app_role: ["admin", "gestor", "usuario"],
+      chamada_status: [
+        "Presente",
+        "Folga",
+        "Falta",
+        "Atestado",
+        "Ferias",
+        "Afastado",
+        "Licenca",
+      ],
       colaborador_status: ["Ativo", "Demitido", "Afastado", "Ferias"],
       pergunta_tipo: [
         "nota_0_10",

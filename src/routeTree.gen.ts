@@ -15,6 +15,7 @@ import { Route as ResetPasswordRouteImport } from './routes/reset-password'
 import { Route as PesquisasRouteImport } from './routes/pesquisas'
 import { Route as InicioRouteImport } from './routes/inicio'
 import { Route as DashboardRouteImport } from './routes/dashboard'
+import { Route as ChamadaRouteImport } from './routes/chamada'
 import { Route as CadastroRouteImport } from './routes/cadastro'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as PTokenRouteImport } from './routes/p.$token'
@@ -49,6 +50,11 @@ const DashboardRoute = DashboardRouteImport.update({
   path: '/dashboard',
   getParentRoute: () => rootRouteImport,
 } as any)
+const ChamadaRoute = ChamadaRouteImport.update({
+  id: '/chamada',
+  path: '/chamada',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const CadastroRoute = CadastroRouteImport.update({
   id: '/cadastro',
   path: '/cadastro',
@@ -68,6 +74,7 @@ const PTokenRoute = PTokenRouteImport.update({
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/cadastro': typeof CadastroRoute
+  '/chamada': typeof ChamadaRoute
   '/dashboard': typeof DashboardRoute
   '/inicio': typeof InicioRoute
   '/pesquisas': typeof PesquisasRoute
@@ -79,6 +86,7 @@ export interface FileRoutesByFullPath {
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/cadastro': typeof CadastroRoute
+  '/chamada': typeof ChamadaRoute
   '/dashboard': typeof DashboardRoute
   '/inicio': typeof InicioRoute
   '/pesquisas': typeof PesquisasRoute
@@ -91,6 +99,7 @@ export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
   '/cadastro': typeof CadastroRoute
+  '/chamada': typeof ChamadaRoute
   '/dashboard': typeof DashboardRoute
   '/inicio': typeof InicioRoute
   '/pesquisas': typeof PesquisasRoute
@@ -104,6 +113,7 @@ export interface FileRouteTypes {
   fullPaths:
     | '/'
     | '/cadastro'
+    | '/chamada'
     | '/dashboard'
     | '/inicio'
     | '/pesquisas'
@@ -115,6 +125,7 @@ export interface FileRouteTypes {
   to:
     | '/'
     | '/cadastro'
+    | '/chamada'
     | '/dashboard'
     | '/inicio'
     | '/pesquisas'
@@ -126,6 +137,7 @@ export interface FileRouteTypes {
     | '__root__'
     | '/'
     | '/cadastro'
+    | '/chamada'
     | '/dashboard'
     | '/inicio'
     | '/pesquisas'
@@ -138,6 +150,7 @@ export interface FileRouteTypes {
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
   CadastroRoute: typeof CadastroRoute
+  ChamadaRoute: typeof ChamadaRoute
   DashboardRoute: typeof DashboardRoute
   InicioRoute: typeof InicioRoute
   PesquisasRoute: typeof PesquisasRoute
@@ -191,6 +204,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof DashboardRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/chamada': {
+      id: '/chamada'
+      path: '/chamada'
+      fullPath: '/chamada'
+      preLoaderRoute: typeof ChamadaRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/cadastro': {
       id: '/cadastro'
       path: '/cadastro'
@@ -218,6 +238,7 @@ declare module '@tanstack/react-router' {
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   CadastroRoute: CadastroRoute,
+  ChamadaRoute: ChamadaRoute,
   DashboardRoute: DashboardRoute,
   InicioRoute: InicioRoute,
   PesquisasRoute: PesquisasRoute,
