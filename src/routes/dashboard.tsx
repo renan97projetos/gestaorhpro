@@ -33,6 +33,7 @@ function Dashboard() {
   const [loading, setLoading] = useState(true);
   const [anoContratacao, setAnoContratacao] = useState<number>(new Date().getFullYear());
   const [anoTurnover, setAnoTurnover] = useState<number>(new Date().getFullYear());
+  const [drill, setDrill] = useState<{ title: string; field: string; value: string; people: ColabFull[] } | null>(null);
 
   const fetchData = async () => {
     const { data } = await supabase.from("colaboradores").select("*");
