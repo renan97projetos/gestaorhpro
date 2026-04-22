@@ -147,8 +147,11 @@ function PesquisasPage() {
     toast.success("Pesquisa excluída");
   };
 
-  const publicUrl = (token: string) =>
-    typeof window !== "undefined" ? `${window.location.origin}/p/${token}` : `/p/${token}`;
+  const [origin, setOrigin] = useState("");
+  useEffect(() => {
+    if (typeof window !== "undefined") setOrigin(window.location.origin);
+  }, []);
+  const publicUrl = (token: string) => `${origin}/p/${token}`;
 
   const copyLink = (token: string) => {
     navigator.clipboard.writeText(publicUrl(token));
