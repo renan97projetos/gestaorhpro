@@ -27,7 +27,9 @@ function AuthPage() {
     <div className="min-h-screen flex items-center justify-center px-4 bg-[image:var(--gradient-soft)] relative overflow-hidden">
       <div className="absolute -top-32 -left-32 h-96 w-96 rounded-full bg-primary/15 blur-3xl" />
       <div className="absolute -bottom-32 -right-32 h-96 w-96 rounded-full bg-primary-glow/20 blur-3xl" />
-
+      <div className="absolute top-4 right-4 z-10">
+        <ThemeToggle variant="outline" />
+      </div>
       <Card className="relative w-full max-w-md p-8 shadow-[var(--shadow-elegant)]">
         <div className="flex flex-col items-center mb-6">
           <div className="h-20 w-20 rounded-full bg-card border-4 border-background shadow-[var(--shadow-card)] flex items-center justify-center mb-4">
