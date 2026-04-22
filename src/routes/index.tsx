@@ -79,7 +79,14 @@ function LoginForm({
     setLoading(true);
     const { error } = await onSubmit(email, password);
     setLoading(false);
-    if (error) toast.error("Falha no login", { description: error });
+    if (error) {
+      const friendly = /invalid login credentials/i.test(error)
+        ? "Email ou senha incorretos."
+        : /email not confirmed/i.test(error)
+        ? "Email ainda não confirmado. Verifique sua caixa de entrada ou cadastre-se novamente."
+        : error;
+      toast.error("Falha no login", { description: friendly });
+    }
   };
 
   const forgot = async () => {
