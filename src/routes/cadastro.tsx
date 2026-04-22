@@ -547,24 +547,36 @@ function ColabTable({
                     </>
                   )}
                   <td className="p-2 text-right">
-                    {isGestor && (
-                      <div className="flex justify-end gap-1">
-                        <Button size="icon" variant="ghost" onClick={() => onEdit(c)} title="Editar" className="h-8 w-8">
-                          <Pencil className="h-4 w-4" />
+                    <div className="flex justify-end gap-1">
+                      <Button
+                        size="icon" variant="ghost"
+                        onClick={() => { if (guard("Editar colaborador")) onEdit(c); }}
+                        title={isGestor ? "Editar" : "Somente visualização"}
+                        className="h-8 w-8"
+                      >
+                        <Pencil className="h-4 w-4" />
+                      </Button>
+                      {mode === "ativos" && onDemitir && (
+                        <Button
+                          size="icon" variant="ghost"
+                          onClick={() => { if (guard("Demitir colaborador")) onDemitir(c); }}
+                          title={isGestor ? "Demitir" : "Somente visualização"}
+                          className="h-8 w-8 text-destructive hover:bg-destructive/10 hover:text-destructive"
+                        >
+                          <UserMinus className="h-4 w-4" />
                         </Button>
-                        {mode === "ativos" && onDemitir && (
-                          <Button size="icon" variant="ghost" onClick={() => onDemitir(c)} title="Demitir"
-                            className="h-8 w-8 text-destructive hover:bg-destructive/10 hover:text-destructive">
-                            <UserMinus className="h-4 w-4" />
-                          </Button>
-                        )}
-                        {mode === "demitidos" && (
-                          <Button size="icon" variant="ghost" onClick={() => onDelete(c)} title="Excluir permanente" className="h-8 w-8">
-                            <Trash2 className="h-4 w-4 text-destructive" />
-                          </Button>
-                        )}
-                      </div>
-                    )}
+                      )}
+                      {mode === "demitidos" && (
+                        <Button
+                          size="icon" variant="ghost"
+                          onClick={() => { if (guard("Excluir registro permanentemente")) onDelete(c); }}
+                          title={isGestor ? "Excluir permanente" : "Somente visualização"}
+                          className="h-8 w-8"
+                        >
+                          <Trash2 className="h-4 w-4 text-destructive" />
+                        </Button>
+                      )}
+                    </div>
                   </td>
                 </tr>
               ))}
