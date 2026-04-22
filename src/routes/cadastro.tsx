@@ -17,6 +17,7 @@ import { toast } from "sonner";
 import { ColabFull, tempoDeEmpresa, tempoExperiencia } from "@/lib/dashboard-helpers";
 import { DemissaoDialog, DemissaoData } from "@/components/DemissaoDialog";
 import { Clock } from "lucide-react";
+import { useReadOnlyGuard, ReadOnlyBanner } from "@/components/BloqueioAcesso";
 
 export const Route = createFileRoute("/cadastro")({
   component: () => (
@@ -226,8 +227,14 @@ function CadastroPage() {
     const a = document.createElement("a"); a.href = url; a.download = filename; a.click(); URL.revokeObjectURL(url);
   };
 
+  const { guard, dialog: bloqueioDialog } = useReadOnlyGuard(
+    isGestor,
+    "Criar, editar ou excluir colaboradores",
+  );
+
   return (
     <div className="p-4 md:p-6 space-y-5 max-w-[1400px] mx-auto">
+      {bloqueioDialog}
       <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-3">
         <div className="flex items-center gap-3">
           <div className="h-12 w-12 rounded-full bg-primary/15 flex items-center justify-center">
@@ -238,12 +245,17 @@ function CadastroPage() {
             <p className="text-muted-foreground text-sm">Gerencie e visualize todos os colaboradores</p>
           </div>
         </div>
-        {isGestor && (
-          <Button onClick={() => setCreating(true)} className="bg-[image:var(--gradient-primary)]">
-            <Plus className="h-4 w-4 mr-2" /> Novo colaborador
-          </Button>
-        )}
+        <Button
+          onClick={() => {
+            if (guard("Cadastrar um novo colaborador")) setCreating(true);
+          }}
+          className="bg-[image:var(--gradient-primary)]"
+        >
+          <Plus className="h-4 w-4 mr-2" /> Novo colaborador
+        </Button>
       </div>
+
+      {!isGestor && <ReadOnlyBanner />}
 
       <Tabs value={tab} onValueChange={setTab}>
         <TabsList className="grid grid-cols-2 max-w-md">
@@ -329,7 +341,7 @@ function CadastroPage() {
             </div>
           </Card>
 
-          <ColabTable rows={filteredAtivos} loading={loading} isGestor={isGestor}
+          <ColabTable rows={filteredAtivos} loading={loading} isGestor={isGestor} guard={guard}
             onEdit={setEditing} onDelete={handleDelete} onDemitir={setDemitindo} mode="ativos" />
         </TabsContent>
 
@@ -374,7 +386,7 @@ function CadastroPage() {
             </div>
           </Card>
 
-          <ColabTable rows={filteredDemitidos} loading={loading} isGestor={isGestor}
+          <ColabTable rows={filteredDemitidos} loading={loading} isGestor={isGestor} guard={guard}
             onEdit={setEditing} onDelete={handleDelete} mode="demitidos" />
         </TabsContent>
       </Tabs>
@@ -435,9 +447,10 @@ function StatusBadge({ s }: { s: ColabFull["status"] }) {
 }
 
 function ColabTable({
-  rows, loading, isGestor, onEdit, onDelete, onDemitir, mode,
+  rows, loading, isGestor, guard, onEdit, onDelete, onDemitir, mode,
 }: {
   rows: ColabFull[]; loading: boolean; isGestor: boolean;
+  guard: (acao?: string) => boolean;
   onEdit: (c: ColabFull) => void;
   onDelete: (c: ColabFull) => void;
   onDemitir?: (c: ColabFull) => void;
@@ -534,24 +547,36 @@ function ColabTable({
                     </>
                   )}
                   <td className="p-2 text-right">
-                    {isGestor && (
-                      <div className="flex justify-end gap-1">
-                        <Button size="icon" variant="ghost" onClick={() => onEdit(c)} title="Editar" className="h-8 w-8">
-                          <Pencil className="h-4 w-4" />
+                    <div className="flex justify-end gap-1">
+                      <Button
+                        size="icon" variant="ghost"
+                        onClick={() => { if (guard("Editar colaborador")) onEdit(c); }}
+                        title={isGestor ? "Editar" : "Somente visualização"}
+                        className="h-8 w-8"
+                      >
+                        <Pencil className="h-4 w-4" />
+                      </Button>
+                      {mode === "ativos" && onDemitir && (
+                        <Button
+                          size="icon" variant="ghost"
+                          onClick={() => { if (guard("Demitir colaborador")) onDemitir(c); }}
+                          title={isGestor ? "Demitir" : "Somente visualização"}
+                          className="h-8 w-8 text-destructive hover:bg-destructive/10 hover:text-destructive"
+                        >
+                          <UserMinus className="h-4 w-4" />
                         </Button>
-                        {mode === "ativos" && onDemitir && (
-                          <Button size="icon" variant="ghost" onClick={() => onDemitir(c)} title="Demitir"
-                            className="h-8 w-8 text-destructive hover:bg-destructive/10 hover:text-destructive">
-                            <UserMinus className="h-4 w-4" />
-                          </Button>
-                        )}
-                        {mode === "demitidos" && (
-                          <Button size="icon" variant="ghost" onClick={() => onDelete(c)} title="Excluir permanente" className="h-8 w-8">
-                            <Trash2 className="h-4 w-4 text-destructive" />
-                          </Button>
-                        )}
-                      </div>
-                    )}
+                      )}
+                      {mode === "demitidos" && (
+                        <Button
+                          size="icon" variant="ghost"
+                          onClick={() => { if (guard("Excluir registro permanentemente")) onDelete(c); }}
+                          title={isGestor ? "Excluir permanente" : "Somente visualização"}
+                          className="h-8 w-8"
+                        >
+                          <Trash2 className="h-4 w-4 text-destructive" />
+                        </Button>
+                      )}
+                    </div>
                   </td>
                 </tr>
               ))}

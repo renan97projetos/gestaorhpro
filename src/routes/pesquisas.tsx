@@ -16,6 +16,7 @@ import { toast } from "sonner";
 import { Copy, Plus, BarChart3, Link2, Lock, Unlock, Trash2, ListChecks } from "lucide-react";
 import { BarChart, Bar, XAxis, YAxis, ResponsiveContainer, Tooltip, CartesianGrid, Cell } from "recharts";
 import { PerguntasBuilder } from "@/components/PerguntasBuilder";
+import { useReadOnlyGuard, ReadOnlyBanner } from "@/components/BloqueioAcesso";
 
 export const Route = createFileRoute("/pesquisas")({
   component: () => (
@@ -54,6 +55,11 @@ type Resposta = {
 
 function PesquisasPage() {
   const { isAdmin } = useAuth();
+  const { isGestor } = useAuth();
+  const { guard, dialog: bloqueioDialog } = useReadOnlyGuard(
+    isGestor,
+    "Criar, editar ou excluir pesquisas",
+  );
   const [pesquisas, setPesquisas] = useState<Pesquisa[]>([]);
   const [respostas, setRespostas] = useState<Resposta[]>([]);
   const [loading, setLoading] = useState(true);
@@ -151,6 +157,8 @@ function PesquisasPage() {
 
   return (
     <div className="p-4 md:p-6 max-w-7xl mx-auto space-y-6">
+      {bloqueioDialog}
+      {!isGestor && <ReadOnlyBanner />}
       <div className="flex items-center justify-between gap-3 flex-wrap">
         <div>
           <h1 className="text-2xl md:text-3xl font-bold">Pesquisas de Clima</h1>
@@ -158,7 +166,13 @@ function PesquisasPage() {
             Crie pesquisas anônimas e acompanhe a satisfação da equipe.
           </p>
         </div>
-        <Dialog open={openCreate} onOpenChange={setOpenCreate}>
+        <Dialog
+          open={openCreate}
+          onOpenChange={(o) => {
+            if (o && !guard("Criar uma nova pesquisa")) return;
+            setOpenCreate(o);
+          }}
+        >
           <DialogTrigger asChild>
             <Button>
               <Plus className="h-4 w-4 mr-2" /> Nova pesquisa
