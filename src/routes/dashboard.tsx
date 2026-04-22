@@ -5,6 +5,8 @@ import { AppLayout } from "@/components/AppLayout";
 import { supabase } from "@/integrations/supabase/client";
 import { Card } from "@/components/ui/card";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } from "@/components/ui/dialog";
+import { ScrollArea } from "@/components/ui/scroll-area";
 import {
   Users, UserCheck, UserX, TrendingUp, UserPlus, Briefcase, Clock,
   Building2, Network, ChevronRight, BarChart3, CalendarDays,
@@ -31,6 +33,7 @@ function Dashboard() {
   const [loading, setLoading] = useState(true);
   const [anoContratacao, setAnoContratacao] = useState<number>(new Date().getFullYear());
   const [anoTurnover, setAnoTurnover] = useState<number>(new Date().getFullYear());
+  const [drill, setDrill] = useState<{ title: string; field: string; value: string; people: ColabFull[] } | null>(null);
 
   const fetchData = async () => {
     const { data } = await supabase.from("colaboradores").select("*");
@@ -239,11 +242,11 @@ function Dashboard() {
           <h2 className="text-xl font-bold">Indicadores Detalhados</h2>
         </div>
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
-          <ListPanel title="Distribuição por Setor" subtitle="Colaboradores ativos organizados por área" icon={Building2} items={bySetor} />
-          <ListPanel title="Distribuição por Turno" subtitle="Organização dos horários de trabalho" icon={Clock} items={byTurno} />
-          <ListPanel title="Estrutura de Liderança" subtitle="Hierarquia organizacional" icon={Network} items={byLideranca} />
-          <ListPanel title="Distribuição por Cargo" subtitle="Funções e responsabilidades" icon={Briefcase} items={byCargo} />
-          <ListPanel title="Horário de Almoço" subtitle="Distribuição dos intervalos" icon={Clock} items={byHorarioAlmoco} />
+          <ListPanel title="Distribuição por Setor" subtitle="Colaboradores ativos organizados por área" icon={Building2} items={bySetor} field="setor" people={ativosArr} onSelect={setDrill} />
+          <ListPanel title="Distribuição por Turno" subtitle="Organização dos horários de trabalho" icon={Clock} items={byTurno} field="turno" people={ativosArr} onSelect={setDrill} />
+          <ListPanel title="Estrutura de Liderança" subtitle="Hierarquia organizacional" icon={Network} items={byLideranca} field="lideranca" people={ativosArr} onSelect={setDrill} />
+          <ListPanel title="Distribuição por Cargo" subtitle="Funções e responsabilidades" icon={Briefcase} items={byCargo} field="cargo" people={ativosArr} onSelect={setDrill} />
+          <ListPanel title="Horário de Almoço" subtitle="Distribuição dos intervalos" icon={Clock} items={byHorarioAlmoco} field="horario_almoco" people={ativosArr} onSelect={setDrill} />
           <Card className="p-5">
             <div className="flex items-center gap-2 mb-1">
               <Users className="h-5 w-5 text-primary" />
@@ -260,6 +263,35 @@ function Dashboard() {
           </Card>
         </div>
       </div>
+
+      <Dialog open={!!drill} onOpenChange={(o) => !o && setDrill(null)}>
+        <DialogContent className="max-w-md">
+          <DialogHeader>
+            <DialogTitle className="text-base">{drill?.title}</DialogTitle>
+            <DialogDescription>
+              <span className="font-semibold text-foreground">{drill?.value}</span> — {drill?.people.length} colaborador{(drill?.people.length ?? 0) === 1 ? "" : "es"}
+            </DialogDescription>
+          </DialogHeader>
+          <ScrollArea className="max-h-[60vh] pr-3">
+            <div className="space-y-1.5">
+              {drill?.people.map((p) => (
+                <div key={p.id} className="flex items-center justify-between gap-3 p-2 rounded-md border bg-card">
+                  <div className="min-w-0">
+                    <p className="text-sm font-medium truncate">{p.colaborador}</p>
+                    <p className="text-xs text-muted-foreground truncate">
+                      {p.cargo ?? "—"}{p.setor ? ` • ${p.setor}` : ""}
+                    </p>
+                  </div>
+                  <span className="text-xs text-muted-foreground shrink-0">{p.matricula}</span>
+                </div>
+              ))}
+              {drill && drill.people.length === 0 && (
+                <p className="text-sm text-muted-foreground text-center py-4">Nenhum colaborador encontrado.</p>
+              )}
+            </div>
+          </ScrollArea>
+        </DialogContent>
+      </Dialog>
     </div>
   );
 }
@@ -312,14 +344,24 @@ function Row({ label, value }: { label: string; value: number }) {
 }
 
 function ListPanel({
-  title, subtitle, icon: Icon, items,
+  title, subtitle, icon: Icon, items, field, people, onSelect,
 }: {
   title: string; subtitle: string;
   icon: React.ComponentType<{ className?: string }>;
   items: { name: string; value: number }[];
+  field: keyof ColabFull;
+  people: ColabFull[];
+  onSelect: (d: { title: string; field: string; value: string; people: ColabFull[] }) => void;
 }) {
   const [expanded, setExpanded] = useState(false);
   const visible = expanded ? items : items.slice(0, 6);
+  const handleClick = (name: string) => {
+    const filtered = people.filter((p) => {
+      const v = p[field];
+      return (v ?? "Sem informação") === name;
+    });
+    onSelect({ title, field: String(field), value: name, people: filtered });
+  };
   return (
     <Card className="p-5">
       <div className="flex items-center gap-2 mb-1">
@@ -329,13 +371,18 @@ function ListPanel({
       <p className="text-sm text-muted-foreground mb-4">{subtitle}</p>
       <div className="space-y-1">
         {visible.map((it) => (
-          <div key={it.name} className="flex items-center justify-between p-2.5 rounded-lg hover:bg-muted/40 transition">
+          <button
+            type="button"
+            key={it.name}
+            onClick={() => handleClick(it.name)}
+            className="w-full flex items-center justify-between p-2.5 rounded-lg hover:bg-muted/40 transition text-left"
+          >
             <span className="text-sm truncate pr-2">{it.name}</span>
             <span className="flex items-center gap-2 text-sm font-semibold">
               <span className="px-2 py-0.5 rounded-full bg-muted text-foreground/80 text-xs min-w-7 text-center">{it.value}</span>
               <ChevronRight className="h-4 w-4 text-muted-foreground" />
             </span>
-          </div>
+          </button>
         ))}
         {items.length > 6 && (
           <button onClick={() => setExpanded((v) => !v)} className="w-full text-xs text-primary mt-2 hover:underline">
