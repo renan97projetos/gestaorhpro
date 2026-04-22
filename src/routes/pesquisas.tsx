@@ -55,6 +55,11 @@ type Resposta = {
 
 function PesquisasPage() {
   const { isAdmin } = useAuth();
+  const { isGestor } = useAuth();
+  const { guard, dialog: bloqueioDialog } = useReadOnlyGuard(
+    isGestor,
+    "Criar, editar ou excluir pesquisas",
+  );
   const [pesquisas, setPesquisas] = useState<Pesquisa[]>([]);
   const [respostas, setRespostas] = useState<Resposta[]>([]);
   const [loading, setLoading] = useState(true);
