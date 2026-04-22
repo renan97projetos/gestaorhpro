@@ -263,6 +263,35 @@ function Dashboard() {
           </Card>
         </div>
       </div>
+
+      <Dialog open={!!drill} onOpenChange={(o) => !o && setDrill(null)}>
+        <DialogContent className="max-w-md">
+          <DialogHeader>
+            <DialogTitle className="text-base">{drill?.title}</DialogTitle>
+            <DialogDescription>
+              <span className="font-semibold text-foreground">{drill?.value}</span> — {drill?.people.length} colaborador{(drill?.people.length ?? 0) === 1 ? "" : "es"}
+            </DialogDescription>
+          </DialogHeader>
+          <ScrollArea className="max-h-[60vh] pr-3">
+            <div className="space-y-1.5">
+              {drill?.people.map((p) => (
+                <div key={p.id} className="flex items-center justify-between gap-3 p-2 rounded-md border bg-card">
+                  <div className="min-w-0">
+                    <p className="text-sm font-medium truncate">{p.colaborador}</p>
+                    <p className="text-xs text-muted-foreground truncate">
+                      {p.cargo ?? "—"}{p.setor ? ` • ${p.setor}` : ""}
+                    </p>
+                  </div>
+                  <span className="text-xs text-muted-foreground shrink-0">{p.matricula}</span>
+                </div>
+              ))}
+              {drill && drill.people.length === 0 && (
+                <p className="text-sm text-muted-foreground text-center py-4">Nenhum colaborador encontrado.</p>
+              )}
+            </div>
+          </ScrollArea>
+        </DialogContent>
+      </Dialog>
     </div>
   );
 }
