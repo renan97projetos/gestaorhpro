@@ -155,7 +155,7 @@ function SignupForm({
     setLoading(false);
     if (error) toast.error("Erro no cadastro", { description: error });
     else {
-      toast.success("Cadastro realizado!", { description: "Você já pode fazer login." });
+      toast.success("Cadastro realizado!", { description: "Faça login com seu email e senha." });
       onSuccess();
     }
   };
