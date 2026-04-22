@@ -447,9 +447,10 @@ function StatusBadge({ s }: { s: ColabFull["status"] }) {
 }
 
 function ColabTable({
-  rows, loading, isGestor, onEdit, onDelete, onDemitir, mode,
+  rows, loading, isGestor, guard, onEdit, onDelete, onDemitir, mode,
 }: {
   rows: ColabFull[]; loading: boolean; isGestor: boolean;
+  guard: (acao?: string) => boolean;
   onEdit: (c: ColabFull) => void;
   onDelete: (c: ColabFull) => void;
   onDemitir?: (c: ColabFull) => void;
