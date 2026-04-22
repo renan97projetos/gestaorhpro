@@ -227,8 +227,14 @@ function CadastroPage() {
     const a = document.createElement("a"); a.href = url; a.download = filename; a.click(); URL.revokeObjectURL(url);
   };
 
+  const { guard, dialog: bloqueioDialog } = useReadOnlyGuard(
+    isGestor,
+    "Criar, editar ou excluir colaboradores",
+  );
+
   return (
     <div className="p-4 md:p-6 space-y-5 max-w-[1400px] mx-auto">
+      {bloqueioDialog}
       <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-3">
         <div className="flex items-center gap-3">
           <div className="h-12 w-12 rounded-full bg-primary/15 flex items-center justify-center">
@@ -239,12 +245,17 @@ function CadastroPage() {
             <p className="text-muted-foreground text-sm">Gerencie e visualize todos os colaboradores</p>
           </div>
         </div>
-        {isGestor && (
-          <Button onClick={() => setCreating(true)} className="bg-[image:var(--gradient-primary)]">
-            <Plus className="h-4 w-4 mr-2" /> Novo colaborador
-          </Button>
-        )}
+        <Button
+          onClick={() => {
+            if (guard("Cadastrar um novo colaborador")) setCreating(true);
+          }}
+          className="bg-[image:var(--gradient-primary)]"
+        >
+          <Plus className="h-4 w-4 mr-2" /> Novo colaborador
+        </Button>
       </div>
+
+      {!isGestor && <ReadOnlyBanner />}
 
       <Tabs value={tab} onValueChange={setTab}>
         <TabsList className="grid grid-cols-2 max-w-md">
