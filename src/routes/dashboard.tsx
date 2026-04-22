@@ -242,11 +242,11 @@ function Dashboard() {
           <h2 className="text-xl font-bold">Indicadores Detalhados</h2>
         </div>
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
-          <ListPanel title="Distribuição por Setor" subtitle="Colaboradores ativos organizados por área" icon={Building2} items={bySetor} />
-          <ListPanel title="Distribuição por Turno" subtitle="Organização dos horários de trabalho" icon={Clock} items={byTurno} />
-          <ListPanel title="Estrutura de Liderança" subtitle="Hierarquia organizacional" icon={Network} items={byLideranca} />
-          <ListPanel title="Distribuição por Cargo" subtitle="Funções e responsabilidades" icon={Briefcase} items={byCargo} />
-          <ListPanel title="Horário de Almoço" subtitle="Distribuição dos intervalos" icon={Clock} items={byHorarioAlmoco} />
+          <ListPanel title="Distribuição por Setor" subtitle="Colaboradores ativos organizados por área" icon={Building2} items={bySetor} field="setor" people={ativosArr} onSelect={setDrill} />
+          <ListPanel title="Distribuição por Turno" subtitle="Organização dos horários de trabalho" icon={Clock} items={byTurno} field="turno" people={ativosArr} onSelect={setDrill} />
+          <ListPanel title="Estrutura de Liderança" subtitle="Hierarquia organizacional" icon={Network} items={byLideranca} field="lideranca" people={ativosArr} onSelect={setDrill} />
+          <ListPanel title="Distribuição por Cargo" subtitle="Funções e responsabilidades" icon={Briefcase} items={byCargo} field="cargo" people={ativosArr} onSelect={setDrill} />
+          <ListPanel title="Horário de Almoço" subtitle="Distribuição dos intervalos" icon={Clock} items={byHorarioAlmoco} field="horario_almoco" people={ativosArr} onSelect={setDrill} />
           <Card className="p-5">
             <div className="flex items-center gap-2 mb-1">
               <Users className="h-5 w-5 text-primary" />
