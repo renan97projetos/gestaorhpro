@@ -26,27 +26,57 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   const [roles, setRoles] = useState<Role[]>([]);
 
   useEffect(() => {
+    let mounted = true;
     const { data: sub } = supabase.auth.onAuthStateChange((_e, sess) => {
+      if (!mounted) return;
       setSession(sess);
       setUser(sess?.user ?? null);
       if (sess?.user) {
-        setTimeout(() => fetchRoles(sess.user.id), 0);
+        // Defer to next tick to avoid deadlocks dentro do callback
+        setTimeout(() => {
+          fetchRoles(sess.user.id).catch((err) => {
+            console.error("[auth] fetchRoles failed:", err);
+          });
+        }, 0);
       } else {
         setRoles([]);
       }
     });
-    supabase.auth.getSession().then(({ data: { session } }) => {
-      setSession(session);
-      setUser(session?.user ?? null);
-      if (session?.user) fetchRoles(session.user.id);
-      setLoading(false);
-    });
-    return () => sub.subscription.unsubscribe();
+    supabase.auth
+      .getSession()
+      .then(({ data: { session } }) => {
+        if (!mounted) return;
+        setSession(session);
+        setUser(session?.user ?? null);
+        if (session?.user) {
+          fetchRoles(session.user.id).catch((err) => {
+            console.error("[auth] fetchRoles initial failed:", err);
+          });
+        }
+        setLoading(false);
+      })
+      .catch((err) => {
+        console.error("[auth] getSession failed:", err);
+        if (mounted) setLoading(false);
+      });
+    return () => {
+      mounted = false;
+      sub.subscription.unsubscribe();
+    };
   }, []);
 
   async function fetchRoles(userId: string) {
-    const { data } = await supabase.from("user_roles").select("role").eq("user_id", userId);
-    setRoles((data ?? []).map((r) => r.role as Role));
+    try {
+      const { data, error } = await supabase
+        .from("user_roles")
+        .select("role")
+        .eq("user_id", userId);
+      if (error) throw error;
+      setRoles((data ?? []).map((r) => r.role as Role));
+    } catch (err) {
+      console.error("[auth] fetchRoles error:", err);
+      setRoles([]);
+    }
   }
 
   const signIn = async (email: string, password: string) => {
