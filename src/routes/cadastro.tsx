@@ -386,7 +386,7 @@ function CadastroPage() {
             </div>
           </Card>
 
-          <ColabTable rows={filteredDemitidos} loading={loading} isGestor={isGestor}
+          <ColabTable rows={filteredDemitidos} loading={loading} isGestor={isGestor} guard={guard}
             onEdit={setEditing} onDelete={handleDelete} mode="demitidos" />
         </TabsContent>
       </Tabs>
