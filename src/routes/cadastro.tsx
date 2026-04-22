@@ -17,6 +17,7 @@ import { toast } from "sonner";
 import { ColabFull, tempoDeEmpresa, tempoExperiencia } from "@/lib/dashboard-helpers";
 import { DemissaoDialog, DemissaoData } from "@/components/DemissaoDialog";
 import { Clock } from "lucide-react";
+import { useReadOnlyGuard, ReadOnlyBanner } from "@/components/BloqueioAcesso";
 
 export const Route = createFileRoute("/cadastro")({
   component: () => (
