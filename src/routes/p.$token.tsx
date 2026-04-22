@@ -9,6 +9,7 @@ import { Label } from "@/components/ui/label";
 import { Checkbox } from "@/components/ui/checkbox";
 import { toast } from "sonner";
 import { CheckCircle2, Building2 } from "lucide-react";
+import { ThemeToggle } from "@/components/ThemeToggle";
 
 export const Route = createFileRoute("/p/$token")({
   component: PublicSurveyPage,
@@ -184,7 +185,10 @@ function PublicSurveyPage() {
     "Esta pesquisa tem como objetivo ouvir você e gerar melhorias contínuas no nosso ambiente, nos setores e na liderança. Suas respostas são 100% anônimas e serão usadas para construir um lugar melhor para todos trabalharem.";
 
   return (
-    <div className="min-h-screen bg-muted/30 py-8 px-4">
+    <div className="min-h-screen bg-muted/30 py-8 px-4 relative">
+      <div className="absolute top-4 right-4 z-10">
+        <ThemeToggle variant="outline" />
+      </div>
       <div className="max-w-xl mx-auto space-y-4">
         <div className="flex items-center gap-3 mb-2">
           <div className="h-10 w-10 rounded-lg bg-primary text-primary-foreground flex items-center justify-center">
