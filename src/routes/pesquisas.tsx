@@ -16,6 +16,7 @@ import { toast } from "sonner";
 import { Copy, Plus, BarChart3, Link2, Lock, Unlock, Trash2, ListChecks } from "lucide-react";
 import { BarChart, Bar, XAxis, YAxis, ResponsiveContainer, Tooltip, CartesianGrid, Cell } from "recharts";
 import { PerguntasBuilder } from "@/components/PerguntasBuilder";
+import { useReadOnlyGuard, ReadOnlyBanner } from "@/components/BloqueioAcesso";
 
 export const Route = createFileRoute("/pesquisas")({
   component: () => (
