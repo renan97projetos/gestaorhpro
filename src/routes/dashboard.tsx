@@ -35,36 +35,37 @@ function Dashboard() {
   const [anoTurnover, setAnoTurnover] = useState<number>(new Date().getFullYear());
   const [drill, setDrill] = useState<{ title: string; field: string; value: string; people: ColabFull[] } | null>(null);
 
-  const fetchData = async () => {
-    const { data } = await supabase.from("colaboradores").select("*");
-    setData((data as ColabFull[]) ?? []);
-    setLoading(false);
-  };
-
   useEffect(() => {
-    fetchData();
-    // Atualiza automaticamente quando algum colaborador é demitido / editado / criado
-    const channel = supabase
-      .channel("dashboard-colaboradores")
-      .on(
-        "postgres_changes",
-        { event: "*", schema: "public", table: "colaboradores" },
-        () => fetchData(),
-      )
-      .subscribe();
+    let mounted = true;
+    (async () => {
+      const { data } = await supabase.from("colaboradores").select("*");
+      if (!mounted) return;
+      setData((data as ColabFull[]) ?? []);
+      setLoading(false);
+    })();
     return () => {
-      supabase.removeChannel(channel);
+      mounted = false;
     };
   }, []);
 
-  const total = data.length;
-  const ativos = data.filter((c) => c.status === "Ativo").length;
-  const afastados = data.filter((c) => c.status === "Afastado" || c.status === "Ferias").length;
-  const demitidos = data.filter((c) => c.status === "Demitido").length;
-  const ativosOuAfastados = ativos + afastados;
+  // Cálculos memoizados — evitam reprocessar a cada render
+  const stats = useMemo(() => {
+    let ativos = 0, afastados = 0, demitidos = 0, homens = 0, mulheres = 0;
+    const ativosArr: ColabFull[] = [];
+    for (const c of data) {
+      if (c.status === "Ativo") { ativos++; ativosArr.push(c); }
+      else if (c.status === "Afastado" || c.status === "Ferias") afastados++;
+      else if (c.status === "Demitido") demitidos++;
+      if (c.status !== "Demitido") {
+        if (c.sexo === "Masculino") homens++;
+        else if (c.sexo === "Feminino") mulheres++;
+      }
+    }
+    return { ativos, afastados, demitidos, homens, mulheres, ativosArr };
+  }, [data]);
 
-  const homens = data.filter((c) => c.sexo === "Masculino" && c.status !== "Demitido").length;
-  const mulheres = data.filter((c) => c.sexo === "Feminino" && c.status !== "Demitido").length;
+  const { ativos, afastados, demitidos, homens, mulheres, ativosArr } = stats;
+  const ativosOuAfastados = ativos + afastados;
   const totalSexo = homens + mulheres || 1;
   const pctH = Math.round((homens / totalSexo) * 1000) / 10;
   const pctM = Math.round((mulheres / totalSexo) * 1000) / 10;
@@ -72,17 +73,23 @@ function Dashboard() {
   const anos = useMemo(() => anosDisponiveis(data), [data]);
   const turnover = useMemo(() => turnoverDoAno(data, anoTurnover), [data, anoTurnover]);
   const contratacoes = useMemo(() => contratacoesPorMes(data, anoContratacao), [data, anoContratacao]);
-  const totalContratado = contratacoes.reduce((s, m) => s + m.contratacoes, 0);
-  const picoMensal = Math.max(...contratacoes.map((m) => m.contratacoes), 0);
-  const mesesAtivos = contratacoes.filter((m) => m.contratacoes > 0).length;
-  const mediaMensal = mesesAtivos ? Math.round((totalContratado / mesesAtivos) * 10) / 10 : 0;
+  const { totalContratado, picoMensal, mesesAtivos, mediaMensal } = useMemo(() => {
+    const total = contratacoes.reduce((s, m) => s + m.contratacoes, 0);
+    const pico = Math.max(...contratacoes.map((m) => m.contratacoes), 0);
+    const meses = contratacoes.filter((m) => m.contratacoes > 0).length;
+    return {
+      totalContratado: total,
+      picoMensal: pico,
+      mesesAtivos: meses,
+      mediaMensal: meses ? Math.round((total / meses) * 10) / 10 : 0,
+    };
+  }, [contratacoes]);
 
-  const ativosArr = data.filter((c) => c.status === "Ativo");
-  const bySetor = aggregate(ativosArr, "setor");
-  const byTurno = aggregate(ativosArr, "turno");
-  const byCargo = aggregate(ativosArr, "cargo");
-  const byLideranca = aggregate(ativosArr, "lideranca");
-  const byHorarioAlmoco = aggregate(ativosArr, "horario_almoco");
+  const bySetor = useMemo(() => aggregate(ativosArr, "setor"), [ativosArr]);
+  const byTurno = useMemo(() => aggregate(ativosArr, "turno"), [ativosArr]);
+  const byCargo = useMemo(() => aggregate(ativosArr, "cargo"), [ativosArr]);
+  const byLideranca = useMemo(() => aggregate(ativosArr, "lideranca"), [ativosArr]);
+  const byHorarioAlmoco = useMemo(() => aggregate(ativosArr, "horario_almoco"), [ativosArr]);
 
   const turnoverColor =
     turnover.taxa <= 5 ? "text-success" : turnover.taxa <= 15 ? "text-warning" : "text-destructive";
