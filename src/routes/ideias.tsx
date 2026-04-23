@@ -189,11 +189,23 @@ function IdeiasPage() {
       ) : (
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
           {ideias.map((ideia) => (
-            <Card key={ideia.id} className="p-5 flex flex-col gap-3">
+            <Card key={ideia.id} className="p-5 flex flex-col gap-3 min-w-0 overflow-hidden">
               <div className="flex items-start justify-between gap-2">
-                <h3 className="font-semibold text-lg leading-tight">{ideia.titulo}</h3>
+                <h3 className="font-semibold text-lg leading-tight break-words min-w-0 flex-1">{ideia.titulo}</h3>
                 {isGestor && (
                   <Button
+                    variant="ghost"
+                    size="icon"
+                    className="text-destructive hover:bg-destructive/10 shrink-0 -mt-1 -mr-1"
+                    onClick={() => setToDelete(ideia)}
+                  >
+                    <Trash2 className="h-4 w-4" />
+                  </Button>
+                )}
+              </div>
+              <p className="text-sm text-foreground/80 whitespace-pre-wrap break-words">
+                {ideia.descricao}
+              </p>
                     variant="ghost"
                     size="icon"
                     className="text-destructive hover:bg-destructive/10 shrink-0 -mt-1 -mr-1"
