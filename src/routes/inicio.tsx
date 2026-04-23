@@ -4,6 +4,7 @@ import { useAuth } from "@/lib/auth-context";
 import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { ThemeToggle } from "@/components/ThemeToggle";
+import { OnboardingTour } from "@/components/OnboardingTour";
 import {
   Building2, Home, Users, UserPlus, UserCog, FileText, LogOut, User, ShieldCheck, ClipboardList, UserCheck, Lightbulb,
 } from "lucide-react";
@@ -86,6 +87,7 @@ function InicioPage() {
           </div>
         </section>
       </main>
+      <OnboardingTour />
     </div>
   );
 }
