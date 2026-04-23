@@ -154,6 +154,42 @@ export type Database = {
         }
         Relationships: []
       }
+      ideias: {
+        Row: {
+          cargo: string
+          created_at: string
+          descricao: string
+          email: string
+          id: string
+          nome: string
+          titulo: string
+          updated_at: string
+          user_id: string | null
+        }
+        Insert: {
+          cargo: string
+          created_at?: string
+          descricao: string
+          email: string
+          id?: string
+          nome: string
+          titulo: string
+          updated_at?: string
+          user_id?: string | null
+        }
+        Update: {
+          cargo?: string
+          created_at?: string
+          descricao?: string
+          email?: string
+          id?: string
+          nome?: string
+          titulo?: string
+          updated_at?: string
+          user_id?: string | null
+        }
+        Relationships: []
+      }
       movimentacoes: {
         Row: {
           campo: string

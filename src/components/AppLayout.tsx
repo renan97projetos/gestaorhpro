@@ -1,7 +1,7 @@
 import { Link, useLocation, useNavigate } from "@tanstack/react-router";
 import { useAuth } from "@/lib/auth-context";
 import { Button } from "@/components/ui/button";
-import { LayoutDashboard, Users, History, LogOut, Menu, X, LayoutGrid, UserCog, ClipboardList, UserCheck } from "lucide-react";
+import { LayoutDashboard, Users, History, LogOut, Menu, X, LayoutGrid, UserCog, ClipboardList, UserCheck, Lightbulb } from "lucide-react";
 import { useState } from "react";
 import { cn } from "@/lib/utils";
 import { ThemeToggle } from "@/components/ThemeToggle";
@@ -13,6 +13,7 @@ const baseNav = [
   { to: "/chamada", label: "Chamada", icon: UserCheck },
   { to: "/solicitacao-movimentacao", label: "Movimentações", icon: History },
   { to: "/pesquisas", label: "Pesquisas", icon: ClipboardList },
+  { to: "/ideias", label: "Ideias", icon: Lightbulb },
 ];
 
 export function AppLayout({ children }: { children: React.ReactNode }) {
