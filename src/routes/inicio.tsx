@@ -23,6 +23,7 @@ const baseItems = [
   { to: "/chamada", label: "Chamada", sub: "Controle de presença diária", icon: UserCheck, tone: "from-cyan-500 to-cyan-600" },
   { to: "/solicitacao-movimentacao", label: "Solicitações", sub: "Movimentações", icon: FileText, tone: "from-amber-500 to-orange-500" },
   { to: "/pesquisas", label: "Pesquisas", sub: "Clima e eNPS", icon: ClipboardList, tone: "from-pink-500 to-pink-600" },
+  { to: "/ideias", label: "Diretório de Ideias", sub: "Caixinha de sugestões", icon: Lightbulb, tone: "from-yellow-400 to-orange-500" },
 ];
 
 function InicioPage() {
