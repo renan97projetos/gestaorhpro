@@ -13,6 +13,7 @@ const baseNav = [
   { to: "/chamada", label: "Chamada", icon: UserCheck },
   { to: "/solicitacao-movimentacao", label: "Movimentações", icon: History },
   { to: "/pesquisas", label: "Pesquisas", icon: ClipboardList },
+  { to: "/ideias", label: "Ideias", icon: Lightbulb },
 ];
 
 export function AppLayout({ children }: { children: React.ReactNode }) {
