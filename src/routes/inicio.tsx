@@ -77,8 +77,8 @@ function InicioPage() {
                   <div className={`h-12 w-12 md:h-14 md:w-14 rounded-2xl bg-gradient-to-br ${it.tone} flex items-center justify-center mb-3 md:mb-4 shadow-md`}>
                     <it.icon className="h-6 w-6 md:h-7 md:w-7 text-white" />
                   </div>
-                  <h3 className="font-bold text-sm md:text-base">{it.label}</h3>
-                  <p className="text-xs md:text-sm text-muted-foreground mt-0.5">{it.sub}</p>
+              <h3 className="font-bold text-sm md:text-base" translate="no">{it.label}</h3>
+                  <p className="text-xs md:text-sm text-muted-foreground mt-0.5" translate="no">{it.sub}</p>
                 </Card>
               </Link>
             ))}
