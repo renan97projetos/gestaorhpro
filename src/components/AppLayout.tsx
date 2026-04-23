@@ -5,6 +5,7 @@ import { LayoutDashboard, Users, History, LogOut, Menu, X, LayoutGrid, UserCog, 
 import { useState } from "react";
 import { cn } from "@/lib/utils";
 import { ThemeToggle } from "@/components/ThemeToggle";
+import { OnboardingTour } from "@/components/OnboardingTour";
 
 const baseNav = [
   { to: "/inicio", label: "Menu", icon: LayoutGrid },
@@ -133,6 +134,7 @@ export function AppLayout({ children }: { children: React.ReactNode }) {
 
         <main className="flex-1 overflow-auto">{children}</main>
       </div>
+      <OnboardingTour />
     </div>
   );
 }
