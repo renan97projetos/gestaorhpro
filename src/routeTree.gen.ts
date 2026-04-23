@@ -14,6 +14,7 @@ import { Route as SolicitacaoMovimentacaoRouteImport } from './routes/solicitaca
 import { Route as ResetPasswordRouteImport } from './routes/reset-password'
 import { Route as PesquisasRouteImport } from './routes/pesquisas'
 import { Route as InicioRouteImport } from './routes/inicio'
+import { Route as IdeiasRouteImport } from './routes/ideias'
 import { Route as DashboardRouteImport } from './routes/dashboard'
 import { Route as ChamadaRouteImport } from './routes/chamada'
 import { Route as CadastroRouteImport } from './routes/cadastro'
@@ -43,6 +44,11 @@ const PesquisasRoute = PesquisasRouteImport.update({
 const InicioRoute = InicioRouteImport.update({
   id: '/inicio',
   path: '/inicio',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const IdeiasRoute = IdeiasRouteImport.update({
+  id: '/ideias',
+  path: '/ideias',
   getParentRoute: () => rootRouteImport,
 } as any)
 const DashboardRoute = DashboardRouteImport.update({
@@ -76,6 +82,7 @@ export interface FileRoutesByFullPath {
   '/cadastro': typeof CadastroRoute
   '/chamada': typeof ChamadaRoute
   '/dashboard': typeof DashboardRoute
+  '/ideias': typeof IdeiasRoute
   '/inicio': typeof InicioRoute
   '/pesquisas': typeof PesquisasRoute
   '/reset-password': typeof ResetPasswordRoute
@@ -88,6 +95,7 @@ export interface FileRoutesByTo {
   '/cadastro': typeof CadastroRoute
   '/chamada': typeof ChamadaRoute
   '/dashboard': typeof DashboardRoute
+  '/ideias': typeof IdeiasRoute
   '/inicio': typeof InicioRoute
   '/pesquisas': typeof PesquisasRoute
   '/reset-password': typeof ResetPasswordRoute
@@ -101,6 +109,7 @@ export interface FileRoutesById {
   '/cadastro': typeof CadastroRoute
   '/chamada': typeof ChamadaRoute
   '/dashboard': typeof DashboardRoute
+  '/ideias': typeof IdeiasRoute
   '/inicio': typeof InicioRoute
   '/pesquisas': typeof PesquisasRoute
   '/reset-password': typeof ResetPasswordRoute
@@ -115,6 +124,7 @@ export interface FileRouteTypes {
     | '/cadastro'
     | '/chamada'
     | '/dashboard'
+    | '/ideias'
     | '/inicio'
     | '/pesquisas'
     | '/reset-password'
@@ -127,6 +137,7 @@ export interface FileRouteTypes {
     | '/cadastro'
     | '/chamada'
     | '/dashboard'
+    | '/ideias'
     | '/inicio'
     | '/pesquisas'
     | '/reset-password'
@@ -139,6 +150,7 @@ export interface FileRouteTypes {
     | '/cadastro'
     | '/chamada'
     | '/dashboard'
+    | '/ideias'
     | '/inicio'
     | '/pesquisas'
     | '/reset-password'
@@ -152,6 +164,7 @@ export interface RootRouteChildren {
   CadastroRoute: typeof CadastroRoute
   ChamadaRoute: typeof ChamadaRoute
   DashboardRoute: typeof DashboardRoute
+  IdeiasRoute: typeof IdeiasRoute
   InicioRoute: typeof InicioRoute
   PesquisasRoute: typeof PesquisasRoute
   ResetPasswordRoute: typeof ResetPasswordRoute
@@ -197,6 +210,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof InicioRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/ideias': {
+      id: '/ideias'
+      path: '/ideias'
+      fullPath: '/ideias'
+      preLoaderRoute: typeof IdeiasRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/dashboard': {
       id: '/dashboard'
       path: '/dashboard'
@@ -240,6 +260,7 @@ const rootRouteChildren: RootRouteChildren = {
   CadastroRoute: CadastroRoute,
   ChamadaRoute: ChamadaRoute,
   DashboardRoute: DashboardRoute,
+  IdeiasRoute: IdeiasRoute,
   InicioRoute: InicioRoute,
   PesquisasRoute: PesquisasRoute,
   ResetPasswordRoute: ResetPasswordRoute,
