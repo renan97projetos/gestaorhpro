@@ -15,6 +15,7 @@ import { Route as ResetPasswordRouteImport } from './routes/reset-password'
 import { Route as PesquisasRouteImport } from './routes/pesquisas'
 import { Route as InicioRouteImport } from './routes/inicio'
 import { Route as IdeiasRouteImport } from './routes/ideias'
+import { Route as ExperienciaRouteImport } from './routes/experiencia'
 import { Route as DashboardRouteImport } from './routes/dashboard'
 import { Route as ChamadaRouteImport } from './routes/chamada'
 import { Route as CadastroRouteImport } from './routes/cadastro'
@@ -51,6 +52,11 @@ const IdeiasRoute = IdeiasRouteImport.update({
   path: '/ideias',
   getParentRoute: () => rootRouteImport,
 } as any)
+const ExperienciaRoute = ExperienciaRouteImport.update({
+  id: '/experiencia',
+  path: '/experiencia',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const DashboardRoute = DashboardRouteImport.update({
   id: '/dashboard',
   path: '/dashboard',
@@ -82,6 +88,7 @@ export interface FileRoutesByFullPath {
   '/cadastro': typeof CadastroRoute
   '/chamada': typeof ChamadaRoute
   '/dashboard': typeof DashboardRoute
+  '/experiencia': typeof ExperienciaRoute
   '/ideias': typeof IdeiasRoute
   '/inicio': typeof InicioRoute
   '/pesquisas': typeof PesquisasRoute
@@ -95,6 +102,7 @@ export interface FileRoutesByTo {
   '/cadastro': typeof CadastroRoute
   '/chamada': typeof ChamadaRoute
   '/dashboard': typeof DashboardRoute
+  '/experiencia': typeof ExperienciaRoute
   '/ideias': typeof IdeiasRoute
   '/inicio': typeof InicioRoute
   '/pesquisas': typeof PesquisasRoute
@@ -109,6 +117,7 @@ export interface FileRoutesById {
   '/cadastro': typeof CadastroRoute
   '/chamada': typeof ChamadaRoute
   '/dashboard': typeof DashboardRoute
+  '/experiencia': typeof ExperienciaRoute
   '/ideias': typeof IdeiasRoute
   '/inicio': typeof InicioRoute
   '/pesquisas': typeof PesquisasRoute
@@ -124,6 +133,7 @@ export interface FileRouteTypes {
     | '/cadastro'
     | '/chamada'
     | '/dashboard'
+    | '/experiencia'
     | '/ideias'
     | '/inicio'
     | '/pesquisas'
@@ -137,6 +147,7 @@ export interface FileRouteTypes {
     | '/cadastro'
     | '/chamada'
     | '/dashboard'
+    | '/experiencia'
     | '/ideias'
     | '/inicio'
     | '/pesquisas'
@@ -150,6 +161,7 @@ export interface FileRouteTypes {
     | '/cadastro'
     | '/chamada'
     | '/dashboard'
+    | '/experiencia'
     | '/ideias'
     | '/inicio'
     | '/pesquisas'
@@ -164,6 +176,7 @@ export interface RootRouteChildren {
   CadastroRoute: typeof CadastroRoute
   ChamadaRoute: typeof ChamadaRoute
   DashboardRoute: typeof DashboardRoute
+  ExperienciaRoute: typeof ExperienciaRoute
   IdeiasRoute: typeof IdeiasRoute
   InicioRoute: typeof InicioRoute
   PesquisasRoute: typeof PesquisasRoute
@@ -217,6 +230,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof IdeiasRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/experiencia': {
+      id: '/experiencia'
+      path: '/experiencia'
+      fullPath: '/experiencia'
+      preLoaderRoute: typeof ExperienciaRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/dashboard': {
       id: '/dashboard'
       path: '/dashboard'
@@ -260,6 +280,7 @@ const rootRouteChildren: RootRouteChildren = {
   CadastroRoute: CadastroRoute,
   ChamadaRoute: ChamadaRoute,
   DashboardRoute: DashboardRoute,
+  ExperienciaRoute: ExperienciaRoute,
   IdeiasRoute: IdeiasRoute,
   InicioRoute: InicioRoute,
   PesquisasRoute: PesquisasRoute,
