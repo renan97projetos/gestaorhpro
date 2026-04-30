@@ -131,6 +131,7 @@ export function AppLayout({ children }: { children: React.ReactNode }) {
               <Link
                 key={n.to}
                 to={n.to}
+                preload="intent"
                 onClick={() => setOpen(false)}
                 className={cn(
                   "flex items-center gap-3 px-3 py-2 rounded-lg text-sm font-medium",
