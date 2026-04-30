@@ -188,7 +188,7 @@ function GeracoesPage() {
         <div>
           <h1 className="text-2xl md:text-3xl font-bold">Gerações na Equipe</h1>
           <p className="text-sm text-muted-foreground">
-            Análise dinâmica — {loading ? "carregando..." : `${totalAtivos} colaboradores ativos`}
+            Análise dinâmica — {loading ? "carregando..." : `${totalAtivos} colaboradores no headcount (ativos + afastados)`}
           </p>
         </div>
       </div>
