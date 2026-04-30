@@ -319,8 +319,10 @@ function Dashboard() {
             <p className="text-sm text-muted-foreground p-3">Sem dados para o ano selecionado.</p>
           )}
           {turnoverPorGrupo.map((g) => {
-            const tone =
-              g.taxa <= 5 ? "success" : g.taxa <= 15 ? "warning" : "destructive";
+            const barClass =
+              g.taxa <= 5 ? "bg-success" : g.taxa <= 15 ? "bg-warning" : "bg-destructive";
+            const textClass =
+              g.taxa <= 5 ? "text-success" : g.taxa <= 15 ? "text-warning" : "text-destructive";
             return (
               <div key={g.name} className="flex flex-col sm:flex-row sm:items-center gap-2 p-3 rounded-lg border bg-card">
                 <div className="flex-1 min-w-0">
@@ -332,11 +334,11 @@ function Dashboard() {
                 <div className="flex items-center gap-3 sm:w-1/2">
                   <div className="flex-1 h-2 bg-muted rounded-full overflow-hidden">
                     <div
-                      className={`h-full bg-${tone}`}
+                      className={`h-full ${barClass}`}
                       style={{ width: `${Math.min(g.taxa, 100)}%` }}
                     />
                   </div>
-                  <span className={`text-sm font-semibold w-16 text-right text-${tone}`}>
+                  <span className={`text-sm font-semibold w-16 text-right ${textClass}`}>
                     {g.taxa}%
                   </span>
                 </div>
