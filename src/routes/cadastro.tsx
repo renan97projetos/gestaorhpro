@@ -42,14 +42,14 @@ const SEXO_OPTS = ["Masculino", "Feminino"] as const;
 const TRACKED_FIELDS: (keyof ColabFull)[] = [
   "matricula", "colaborador", "status", "cargo", "setor", "subsetor",
   "lideranca", "turno", "sabado_trabalho", "sabado_horario",
-  "horario_almoco", "horario_cafe", "admissao", "sexo", "data_demissao", "tipo_demissao",
+  "horario_almoco", "horario_cafe", "admissao", "sexo", "data_nascimento", "data_demissao", "tipo_demissao",
 ];
 const FIELD_LABELS: Record<string, string> = {
   matricula: "Matrícula", colaborador: "Colaborador", status: "Status",
   cargo: "Cargo", setor: "Setor", subsetor: "Subsetor", lideranca: "Liderança",
   turno: "Turno", sabado_trabalho: "Sábado Trabalho", sabado_horario: "Sábado Horário",
   horario_almoco: "Horário Almoço", horario_cafe: "Horário Café", admissao: "Admissão",
-  sexo: "Sexo", data_demissao: "Data Demissão", tipo_demissao: "Tipo Demissão",
+  sexo: "Sexo", data_nascimento: "Data Nascimento", data_demissao: "Data Demissão", tipo_demissao: "Tipo Demissão",
 };
 
 function CadastroPage() {
