@@ -16,11 +16,13 @@ export const Route = createFileRoute("/geracoes")({
 });
 
 // Dados calculados a partir da planilha de aniversários (185 colaboradores únicos, nomes duplicados removidos)
-const TOTAL = 185;
+// Headcount oficial da filial: 187 colaboradores
+// Base: 185 da planilha de aniversários + 2 ajuste de headcount (1 Millennial e 1 Gen X)
+const TOTAL = 187;
 const GERACOES = [
-  { nome: "Gen Z", qtd: 87, pct: 47.0, cor: "hsl(160 70% 45%)", periodo: "1997 - 2012" },
-  { nome: "Millennials", qtd: 81, pct: 43.8, cor: "hsl(255 70% 70%)", periodo: "1981 - 1996" },
-  { nome: "Gen X", qtd: 17, pct: 9.2, cor: "hsl(35 90% 55%)", periodo: "1965 - 1980" },
+  { nome: "Gen Z", qtd: 87, pct: 46.5, cor: "hsl(160 70% 45%)", periodo: "1997 - 2012" },
+  { nome: "Millennials", qtd: 82, pct: 43.9, cor: "hsl(255 70% 70%)", periodo: "1981 - 1996" },
+  { nome: "Gen X", qtd: 18, pct: 9.6, cor: "hsl(35 90% 55%)", periodo: "1965 - 1980" },
 ];
 
 // Histograma de idades (dados reais da planilha, nomes únicos)
@@ -60,7 +62,7 @@ const INFOS: Info[] = [
   {
     nome: "Gen Z",
     qtd: 87,
-    pct: 47.0,
+    pct: 46.5,
     cor: "hsl(160 70% 45%)",
     resumo:
       "Nascidos entre 1997 e 2012. Cresceram com smartphone, redes sociais e acesso instantâneo à informação. Valorizam propósito, diversidade, saúde mental e flexibilidade. São pragmáticos e têm pouca paciência para processos engessados.",
@@ -81,8 +83,8 @@ const INFOS: Info[] = [
   },
   {
     nome: "Millennials",
-    qtd: 81,
-    pct: 43.8,
+    qtd: 82,
+    pct: 43.9,
     cor: "hsl(255 70% 70%)",
     resumo:
       "Nascidos entre 1981 e 1996. Viveram a transição do analógico para o digital. Valorizam equilíbrio entre vida e trabalho, desenvolvimento profissional e ambientes colaborativos. São a 'ponte' entre Gen X e Gen Z.",
@@ -103,8 +105,8 @@ const INFOS: Info[] = [
   },
   {
     nome: "Gen X",
-    qtd: 17,
-    pct: 9.2,
+    qtd: 18,
+    pct: 9.6,
     cor: "hsl(35 90% 55%)",
     resumo:
       "Nascidos entre 1965 e 1980. Independentes, resilientes e adaptáveis. Viveram a chegada do computador no trabalho. Valorizam estabilidade, respeito à experiência e reconhecimento pela trajetória.",
@@ -263,7 +265,7 @@ function GeracoesPage() {
 
       <Card className="p-4 bg-muted/40 border-dashed">
         <p className="text-xs text-muted-foreground">
-          📊 Análise baseada em {TOTAL} colaboradores únicos (nomes duplicados foram removidos do cálculo).
+          📊 Análise baseada no headcount oficial de {TOTAL} colaboradores (185 com data de nascimento na planilha + 2 ajuste de headcount).
           Faixas geracionais: Gen Z (1997-2012), Millennials (1981-1996), Gen X (1965-1980).
         </p>
       </Card>
