@@ -17,6 +17,7 @@ export type ColabFull = {
   sexo: "Masculino" | "Feminino" | null;
   data_demissao: string | null;
   tipo_demissao: string | null;
+  data_nascimento: string | null;
 };
 
 export const MESES = ["Jan", "Fev", "Mar", "Abr", "Mai", "Jun", "Jul", "Ago", "Set", "Out", "Nov", "Dez"];

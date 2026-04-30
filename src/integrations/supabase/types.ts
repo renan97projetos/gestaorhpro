@@ -66,6 +66,7 @@ export type Database = {
           created_at: string
           created_by: string | null
           data_demissao: string | null
+          data_nascimento: string | null
           horario_almoco: string | null
           horario_cafe: string | null
           id: string
@@ -89,6 +90,7 @@ export type Database = {
           created_at?: string
           created_by?: string | null
           data_demissao?: string | null
+          data_nascimento?: string | null
           horario_almoco?: string | null
           horario_cafe?: string | null
           id?: string
@@ -112,6 +114,7 @@ export type Database = {
           created_at?: string
           created_by?: string | null
           data_demissao?: string | null
+          data_nascimento?: string | null
           horario_almoco?: string | null
           horario_cafe?: string | null
           id?: string
