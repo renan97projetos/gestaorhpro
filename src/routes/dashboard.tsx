@@ -92,6 +92,27 @@ function Dashboard() {
   const byLideranca = useMemo(() => aggregate(ativosArr, "lideranca"), [ativosArr]);
   const byHorarioAlmoco = useMemo(() => aggregate(ativosArr, "horario_almoco"), [ativosArr]);
 
+  // Tempo médio de permanência
+  const permAtivos = useMemo(() => tempoMedioPermanencia(data, "ativos"), [data]);
+  const permDemitidos = useMemo(() => tempoMedioPermanencia(data, "demitidos"), [data]);
+  const permGeral = useMemo(() => tempoMedioPermanencia(data, "todos"), [data]);
+
+  // Turnover por setor / liderança
+  const [turnoverGroup, setTurnoverGroup] = useState<"setor" | "lideranca">("setor");
+  const turnoverPorGrupo = useMemo(
+    () => turnoverPorAgrupamento(data, anoTurnover, turnoverGroup),
+    [data, anoTurnover, turnoverGroup],
+  );
+
+  // Geolocalização (cidade / bairro) — apenas ativos+afastados
+  const byCidade = useMemo(() => aggregate(ativosArr, "cidade" as keyof ColabFull), [ativosArr]);
+  const byBairro = useMemo(() => aggregate(ativosArr, "bairro" as keyof ColabFull), [ativosArr]);
+  const semLocalizacao = useMemo(
+    () => ativosArr.filter((c) => !c.cidade || !c.bairro).length,
+    [ativosArr],
+  );
+  const comLocalizacao = ativosArr.length - semLocalizacao;
+
   const turnoverColor =
     turnover.taxa <= 5 ? "text-success" : turnover.taxa <= 15 ? "text-warning" : "text-destructive";
   const turnoverBg =
