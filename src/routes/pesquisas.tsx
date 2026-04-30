@@ -16,6 +16,7 @@ import { toast } from "sonner";
 import { Copy, Plus, BarChart3, Link2, Lock, Unlock, Trash2, ListChecks } from "lucide-react";
 import { BarChart, Bar, XAxis, YAxis, ResponsiveContainer, Tooltip, CartesianGrid, Cell } from "recharts";
 import { PerguntasBuilder } from "@/components/PerguntasBuilder";
+import { PesquisaIndicadores } from "@/components/PesquisaIndicadores";
 import { useReadOnlyGuard, ReadOnlyBanner } from "@/components/BloqueioAcesso";
 
 export const Route = createFileRoute("/pesquisas")({
@@ -363,8 +364,11 @@ function PesquisaDetail({
           <TabsTrigger value="perguntas">
             <ListChecks className="h-4 w-4 mr-1" /> Perguntas
           </TabsTrigger>
+          <TabsTrigger value="indicadores">
+            <BarChart3 className="h-4 w-4 mr-1" /> Indicadores
+          </TabsTrigger>
           <TabsTrigger value="distribuicao">
-            <BarChart3 className="h-4 w-4 mr-1" /> Distribuição
+            <BarChart3 className="h-4 w-4 mr-1" /> eNPS
           </TabsTrigger>
           <TabsTrigger value="setor">Por setor</TabsTrigger>
           <TabsTrigger value="lideranca">Por liderança</TabsTrigger>
@@ -384,6 +388,9 @@ function PesquisaDetail({
           </Card>
         </TabsContent>
 
+        <TabsContent value="indicadores">
+          <PesquisaIndicadores pesquisaId={pesquisa.id} />
+        </TabsContent>
 
         <TabsContent value="distribuicao">
           <Card className="p-4">

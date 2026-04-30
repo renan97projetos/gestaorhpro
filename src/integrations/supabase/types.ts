@@ -162,6 +162,7 @@ export type Database = {
           email: string
           id: string
           nome: string
+          status: Database["public"]["Enums"]["ideia_status"]
           titulo: string
           updated_at: string
           user_id: string | null
@@ -173,6 +174,7 @@ export type Database = {
           email: string
           id?: string
           nome: string
+          status?: Database["public"]["Enums"]["ideia_status"]
           titulo: string
           updated_at?: string
           user_id?: string | null
@@ -184,6 +186,7 @@ export type Database = {
           email?: string
           id?: string
           nome?: string
+          status?: Database["public"]["Enums"]["ideia_status"]
           titulo?: string
           updated_at?: string
           user_id?: string | null
@@ -544,6 +547,12 @@ export type Database = {
         | "Afastado"
         | "Licenca"
       colaborador_status: "Ativo" | "Demitido" | "Afastado" | "Ferias"
+      ideia_status:
+        | "em_analise"
+        | "em_andamento"
+        | "aprovado"
+        | "concluido"
+        | "rejeitado"
       pergunta_tipo:
         | "nota_0_10"
         | "escolha_unica"
@@ -705,6 +714,13 @@ export const Constants = {
         "Licenca",
       ],
       colaborador_status: ["Ativo", "Demitido", "Afastado", "Ferias"],
+      ideia_status: [
+        "em_analise",
+        "em_andamento",
+        "aprovado",
+        "concluido",
+        "rejeitado",
+      ],
       pergunta_tipo: [
         "nota_0_10",
         "escolha_unica",

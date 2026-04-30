@@ -6,7 +6,7 @@ import { Button } from "@/components/ui/button";
 import { ThemeToggle } from "@/components/ThemeToggle";
 import { OnboardingTour } from "@/components/OnboardingTour";
 import {
-  Building2, Home, Users, UserPlus, UserCog, FileText, LogOut, User, ShieldCheck, ClipboardList, UserCheck, Lightbulb, CalendarClock,
+  Building2, Home, Users, UserPlus, UserCog, FileText, LogOut, User, ShieldCheck, ClipboardList, UserCheck, Lightbulb, CalendarClock, Sparkles,
 } from "lucide-react";
 
 export const Route = createFileRoute("/inicio")({
@@ -26,6 +26,7 @@ const baseItems = [
   { to: "/solicitacao-movimentacao", label: "Solicitações", sub: "Movimentações", icon: FileText, tone: "from-amber-500 to-orange-500" },
   { to: "/pesquisas", label: "Pesquisas", sub: "Clima e eNPS", icon: ClipboardList, tone: "from-pink-500 to-pink-600" },
   { to: "/ideias", label: "Diretório de Ideias", sub: "Caixinha de sugestões", icon: Lightbulb, tone: "from-yellow-400 to-orange-500" },
+  { to: "/geracoes", label: "Gerações", sub: "Perfil etário da equipe", icon: Sparkles, tone: "from-fuchsia-500 to-purple-600" },
 ];
 
 function InicioPage() {
