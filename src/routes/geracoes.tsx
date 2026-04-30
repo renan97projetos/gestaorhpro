@@ -3,8 +3,11 @@ import { useEffect, useMemo, useState } from "react";
 import { RequireAuth } from "@/components/RequireAuth";
 import { AppLayout } from "@/components/AppLayout";
 import { Card } from "@/components/ui/card";
+import { Button } from "@/components/ui/button";
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } from "@/components/ui/dialog";
+import { ScrollArea } from "@/components/ui/scroll-area";
 import { PieChart, Pie, Cell, ResponsiveContainer, Tooltip, BarChart, Bar, XAxis, YAxis, CartesianGrid, Legend } from "recharts";
-import { Users, Sparkles, Briefcase, Heart, AlertCircle } from "lucide-react";
+import { Users, Sparkles, Briefcase, Heart, AlertCircle, Eye } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 
 export const Route = createFileRoute("/geracoes")({
@@ -115,15 +118,19 @@ function calcIdade(dataNasc: string): number {
   return idade;
 }
 
+type ColabMin = { id: string; matricula: string; colaborador: string; setor: string | null; cargo: string | null; data_nascimento: string | null };
+
 function GeracoesPage() {
-  const [colabs, setColabs] = useState<{ data_nascimento: string | null }[]>([]);
+  const [colabs, setColabs] = useState<ColabMin[]>([]);
   const [loading, setLoading] = useState(true);
+  const [openSemData, setOpenSemData] = useState(false);
 
   const carregar = async () => {
     const { data } = await supabase
       .from("colaboradores")
-      .select("data_nascimento")
-      .eq("status", "Ativo");
+      .select("id, matricula, colaborador, setor, cargo, data_nascimento")
+      .eq("status", "Ativo")
+      .order("colaborador");
     setColabs(data ?? []);
     setLoading(false);
   };
@@ -137,17 +144,17 @@ function GeracoesPage() {
     return () => { supabase.removeChannel(ch); };
   }, []);
 
-  const { totalAtivos, comData, semData, contagem, histograma, ordemKeys } = useMemo(() => {
+  const { totalAtivos, comData, semData, semDataLista, contagem, histograma, ordemKeys } = useMemo(() => {
     const cont: Record<GenKey, number> = { ALPHA: 0, Z: 0, M: 0, X: 0, BB: 0 };
     const histMap = new Map<number, Record<GenKey, number>>();
-    let semData = 0;
+    const semDataLista: ColabMin[] = [];
     for (const c of colabs) {
-      if (!c.data_nascimento) { semData++; continue; }
+      if (!c.data_nascimento) { semDataLista.push(c); continue; }
       const d = new Date(c.data_nascimento);
-      if (isNaN(d.getTime())) { semData++; continue; }
+      if (isNaN(d.getTime())) { semDataLista.push(c); continue; }
       const ano = d.getFullYear();
       const gen = classificar(ano);
-      if (!gen) { semData++; continue; }
+      if (!gen) { semDataLista.push(c); continue; }
       cont[gen]++;
       const idade = calcIdade(c.data_nascimento);
       if (!histMap.has(idade)) histMap.set(idade, { ALPHA: 0, Z: 0, M: 0, X: 0, BB: 0 });
@@ -157,9 +164,10 @@ function GeracoesPage() {
       .sort((a, b) => a[0] - b[0])
       .map(([idade, gens]) => ({ idade, ...gens }));
     const totalAtivos = colabs.length;
+    const semData = semDataLista.length;
     const comData = totalAtivos - semData;
     const ordemKeys: GenKey[] = (["Z", "M", "X", "ALPHA", "BB"] as GenKey[]).filter((k) => cont[k] > 0);
-    return { totalAtivos, comData, semData, contagem: cont, histograma, ordemKeys };
+    return { totalAtivos, comData, semData, semDataLista, contagem: cont, histograma, ordemKeys };
   }, [colabs]);
 
   const dadosPizza = ordemKeys.map((k) => ({
@@ -189,7 +197,7 @@ function GeracoesPage() {
         <Card className="p-4 border-amber-300 bg-amber-50 dark:bg-amber-950/20">
           <div className="flex gap-3 items-start">
             <AlertCircle className="h-5 w-5 text-amber-600 shrink-0 mt-0.5" />
-            <div className="text-sm">
+            <div className="text-sm flex-1">
               <p className="font-semibold text-amber-900 dark:text-amber-200">
                 {semData} colaborador(es) sem data de nascimento cadastrada
               </p>
@@ -197,9 +205,42 @@ function GeracoesPage() {
                 Esses colaboradores não entram no cálculo. Edite o cadastro deles e adicione a data de nascimento para incluí-los na análise.
               </p>
             </div>
+            <Button size="sm" variant="outline" onClick={() => setOpenSemData(true)} className="shrink-0">
+              <Eye className="h-4 w-4 mr-1.5" /> Ver lista
+            </Button>
           </div>
         </Card>
       )}
+
+      <Dialog open={openSemData} onOpenChange={setOpenSemData}>
+        <DialogContent className="max-w-2xl">
+          <DialogHeader>
+            <DialogTitle>Colaboradores sem data de nascimento</DialogTitle>
+            <DialogDescription>
+              {semData} colaborador(es) ativos precisam ter a data de nascimento cadastrada para entrarem na análise de gerações.
+            </DialogDescription>
+          </DialogHeader>
+          <ScrollArea className="max-h-[60vh] pr-3">
+            {semDataLista.length === 0 ? (
+              <p className="text-sm text-muted-foreground py-6 text-center">Nenhum pendente 🎉</p>
+            ) : (
+              <ul className="divide-y">
+                {semDataLista.map((c) => (
+                  <li key={c.id} className="py-2.5 flex items-center justify-between gap-3">
+                    <div className="min-w-0">
+                      <p className="font-medium text-sm truncate">{c.colaborador}</p>
+                      <p className="text-xs text-muted-foreground truncate">
+                        Mat. {c.matricula}{c.cargo ? ` • ${c.cargo}` : ""}{c.setor ? ` • ${c.setor}` : ""}
+                      </p>
+                    </div>
+                  </li>
+                ))}
+              </ul>
+            )}
+          </ScrollArea>
+        </DialogContent>
+      </Dialog>
+
 
       {comData === 0 && !loading ? (
         <Card className="p-8 text-center text-muted-foreground">
