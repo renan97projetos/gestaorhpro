@@ -700,6 +700,9 @@ function ColabDialog({
             <Field label="Admissão *">
               <Input type="date" value={form.admissao ?? ""} onChange={(e) => set("admissao", e.target.value)} />
             </Field>
+            <Field label="Data de nascimento">
+              <Input type="date" value={form.data_nascimento ?? ""} onChange={(e) => set("data_nascimento", e.target.value || null as any)} />
+            </Field>
             {isDemitido && (
               <>
                 <Field label="Data demissão">
