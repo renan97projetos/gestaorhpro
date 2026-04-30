@@ -43,6 +43,7 @@ const TRACKED_FIELDS: (keyof ColabFull)[] = [
   "matricula", "colaborador", "status", "cargo", "setor", "subsetor",
   "lideranca", "turno", "sabado_trabalho", "sabado_horario",
   "horario_almoco", "horario_cafe", "admissao", "sexo", "data_nascimento", "data_demissao", "tipo_demissao",
+  "cidade", "bairro",
 ];
 const FIELD_LABELS: Record<string, string> = {
   matricula: "Matrícula", colaborador: "Colaborador", status: "Status",
@@ -50,6 +51,7 @@ const FIELD_LABELS: Record<string, string> = {
   turno: "Turno", sabado_trabalho: "Sábado Trabalho", sabado_horario: "Sábado Horário",
   horario_almoco: "Horário Almoço", horario_cafe: "Horário Café", admissao: "Admissão",
   sexo: "Sexo", data_nascimento: "Data Nascimento", data_demissao: "Data Demissão", tipo_demissao: "Tipo Demissão",
+  cidade: "Cidade", bairro: "Bairro",
 };
 
 function CadastroPage() {
