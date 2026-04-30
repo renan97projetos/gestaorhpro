@@ -118,7 +118,7 @@ function calcIdade(dataNasc: string): number {
   return idade;
 }
 
-type ColabMin = { id: string; matricula: string; colaborador: string; setor: string | null; cargo: string | null; data_nascimento: string | null };
+type ColabMin = { id: string; matricula: string; colaborador: string; setor: string | null; cargo: string | null; data_nascimento: string | null; status?: string };
 
 function GeracoesPage() {
   const [colabs, setColabs] = useState<ColabMin[]>([]);
