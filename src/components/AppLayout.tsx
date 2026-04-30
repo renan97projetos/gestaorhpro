@@ -27,7 +27,23 @@ export function AppLayout({ children }: { children: React.ReactNode }) {
     : baseNav;
   const navigate = useNavigate();
   const location = useLocation();
+  const router = useRouter();
   const [open, setOpen] = useState(false);
+
+  // Pré-aquece em background os chunks de TODAS as rotas do menu na 1ª montagem.
+  // Assim, qualquer clique posterior é instantâneo (chunk + dados já em cache).
+  useEffect(() => {
+    const idle = (cb: () => void) =>
+      typeof (window as unknown as { requestIdleCallback?: (cb: () => void) => void }).requestIdleCallback === "function"
+        ? (window as unknown as { requestIdleCallback: (cb: () => void) => void }).requestIdleCallback(cb)
+        : setTimeout(cb, 200);
+    idle(() => {
+      nav.forEach((n) => {
+        router.preloadRoute({ to: n.to }).catch(() => {});
+      });
+    });
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   const handleLogout = async () => {
     await signOut();
