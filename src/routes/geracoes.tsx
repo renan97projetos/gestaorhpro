@@ -118,15 +118,19 @@ function calcIdade(dataNasc: string): number {
   return idade;
 }
 
+type ColabMin = { id: string; matricula: string; colaborador: string; setor: string | null; cargo: string | null; data_nascimento: string | null };
+
 function GeracoesPage() {
-  const [colabs, setColabs] = useState<{ data_nascimento: string | null }[]>([]);
+  const [colabs, setColabs] = useState<ColabMin[]>([]);
   const [loading, setLoading] = useState(true);
+  const [openSemData, setOpenSemData] = useState(false);
 
   const carregar = async () => {
     const { data } = await supabase
       .from("colaboradores")
-      .select("data_nascimento")
-      .eq("status", "Ativo");
+      .select("id, matricula, colaborador, setor, cargo, data_nascimento")
+      .eq("status", "Ativo")
+      .order("colaborador");
     setColabs(data ?? []);
     setLoading(false);
   };
@@ -140,17 +144,17 @@ function GeracoesPage() {
     return () => { supabase.removeChannel(ch); };
   }, []);
 
-  const { totalAtivos, comData, semData, contagem, histograma, ordemKeys } = useMemo(() => {
+  const { totalAtivos, comData, semData, semDataLista, contagem, histograma, ordemKeys } = useMemo(() => {
     const cont: Record<GenKey, number> = { ALPHA: 0, Z: 0, M: 0, X: 0, BB: 0 };
     const histMap = new Map<number, Record<GenKey, number>>();
-    let semData = 0;
+    const semDataLista: ColabMin[] = [];
     for (const c of colabs) {
-      if (!c.data_nascimento) { semData++; continue; }
+      if (!c.data_nascimento) { semDataLista.push(c); continue; }
       const d = new Date(c.data_nascimento);
-      if (isNaN(d.getTime())) { semData++; continue; }
+      if (isNaN(d.getTime())) { semDataLista.push(c); continue; }
       const ano = d.getFullYear();
       const gen = classificar(ano);
-      if (!gen) { semData++; continue; }
+      if (!gen) { semDataLista.push(c); continue; }
       cont[gen]++;
       const idade = calcIdade(c.data_nascimento);
       if (!histMap.has(idade)) histMap.set(idade, { ALPHA: 0, Z: 0, M: 0, X: 0, BB: 0 });
@@ -160,9 +164,10 @@ function GeracoesPage() {
       .sort((a, b) => a[0] - b[0])
       .map(([idade, gens]) => ({ idade, ...gens }));
     const totalAtivos = colabs.length;
+    const semData = semDataLista.length;
     const comData = totalAtivos - semData;
     const ordemKeys: GenKey[] = (["Z", "M", "X", "ALPHA", "BB"] as GenKey[]).filter((k) => cont[k] > 0);
-    return { totalAtivos, comData, semData, contagem: cont, histograma, ordemKeys };
+    return { totalAtivos, comData, semData, semDataLista, contagem: cont, histograma, ordemKeys };
   }, [colabs]);
 
   const dadosPizza = ordemKeys.map((k) => ({
