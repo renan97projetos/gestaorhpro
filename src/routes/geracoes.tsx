@@ -118,7 +118,7 @@ function calcIdade(dataNasc: string): number {
   return idade;
 }
 
-type ColabMin = { id: string; matricula: string; colaborador: string; setor: string | null; cargo: string | null; data_nascimento: string | null };
+type ColabMin = { id: string; matricula: string; colaborador: string; setor: string | null; cargo: string | null; data_nascimento: string | null; status?: string };
 
 function GeracoesPage() {
   const [colabs, setColabs] = useState<ColabMin[]>([]);
@@ -128,8 +128,8 @@ function GeracoesPage() {
   const carregar = async () => {
     const { data } = await supabase
       .from("colaboradores")
-      .select("id, matricula, colaborador, setor, cargo, data_nascimento")
-      .eq("status", "Ativo")
+      .select("id, matricula, colaborador, setor, cargo, data_nascimento, status")
+      .in("status", ["Ativo", "Afastado"])
       .order("colaborador");
     setColabs(data ?? []);
     setLoading(false);
@@ -188,7 +188,7 @@ function GeracoesPage() {
         <div>
           <h1 className="text-2xl md:text-3xl font-bold">Gerações na Equipe</h1>
           <p className="text-sm text-muted-foreground">
-            Análise dinâmica — {loading ? "carregando..." : `${totalAtivos} colaboradores ativos`}
+            Análise dinâmica — {loading ? "carregando..." : `${totalAtivos} colaboradores no headcount (ativos + afastados)`}
           </p>
         </div>
       </div>
