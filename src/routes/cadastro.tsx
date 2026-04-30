@@ -219,7 +219,7 @@ function CadastroPage() {
   };
 
   const exportCsv = (rows: ColabFull[], filename: string) => {
-    const cols = ["matricula", "colaborador", "sexo", "status", "cargo", "setor", "subsetor", "lideranca", "turno", "sabado_trabalho", "sabado_horario", "horario_almoco", "horario_cafe", "admissao", "data_demissao", "tipo_demissao"];
+    const cols = ["matricula", "colaborador", "sexo", "status", "cargo", "setor", "subsetor", "lideranca", "turno", "sabado_trabalho", "sabado_horario", "horario_almoco", "horario_cafe", "admissao", "data_nascimento", "data_demissao", "tipo_demissao"];
     const head = cols.join(";");
     const body = rows.map((r) => cols.map((c) => `"${(r as Record<string, unknown>)[c] ?? ""}"`).join(";")).join("\n");
     const blob = new Blob(["\uFEFF" + head + "\n" + body], { type: "text/csv;charset=utf-8;" });
