@@ -61,7 +61,9 @@ export type Database = {
       colaboradores: {
         Row: {
           admissao: string | null
+          bairro: string | null
           cargo: string | null
+          cidade: string | null
           colaborador: string
           created_at: string
           created_by: string | null
@@ -85,7 +87,9 @@ export type Database = {
         }
         Insert: {
           admissao?: string | null
+          bairro?: string | null
           cargo?: string | null
+          cidade?: string | null
           colaborador: string
           created_at?: string
           created_by?: string | null
@@ -109,7 +113,9 @@ export type Database = {
         }
         Update: {
           admissao?: string | null
+          bairro?: string | null
           cargo?: string | null
+          cidade?: string | null
           colaborador?: string
           created_at?: string
           created_by?: string | null

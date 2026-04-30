@@ -18,6 +18,8 @@ export type ColabFull = {
   data_demissao: string | null;
   tipo_demissao: string | null;
   data_nascimento: string | null;
+  cidade: string | null;
+  bairro: string | null;
 };
 
 export const MESES = ["Jan", "Fev", "Mar", "Abr", "Mai", "Jun", "Jul", "Ago", "Set", "Out", "Nov", "Dez"];
@@ -127,4 +129,86 @@ export function tempoExperiencia(admissao: string | null): { label: string; tone
   if (meses < 6) return { label: "Novo", tone: "novo" };
   if (meses < 24) return { label: "Em adaptação", tone: "novo" };
   return { label: "Experiente", tone: "experiente" };
+}
+
+/**
+ * Calcula o tempo médio de permanência (em meses) dos colaboradores.
+ * @param colabs Lista de colaboradores
+ * @param scope "ativos" considera apenas ativos+afastados (admissão até hoje);
+ *              "demitidos" considera apenas desligados (admissão até demissão);
+ *              "todos" combina ambos
+ */
+export function tempoMedioPermanencia(
+  colabs: ColabFull[],
+  scope: "ativos" | "demitidos" | "todos" = "todos"
+): { mediaMeses: number; mediaTexto: string; amostra: number } {
+  const hoje = new Date();
+  const valores: number[] = [];
+  for (const c of colabs) {
+    if (!c.admissao) continue;
+    const ini = new Date(c.admissao);
+    let fim: Date;
+    if (c.status === "Demitido") {
+      if (scope === "ativos") continue;
+      if (!c.data_demissao) continue;
+      fim = new Date(c.data_demissao);
+    } else {
+      if (scope === "demitidos") continue;
+      fim = hoje;
+    }
+    const meses =
+      (fim.getFullYear() - ini.getFullYear()) * 12 +
+      (fim.getMonth() - ini.getMonth()) -
+      (fim.getDate() < ini.getDate() ? 1 : 0);
+    if (meses >= 0) valores.push(meses);
+  }
+  const amostra = valores.length;
+  if (amostra === 0) return { mediaMeses: 0, mediaTexto: "—", amostra: 0 };
+  const media = valores.reduce((a, b) => a + b, 0) / amostra;
+  const anos = Math.floor(media / 12);
+  const restoMeses = Math.round(media % 12);
+  let texto = "";
+  if (anos > 0) texto += `${anos} ${anos === 1 ? "ano" : "anos"}`;
+  if (restoMeses > 0) texto += `${anos > 0 ? " e " : ""}${restoMeses} ${restoMeses === 1 ? "mês" : "meses"}`;
+  if (!texto) texto = "menos de 1 mês";
+  return { mediaMeses: Math.round(media * 10) / 10, mediaTexto: texto, amostra };
+}
+
+/**
+ * Turnover agrupado por uma chave (setor ou liderança/gestor) no ano informado.
+ * Considera o headcount médio do grupo (início + fim do ano) / 2.
+ */
+export function turnoverPorAgrupamento(
+  colabs: ColabFull[],
+  ano: number,
+  key: "setor" | "lideranca"
+): { name: string; admissoes: number; demissoes: number; headcount: number; taxa: number }[] {
+  const inicioAno = new Date(ano, 0, 1);
+  const fimAno = new Date(ano, 11, 31);
+  const grupos = new Map<string, ColabFull[]>();
+  for (const c of colabs) {
+    const k = (c[key] as string) || "—";
+    if (!grupos.has(k)) grupos.set(k, []);
+    grupos.get(k)!.push(c);
+  }
+  const result: { name: string; admissoes: number; demissoes: number; headcount: number; taxa: number }[] = [];
+  for (const [name, arr] of grupos) {
+    const admissoes = arr.filter((c) => c.admissao && new Date(c.admissao).getFullYear() === ano).length;
+    const demissoes = arr.filter((c) => c.data_demissao && new Date(c.data_demissao).getFullYear() === ano).length;
+    const ativosFim = arr.filter((c) => {
+      if (!c.admissao || new Date(c.admissao) > fimAno) return false;
+      if (c.data_demissao && new Date(c.data_demissao) <= fimAno) return false;
+      return true;
+    }).length;
+    const ativosInicio = arr.filter((c) => {
+      if (!c.admissao || new Date(c.admissao) >= inicioAno) return false;
+      if (c.data_demissao && new Date(c.data_demissao) < inicioAno) return false;
+      return true;
+    }).length;
+    const headcount = (ativosInicio + ativosFim) / 2;
+    const taxa = headcount > 0 ? Math.round((demissoes / headcount) * 1000) / 10 : 0;
+    if (admissoes === 0 && demissoes === 0 && headcount === 0) continue;
+    result.push({ name, admissoes, demissoes, headcount: Math.round(headcount * 10) / 10, taxa });
+  }
+  return result.sort((a, b) => b.taxa - a.taxa || b.demissoes - a.demissoes);
 }

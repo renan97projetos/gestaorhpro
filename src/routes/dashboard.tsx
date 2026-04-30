@@ -9,13 +9,14 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } f
 import { ScrollArea } from "@/components/ui/scroll-area";
 import {
   Users, UserCheck, UserX, TrendingUp, UserPlus, Briefcase, Clock,
-  Building2, Network, ChevronRight, BarChart3, CalendarDays,
+  Building2, Network, ChevronRight, BarChart3, CalendarDays, MapPin, Hourglass,
 } from "lucide-react";
 import {
   ResponsiveContainer, BarChart, Bar, XAxis, YAxis, Tooltip, CartesianGrid,
 } from "recharts";
 import {
   ColabFull, aggregate, contratacoesPorMes, turnoverDoAno, anosDisponiveis,
+  tempoMedioPermanencia, turnoverPorAgrupamento,
 } from "@/lib/dashboard-helpers";
 
 export const Route = createFileRoute("/dashboard")({
@@ -90,6 +91,27 @@ function Dashboard() {
   const byCargo = useMemo(() => aggregate(ativosArr, "cargo"), [ativosArr]);
   const byLideranca = useMemo(() => aggregate(ativosArr, "lideranca"), [ativosArr]);
   const byHorarioAlmoco = useMemo(() => aggregate(ativosArr, "horario_almoco"), [ativosArr]);
+
+  // Tempo médio de permanência
+  const permAtivos = useMemo(() => tempoMedioPermanencia(data, "ativos"), [data]);
+  const permDemitidos = useMemo(() => tempoMedioPermanencia(data, "demitidos"), [data]);
+  const permGeral = useMemo(() => tempoMedioPermanencia(data, "todos"), [data]);
+
+  // Turnover por setor / liderança
+  const [turnoverGroup, setTurnoverGroup] = useState<"setor" | "lideranca">("setor");
+  const turnoverPorGrupo = useMemo(
+    () => turnoverPorAgrupamento(data, anoTurnover, turnoverGroup),
+    [data, anoTurnover, turnoverGroup],
+  );
+
+  // Geolocalização (cidade / bairro) — apenas ativos+afastados
+  const byCidade = useMemo(() => aggregate(ativosArr, "cidade" as keyof ColabFull), [ativosArr]);
+  const byBairro = useMemo(() => aggregate(ativosArr, "bairro" as keyof ColabFull), [ativosArr]);
+  const semLocalizacao = useMemo(
+    () => ativosArr.filter((c) => !c.cidade || !c.bairro).length,
+    [ativosArr],
+  );
+  const comLocalizacao = ativosArr.length - semLocalizacao;
 
   const turnoverColor =
     turnover.taxa <= 5 ? "text-success" : turnover.taxa <= 15 ? "text-warning" : "text-destructive";
@@ -238,6 +260,160 @@ function Dashboard() {
           <span className="flex items-center gap-1"><span className="h-2 w-2 rounded-full bg-warning" /> 5-15%: Aceitável</span>
           <span className="flex items-center gap-1"><span className="h-2 w-2 rounded-full bg-destructive" /> Acima de 15%: Atenção</span>
         </div>
+      </Card>
+
+      {/* Tempo médio de permanência */}
+      <Card className="p-5">
+        <div className="flex items-center gap-2 mb-1">
+          <Hourglass className="h-5 w-5 text-primary" />
+          <h3 className="font-semibold text-lg">Tempo Médio de Permanência</h3>
+        </div>
+        <p className="text-sm text-muted-foreground mb-4">
+          Quanto tempo, em média, os colaboradores permanecem na empresa
+        </p>
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+          <div className="rounded-xl border-2 border-primary/30 bg-primary/5 p-5 text-center">
+            <p className="text-3xl font-bold text-primary">{permGeral.mediaTexto}</p>
+            <p className="font-semibold mt-1">Média Geral</p>
+            <p className="text-xs text-muted-foreground">{permGeral.amostra} colaboradores · {permGeral.mediaMeses} meses</p>
+          </div>
+          <div className="rounded-xl border-2 border-success/30 bg-success/5 p-5 text-center">
+            <p className="text-3xl font-bold text-success">{permAtivos.mediaTexto}</p>
+            <p className="font-semibold mt-1">Ativos / Afastados</p>
+            <p className="text-xs text-muted-foreground">{permAtivos.amostra} colaboradores</p>
+          </div>
+          <div className="rounded-xl border-2 border-destructive/30 bg-destructive/5 p-5 text-center">
+            <p className="text-3xl font-bold text-destructive">{permDemitidos.mediaTexto}</p>
+            <p className="font-semibold mt-1">Desligados</p>
+            <p className="text-xs text-muted-foreground">{permDemitidos.amostra} colaboradores</p>
+          </div>
+        </div>
+      </Card>
+
+      {/* Turnover por Gestor / Setor */}
+      <Card className="p-5">
+        <div className="flex items-center gap-2 mb-1">
+          <BarChart3 className="h-5 w-5 text-primary" />
+          <h3 className="font-semibold text-lg">Turnover por {turnoverGroup === "setor" ? "Setor" : "Gestor"}</h3>
+        </div>
+        <p className="text-sm text-muted-foreground mb-4">
+          Rotatividade detalhada por área ou liderança em {anoTurnover}
+        </p>
+        <div className="flex flex-wrap items-center gap-2 mb-4">
+          <Select value={turnoverGroup} onValueChange={(v) => setTurnoverGroup(v as "setor" | "lideranca")}>
+            <SelectTrigger className="w-40"><SelectValue /></SelectTrigger>
+            <SelectContent>
+              <SelectItem value="setor">Por Setor</SelectItem>
+              <SelectItem value="lideranca">Por Gestor</SelectItem>
+            </SelectContent>
+          </Select>
+          <Select value={String(anoTurnover)} onValueChange={(v) => setAnoTurnover(Number(v))}>
+            <SelectTrigger className="w-32"><SelectValue /></SelectTrigger>
+            <SelectContent>
+              {anos.map((a) => <SelectItem key={a} value={String(a)}>{a}</SelectItem>)}
+            </SelectContent>
+          </Select>
+        </div>
+        <div className="space-y-2">
+          {turnoverPorGrupo.length === 0 && (
+            <p className="text-sm text-muted-foreground p-3">Sem dados para o ano selecionado.</p>
+          )}
+          {turnoverPorGrupo.map((g) => {
+            const barClass =
+              g.taxa <= 5 ? "bg-success" : g.taxa <= 15 ? "bg-warning" : "bg-destructive";
+            const textClass =
+              g.taxa <= 5 ? "text-success" : g.taxa <= 15 ? "text-warning" : "text-destructive";
+            return (
+              <div key={g.name} className="flex flex-col sm:flex-row sm:items-center gap-2 p-3 rounded-lg border bg-card">
+                <div className="flex-1 min-w-0">
+                  <p className="font-medium truncate">{g.name}</p>
+                  <p className="text-xs text-muted-foreground">
+                    Headcount médio: {g.headcount} · {g.admissoes} admissões · {g.demissoes} demissões
+                  </p>
+                </div>
+                <div className="flex items-center gap-3 sm:w-1/2">
+                  <div className="flex-1 h-2 bg-muted rounded-full overflow-hidden">
+                    <div
+                      className={`h-full ${barClass}`}
+                      style={{ width: `${Math.min(g.taxa, 100)}%` }}
+                    />
+                  </div>
+                  <span className={`text-sm font-semibold w-16 text-right ${textClass}`}>
+                    {g.taxa}%
+                  </span>
+                </div>
+              </div>
+            );
+          })}
+        </div>
+      </Card>
+
+      {/* Geolocalização */}
+      <Card className="p-5">
+        <div className="flex items-center gap-2 mb-1">
+          <MapPin className="h-5 w-5 text-primary" />
+          <h3 className="font-semibold text-lg">Geolocalização dos Colaboradores</h3>
+        </div>
+        <p className="text-sm text-muted-foreground mb-4">
+          Distribuição por cidade e bairro (ativos + afastados). Preencha cidade/bairro no cadastro do colaborador.
+        </p>
+        <div className="grid grid-cols-2 md:grid-cols-4 gap-3 mb-4">
+          <div className="rounded-lg border p-3 text-center">
+            <p className="text-2xl font-bold text-primary">{comLocalizacao}</p>
+            <p className="text-xs text-muted-foreground">Com localização</p>
+          </div>
+          <div className="rounded-lg border p-3 text-center">
+            <p className="text-2xl font-bold text-warning">{semLocalizacao}</p>
+            <p className="text-xs text-muted-foreground">Sem localização</p>
+          </div>
+          <div className="rounded-lg border p-3 text-center">
+            <p className="text-2xl font-bold">{byCidade.filter((c) => c.name !== "—").length}</p>
+            <p className="text-xs text-muted-foreground">Cidades distintas</p>
+          </div>
+          <div className="rounded-lg border p-3 text-center">
+            <p className="text-2xl font-bold">{byBairro.filter((b) => b.name !== "—").length}</p>
+            <p className="text-xs text-muted-foreground">Bairros distintos</p>
+          </div>
+        </div>
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+          <div>
+            <p className="font-semibold text-sm mb-2 flex items-center gap-1.5">
+              <MapPin className="h-4 w-4 text-primary" /> Top Cidades
+            </p>
+            <div className="space-y-1">
+              {byCidade.filter((c) => c.name !== "—").slice(0, 8).map((c) => (
+                <div key={c.name} className="flex items-center justify-between p-2 rounded border bg-card">
+                  <span className="text-sm truncate pr-2">{c.name}</span>
+                  <span className="text-sm font-semibold px-2 py-0.5 rounded-full bg-muted">{c.value}</span>
+                </div>
+              ))}
+              {byCidade.filter((c) => c.name !== "—").length === 0 && (
+                <p className="text-xs text-muted-foreground p-2">Nenhuma cidade cadastrada ainda.</p>
+              )}
+            </div>
+          </div>
+          <div>
+            <p className="font-semibold text-sm mb-2 flex items-center gap-1.5">
+              <MapPin className="h-4 w-4 text-primary" /> Top Bairros
+            </p>
+            <div className="space-y-1">
+              {byBairro.filter((b) => b.name !== "—").slice(0, 8).map((b) => (
+                <div key={b.name} className="flex items-center justify-between p-2 rounded border bg-card">
+                  <span className="text-sm truncate pr-2">{b.name}</span>
+                  <span className="text-sm font-semibold px-2 py-0.5 rounded-full bg-muted">{b.value}</span>
+                </div>
+              ))}
+              {byBairro.filter((b) => b.name !== "—").length === 0 && (
+                <p className="text-xs text-muted-foreground p-2">Nenhum bairro cadastrado ainda.</p>
+              )}
+            </div>
+          </div>
+        </div>
+        {semLocalizacao > 0 && (
+          <p className="text-xs text-muted-foreground mt-3 p-2 bg-warning/10 rounded">
+            💡 {semLocalizacao} colaborador{semLocalizacao === 1 ? "" : "es"} ainda sem cidade/bairro. Edite no cadastro para aparecer no mapa.
+          </p>
+        )}
       </Card>
 
       {/* Indicadores Detalhados */}
