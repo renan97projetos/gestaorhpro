@@ -1,8 +1,8 @@
-import { Link, useLocation, useNavigate } from "@tanstack/react-router";
+import { Link, useLocation, useNavigate, useRouter } from "@tanstack/react-router";
 import { useAuth } from "@/lib/auth-context";
 import { Button } from "@/components/ui/button";
 import { LayoutDashboard, Users, History, LogOut, Menu, X, LayoutGrid, UserCog, ClipboardList, UserCheck, Lightbulb, CalendarClock, Sparkles, AlertTriangle } from "lucide-react";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { cn } from "@/lib/utils";
 import { ThemeToggle } from "@/components/ThemeToggle";
 import { OnboardingTour } from "@/components/OnboardingTour";
@@ -27,7 +27,23 @@ export function AppLayout({ children }: { children: React.ReactNode }) {
     : baseNav;
   const navigate = useNavigate();
   const location = useLocation();
+  const router = useRouter();
   const [open, setOpen] = useState(false);
+
+  // Pré-aquece em background os chunks de TODAS as rotas do menu na 1ª montagem.
+  // Assim, qualquer clique posterior é instantâneo (chunk + dados já em cache).
+  useEffect(() => {
+    const idle = (cb: () => void) =>
+      typeof (window as unknown as { requestIdleCallback?: (cb: () => void) => void }).requestIdleCallback === "function"
+        ? (window as unknown as { requestIdleCallback: (cb: () => void) => void }).requestIdleCallback(cb)
+        : setTimeout(cb, 200);
+    idle(() => {
+      nav.forEach((n) => {
+        router.preloadRoute({ to: n.to }).catch(() => {});
+      });
+    });
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   const handleLogout = async () => {
     await signOut();
@@ -56,6 +72,7 @@ export function AppLayout({ children }: { children: React.ReactNode }) {
               <Link
                 key={n.to}
                 to={n.to}
+                preload="intent"
                 className={cn(
                   "flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium transition-colors",
                   active
@@ -114,6 +131,7 @@ export function AppLayout({ children }: { children: React.ReactNode }) {
               <Link
                 key={n.to}
                 to={n.to}
+                preload="intent"
                 onClick={() => setOpen(false)}
                 className={cn(
                   "flex items-center gap-3 px-3 py-2 rounded-lg text-sm font-medium",
