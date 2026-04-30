@@ -197,7 +197,7 @@ function GeracoesPage() {
         <Card className="p-4 border-amber-300 bg-amber-50 dark:bg-amber-950/20">
           <div className="flex gap-3 items-start">
             <AlertCircle className="h-5 w-5 text-amber-600 shrink-0 mt-0.5" />
-            <div className="text-sm">
+            <div className="text-sm flex-1">
               <p className="font-semibold text-amber-900 dark:text-amber-200">
                 {semData} colaborador(es) sem data de nascimento cadastrada
               </p>
@@ -205,9 +205,42 @@ function GeracoesPage() {
                 Esses colaboradores não entram no cálculo. Edite o cadastro deles e adicione a data de nascimento para incluí-los na análise.
               </p>
             </div>
+            <Button size="sm" variant="outline" onClick={() => setOpenSemData(true)} className="shrink-0">
+              <Eye className="h-4 w-4 mr-1.5" /> Ver lista
+            </Button>
           </div>
         </Card>
       )}
+
+      <Dialog open={openSemData} onOpenChange={setOpenSemData}>
+        <DialogContent className="max-w-2xl">
+          <DialogHeader>
+            <DialogTitle>Colaboradores sem data de nascimento</DialogTitle>
+            <DialogDescription>
+              {semData} colaborador(es) ativos precisam ter a data de nascimento cadastrada para entrarem na análise de gerações.
+            </DialogDescription>
+          </DialogHeader>
+          <ScrollArea className="max-h-[60vh] pr-3">
+            {semDataLista.length === 0 ? (
+              <p className="text-sm text-muted-foreground py-6 text-center">Nenhum pendente 🎉</p>
+            ) : (
+              <ul className="divide-y">
+                {semDataLista.map((c) => (
+                  <li key={c.id} className="py-2.5 flex items-center justify-between gap-3">
+                    <div className="min-w-0">
+                      <p className="font-medium text-sm truncate">{c.colaborador}</p>
+                      <p className="text-xs text-muted-foreground truncate">
+                        Mat. {c.matricula}{c.cargo ? ` • ${c.cargo}` : ""}{c.setor ? ` • ${c.setor}` : ""}
+                      </p>
+                    </div>
+                  </li>
+                ))}
+              </ul>
+            )}
+          </ScrollArea>
+        </DialogContent>
+      </Dialog>
+
 
       {comData === 0 && !loading ? (
         <Card className="p-8 text-center text-muted-foreground">
