@@ -1,7 +1,7 @@
 import { Link, useLocation, useNavigate } from "@tanstack/react-router";
 import { useAuth } from "@/lib/auth-context";
 import { Button } from "@/components/ui/button";
-import { LayoutDashboard, Users, History, LogOut, Menu, X, LayoutGrid, UserCog, ClipboardList, UserCheck, Lightbulb, CalendarClock, Sparkles } from "lucide-react";
+import { LayoutDashboard, Users, History, LogOut, Menu, X, LayoutGrid, UserCog, ClipboardList, UserCheck, Lightbulb, CalendarClock, Sparkles, AlertTriangle } from "lucide-react";
 import { useState } from "react";
 import { cn } from "@/lib/utils";
 import { ThemeToggle } from "@/components/ThemeToggle";
@@ -12,6 +12,7 @@ const baseNav = [
   { to: "/dashboard", label: "Dashboard", icon: LayoutDashboard },
   { to: "/cadastro", label: "Colaboradores", icon: Users },
   { to: "/chamada", label: "Chamada", icon: UserCheck },
+  { to: "/analise-faltas", label: "Análise de Faltas", icon: AlertTriangle },
   { to: "/experiencia", label: "Experiência (90 dias)", icon: CalendarClock },
   { to: "/solicitacao-movimentacao", label: "Movimentações", icon: History },
   { to: "/pesquisas", label: "Pesquisas", icon: ClipboardList },
