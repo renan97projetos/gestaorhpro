@@ -128,8 +128,8 @@ function GeracoesPage() {
   const carregar = async () => {
     const { data } = await supabase
       .from("colaboradores")
-      .select("id, matricula, colaborador, setor, cargo, data_nascimento")
-      .eq("status", "Ativo")
+      .select("id, matricula, colaborador, setor, cargo, data_nascimento, status")
+      .in("status", ["Ativo", "Afastado"])
       .order("colaborador");
     setColabs(data ?? []);
     setLoading(false);
