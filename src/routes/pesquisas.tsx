@@ -388,6 +388,9 @@ function PesquisaDetail({
           </Card>
         </TabsContent>
 
+        <TabsContent value="indicadores">
+          <PesquisaIndicadores pesquisaId={pesquisa.id} />
+        </TabsContent>
 
         <TabsContent value="distribuicao">
           <Card className="p-4">
