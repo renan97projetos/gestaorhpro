@@ -9,13 +9,14 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } f
 import { ScrollArea } from "@/components/ui/scroll-area";
 import {
   Users, UserCheck, UserX, TrendingUp, UserPlus, Briefcase, Clock,
-  Building2, Network, ChevronRight, BarChart3, CalendarDays,
+  Building2, Network, ChevronRight, BarChart3, CalendarDays, MapPin, Hourglass,
 } from "lucide-react";
 import {
   ResponsiveContainer, BarChart, Bar, XAxis, YAxis, Tooltip, CartesianGrid,
 } from "recharts";
 import {
   ColabFull, aggregate, contratacoesPorMes, turnoverDoAno, anosDisponiveis,
+  tempoMedioPermanencia, turnoverPorAgrupamento,
 } from "@/lib/dashboard-helpers";
 
 export const Route = createFileRoute("/dashboard")({
