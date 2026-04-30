@@ -703,6 +703,12 @@ function ColabDialog({
             <Field label="Data de nascimento">
               <Input type="date" value={form.data_nascimento ?? ""} onChange={(e) => set("data_nascimento", e.target.value || null as any)} />
             </Field>
+            <Field label="Cidade (geolocalização)">
+              <Input value={form.cidade ?? ""} onChange={(e) => set("cidade", e.target.value || null as any)} placeholder="Ex: Cariacica" />
+            </Field>
+            <Field label="Bairro (geolocalização)">
+              <Input value={form.bairro ?? ""} onChange={(e) => set("bairro", e.target.value || null as any)} placeholder="Ex: Campo Grande" />
+            </Field>
             {isDemitido && (
               <>
                 <Field label="Data demissão">
