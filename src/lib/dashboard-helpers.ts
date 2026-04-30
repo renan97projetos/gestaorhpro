@@ -18,6 +18,8 @@ export type ColabFull = {
   data_demissao: string | null;
   tipo_demissao: string | null;
   data_nascimento: string | null;
+  cidade: string | null;
+  bairro: string | null;
 };
 
 export const MESES = ["Jan", "Fev", "Mar", "Abr", "Mai", "Jun", "Jul", "Ago", "Set", "Out", "Nov", "Dez"];
