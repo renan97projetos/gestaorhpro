@@ -14,6 +14,60 @@ export type Database = {
   }
   public: {
     Tables: {
+      admissoes_movimentacao: {
+        Row: {
+          cargo: string | null
+          colaborador_id: string
+          colaborador_nome: string
+          created_at: string
+          created_by: string | null
+          created_by_nome: string | null
+          data_admissao: string
+          id: string
+          observacao: string | null
+          setor: string | null
+          substituido_id: string | null
+          substituido_nome: string | null
+          tipo: string
+          updated_at: string
+          vaga_id: string | null
+        }
+        Insert: {
+          cargo?: string | null
+          colaborador_id: string
+          colaborador_nome: string
+          created_at?: string
+          created_by?: string | null
+          created_by_nome?: string | null
+          data_admissao?: string
+          id?: string
+          observacao?: string | null
+          setor?: string | null
+          substituido_id?: string | null
+          substituido_nome?: string | null
+          tipo?: string
+          updated_at?: string
+          vaga_id?: string | null
+        }
+        Update: {
+          cargo?: string | null
+          colaborador_id?: string
+          colaborador_nome?: string
+          created_at?: string
+          created_by?: string | null
+          created_by_nome?: string | null
+          data_admissao?: string
+          id?: string
+          observacao?: string | null
+          setor?: string | null
+          substituido_id?: string | null
+          substituido_nome?: string | null
+          tipo?: string
+          updated_at?: string
+          vaga_id?: string | null
+        }
+        Relationships: []
+      }
       chamadas: {
         Row: {
           colaborador_id: string
