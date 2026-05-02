@@ -1,7 +1,7 @@
 import { Link, useLocation, useNavigate, useRouter } from "@tanstack/react-router";
 import { useAuth } from "@/lib/auth-context";
 import { Button } from "@/components/ui/button";
-import { LayoutDashboard, Users, History, LogOut, Menu, X, LayoutGrid, UserCog, ClipboardList, UserCheck, Lightbulb, CalendarClock, Sparkles, AlertTriangle, Cake } from "lucide-react";
+import { LayoutDashboard, Users, History, LogOut, Menu, X, LayoutGrid, UserCog, ClipboardList, UserCheck, Lightbulb, CalendarClock, Sparkles, AlertTriangle, Cake, ArrowRightLeft } from "lucide-react";
 import { useEffect, useState } from "react";
 import { cn } from "@/lib/utils";
 import { ThemeToggle } from "@/components/ThemeToggle";
@@ -16,6 +16,7 @@ const baseNav = [
   { to: "/analise-faltas", label: "Análise de Faltas", icon: AlertTriangle },
   { to: "/experiencia", label: "Experiência (90 dias)", icon: CalendarClock },
   { to: "/solicitacao-movimentacao", label: "Movimentações", icon: History },
+  { to: "/movimentacoes-admissoes", label: "Mov. Admissões", icon: ArrowRightLeft },
   { to: "/pesquisas", label: "Pesquisas", icon: ClipboardList },
   { to: "/ideias", label: "Ideias", icon: Lightbulb },
   { to: "/geracoes", label: "Gerações", icon: Sparkles },

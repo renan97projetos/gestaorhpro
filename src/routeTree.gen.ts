@@ -13,6 +13,7 @@ import { Route as UsuariosRouteImport } from './routes/usuarios'
 import { Route as SolicitacaoMovimentacaoRouteImport } from './routes/solicitacao-movimentacao'
 import { Route as ResetPasswordRouteImport } from './routes/reset-password'
 import { Route as PesquisasRouteImport } from './routes/pesquisas'
+import { Route as MovimentacoesAdmissoesRouteImport } from './routes/movimentacoes-admissoes'
 import { Route as InicioRouteImport } from './routes/inicio'
 import { Route as IdeiasRouteImport } from './routes/ideias'
 import { Route as GeracoesRouteImport } from './routes/geracoes'
@@ -43,6 +44,11 @@ const ResetPasswordRoute = ResetPasswordRouteImport.update({
 const PesquisasRoute = PesquisasRouteImport.update({
   id: '/pesquisas',
   path: '/pesquisas',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const MovimentacoesAdmissoesRoute = MovimentacoesAdmissoesRouteImport.update({
+  id: '/movimentacoes-admissoes',
+  path: '/movimentacoes-admissoes',
   getParentRoute: () => rootRouteImport,
 } as any)
 const InicioRoute = InicioRouteImport.update({
@@ -112,6 +118,7 @@ export interface FileRoutesByFullPath {
   '/geracoes': typeof GeracoesRoute
   '/ideias': typeof IdeiasRoute
   '/inicio': typeof InicioRoute
+  '/movimentacoes-admissoes': typeof MovimentacoesAdmissoesRoute
   '/pesquisas': typeof PesquisasRoute
   '/reset-password': typeof ResetPasswordRoute
   '/solicitacao-movimentacao': typeof SolicitacaoMovimentacaoRoute
@@ -129,6 +136,7 @@ export interface FileRoutesByTo {
   '/geracoes': typeof GeracoesRoute
   '/ideias': typeof IdeiasRoute
   '/inicio': typeof InicioRoute
+  '/movimentacoes-admissoes': typeof MovimentacoesAdmissoesRoute
   '/pesquisas': typeof PesquisasRoute
   '/reset-password': typeof ResetPasswordRoute
   '/solicitacao-movimentacao': typeof SolicitacaoMovimentacaoRoute
@@ -147,6 +155,7 @@ export interface FileRoutesById {
   '/geracoes': typeof GeracoesRoute
   '/ideias': typeof IdeiasRoute
   '/inicio': typeof InicioRoute
+  '/movimentacoes-admissoes': typeof MovimentacoesAdmissoesRoute
   '/pesquisas': typeof PesquisasRoute
   '/reset-password': typeof ResetPasswordRoute
   '/solicitacao-movimentacao': typeof SolicitacaoMovimentacaoRoute
@@ -166,6 +175,7 @@ export interface FileRouteTypes {
     | '/geracoes'
     | '/ideias'
     | '/inicio'
+    | '/movimentacoes-admissoes'
     | '/pesquisas'
     | '/reset-password'
     | '/solicitacao-movimentacao'
@@ -183,6 +193,7 @@ export interface FileRouteTypes {
     | '/geracoes'
     | '/ideias'
     | '/inicio'
+    | '/movimentacoes-admissoes'
     | '/pesquisas'
     | '/reset-password'
     | '/solicitacao-movimentacao'
@@ -200,6 +211,7 @@ export interface FileRouteTypes {
     | '/geracoes'
     | '/ideias'
     | '/inicio'
+    | '/movimentacoes-admissoes'
     | '/pesquisas'
     | '/reset-password'
     | '/solicitacao-movimentacao'
@@ -218,6 +230,7 @@ export interface RootRouteChildren {
   GeracoesRoute: typeof GeracoesRoute
   IdeiasRoute: typeof IdeiasRoute
   InicioRoute: typeof InicioRoute
+  MovimentacoesAdmissoesRoute: typeof MovimentacoesAdmissoesRoute
   PesquisasRoute: typeof PesquisasRoute
   ResetPasswordRoute: typeof ResetPasswordRoute
   SolicitacaoMovimentacaoRoute: typeof SolicitacaoMovimentacaoRoute
@@ -253,6 +266,13 @@ declare module '@tanstack/react-router' {
       path: '/pesquisas'
       fullPath: '/pesquisas'
       preLoaderRoute: typeof PesquisasRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/movimentacoes-admissoes': {
+      id: '/movimentacoes-admissoes'
+      path: '/movimentacoes-admissoes'
+      fullPath: '/movimentacoes-admissoes'
+      preLoaderRoute: typeof MovimentacoesAdmissoesRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/inicio': {
@@ -346,6 +366,7 @@ const rootRouteChildren: RootRouteChildren = {
   GeracoesRoute: GeracoesRoute,
   IdeiasRoute: IdeiasRoute,
   InicioRoute: InicioRoute,
+  MovimentacoesAdmissoesRoute: MovimentacoesAdmissoesRoute,
   PesquisasRoute: PesquisasRoute,
   ResetPasswordRoute: ResetPasswordRoute,
   SolicitacaoMovimentacaoRoute: SolicitacaoMovimentacaoRoute,
