@@ -19,6 +19,7 @@ const baseNav = [
   { to: "/pesquisas", label: "Pesquisas", icon: ClipboardList },
   { to: "/ideias", label: "Ideias", icon: Lightbulb },
   { to: "/geracoes", label: "Gerações", icon: Sparkles },
+  { to: "/aniversariantes", label: "Aniversariantes", icon: Cake },
 ];
 
 export function AppLayout({ children }: { children: React.ReactNode }) {
