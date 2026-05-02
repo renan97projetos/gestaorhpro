@@ -26,6 +26,7 @@ const baseItems = [
   { to: "/aniversariantes", label: "Aniversariantes", sub: "Aniversários do mês", icon: Cake, tone: "from-pink-400 to-rose-500" },
   { to: "/experiencia", label: "Experiência 90 dias", sub: "Avaliação dos novos", icon: CalendarClock, tone: "from-teal-500 to-teal-600" },
   { to: "/solicitacao-movimentacao", label: "Solicitações", sub: "Movimentações", icon: FileText, tone: "from-amber-500 to-orange-500" },
+  { to: "/movimentacoes-admissoes", label: "Mov. Admissões", sub: "Quem entrou no lugar de quem", icon: ArrowRightLeft, tone: "from-indigo-500 to-indigo-600" },
   { to: "/pesquisas", label: "Pesquisas", sub: "Clima e eNPS", icon: ClipboardList, tone: "from-pink-500 to-pink-600" },
   { to: "/ideias", label: "Diretório de Ideias", sub: "Caixinha de sugestões", icon: Lightbulb, tone: "from-yellow-400 to-orange-500" },
   { to: "/geracoes", label: "Gerações", sub: "Perfil etário da equipe", icon: Sparkles, tone: "from-fuchsia-500 to-purple-600" },
