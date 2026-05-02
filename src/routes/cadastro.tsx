@@ -631,6 +631,14 @@ function ColabDialog({
     if (!form.matricula || !form.colaborador) return toast.error("Matrícula e nome são obrigatórios");
     if (!form.sexo) return toast.error("Selecione o sexo");
     if (!form.status) return toast.error("Selecione o status");
+    // Campos obrigatórios apenas no cadastro de NOVO colaborador
+    if (!initial) {
+      if (!form.data_nascimento) return toast.error("Informe a data de nascimento");
+      if (!form.cidade?.trim()) return toast.error("Informe a cidade");
+      if (!form.bairro?.trim()) return toast.error("Informe o bairro");
+      if (!form.lideranca?.trim()) return toast.error("Informe o gestor (liderança)");
+      if (!form.turno?.trim()) return toast.error("Informe o horário (turno)");
+    }
     setSaving(true);
     await onSave(form);
     setSaving(false);
