@@ -1,11 +1,12 @@
 import { Link, useLocation, useNavigate, useRouter } from "@tanstack/react-router";
 import { useAuth } from "@/lib/auth-context";
 import { Button } from "@/components/ui/button";
-import { LayoutDashboard, Users, History, LogOut, Menu, X, LayoutGrid, UserCog, ClipboardList, UserCheck, Lightbulb, CalendarClock, Sparkles, AlertTriangle } from "lucide-react";
+import { LayoutDashboard, Users, History, LogOut, Menu, X, LayoutGrid, UserCog, ClipboardList, UserCheck, Lightbulb, CalendarClock, Sparkles, AlertTriangle, Cake } from "lucide-react";
 import { useEffect, useState } from "react";
 import { cn } from "@/lib/utils";
 import { ThemeToggle } from "@/components/ThemeToggle";
 import { OnboardingTour } from "@/components/OnboardingTour";
+import { AniversarioPopup } from "@/components/AniversarioPopup";
 
 const baseNav = [
   { to: "/inicio", label: "Menu", icon: LayoutGrid },
