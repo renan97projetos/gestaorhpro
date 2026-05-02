@@ -20,6 +20,7 @@ import { Route as ExperienciaRouteImport } from './routes/experiencia'
 import { Route as DashboardRouteImport } from './routes/dashboard'
 import { Route as ChamadaRouteImport } from './routes/chamada'
 import { Route as CadastroRouteImport } from './routes/cadastro'
+import { Route as AniversariantesRouteImport } from './routes/aniversariantes'
 import { Route as AnaliseFaltasRouteImport } from './routes/analise-faltas'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as PTokenRouteImport } from './routes/p.$token'
@@ -79,6 +80,11 @@ const CadastroRoute = CadastroRouteImport.update({
   path: '/cadastro',
   getParentRoute: () => rootRouteImport,
 } as any)
+const AniversariantesRoute = AniversariantesRouteImport.update({
+  id: '/aniversariantes',
+  path: '/aniversariantes',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const AnaliseFaltasRoute = AnaliseFaltasRouteImport.update({
   id: '/analise-faltas',
   path: '/analise-faltas',
@@ -98,6 +104,7 @@ const PTokenRoute = PTokenRouteImport.update({
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/analise-faltas': typeof AnaliseFaltasRoute
+  '/aniversariantes': typeof AniversariantesRoute
   '/cadastro': typeof CadastroRoute
   '/chamada': typeof ChamadaRoute
   '/dashboard': typeof DashboardRoute
@@ -114,6 +121,7 @@ export interface FileRoutesByFullPath {
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/analise-faltas': typeof AnaliseFaltasRoute
+  '/aniversariantes': typeof AniversariantesRoute
   '/cadastro': typeof CadastroRoute
   '/chamada': typeof ChamadaRoute
   '/dashboard': typeof DashboardRoute
@@ -131,6 +139,7 @@ export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
   '/analise-faltas': typeof AnaliseFaltasRoute
+  '/aniversariantes': typeof AniversariantesRoute
   '/cadastro': typeof CadastroRoute
   '/chamada': typeof ChamadaRoute
   '/dashboard': typeof DashboardRoute
@@ -149,6 +158,7 @@ export interface FileRouteTypes {
   fullPaths:
     | '/'
     | '/analise-faltas'
+    | '/aniversariantes'
     | '/cadastro'
     | '/chamada'
     | '/dashboard'
@@ -165,6 +175,7 @@ export interface FileRouteTypes {
   to:
     | '/'
     | '/analise-faltas'
+    | '/aniversariantes'
     | '/cadastro'
     | '/chamada'
     | '/dashboard'
@@ -181,6 +192,7 @@ export interface FileRouteTypes {
     | '__root__'
     | '/'
     | '/analise-faltas'
+    | '/aniversariantes'
     | '/cadastro'
     | '/chamada'
     | '/dashboard'
@@ -198,6 +210,7 @@ export interface FileRouteTypes {
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
   AnaliseFaltasRoute: typeof AnaliseFaltasRoute
+  AniversariantesRoute: typeof AniversariantesRoute
   CadastroRoute: typeof CadastroRoute
   ChamadaRoute: typeof ChamadaRoute
   DashboardRoute: typeof DashboardRoute
@@ -291,6 +304,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof CadastroRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/aniversariantes': {
+      id: '/aniversariantes'
+      path: '/aniversariantes'
+      fullPath: '/aniversariantes'
+      preLoaderRoute: typeof AniversariantesRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/analise-faltas': {
       id: '/analise-faltas'
       path: '/analise-faltas'
@@ -318,6 +338,7 @@ declare module '@tanstack/react-router' {
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   AnaliseFaltasRoute: AnaliseFaltasRoute,
+  AniversariantesRoute: AniversariantesRoute,
   CadastroRoute: CadastroRoute,
   ChamadaRoute: ChamadaRoute,
   DashboardRoute: DashboardRoute,
