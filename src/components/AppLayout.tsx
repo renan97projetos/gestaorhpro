@@ -16,6 +16,7 @@ const baseNav = [
   { to: "/analise-faltas", label: "Análise de Faltas", icon: AlertTriangle },
   { to: "/experiencia", label: "Experiência (90 dias)", icon: CalendarClock },
   { to: "/solicitacao-movimentacao", label: "Movimentações", icon: History },
+  { to: "/movimentacoes-admissoes", label: "Mov. Admissões", icon: ArrowRightLeft },
   { to: "/pesquisas", label: "Pesquisas", icon: ClipboardList },
   { to: "/ideias", label: "Ideias", icon: Lightbulb },
   { to: "/geracoes", label: "Gerações", icon: Sparkles },
