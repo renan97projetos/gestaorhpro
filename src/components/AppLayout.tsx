@@ -7,6 +7,7 @@ import { cn } from "@/lib/utils";
 import { ThemeToggle } from "@/components/ThemeToggle";
 import { OnboardingTour } from "@/components/OnboardingTour";
 import { AniversarioPopup } from "@/components/AniversarioPopup";
+import { OnlineUsersWidget } from "@/components/OnlineUsersWidget";
 
 const baseNav = [
   { to: "/inicio", label: "Menu", icon: LayoutGrid },
@@ -97,6 +98,9 @@ export function AppLayout({ children }: { children: React.ReactNode }) {
             </div>
             <ThemeToggle className="text-sidebar-foreground/80 hover:bg-sidebar-accent hover:text-sidebar-accent-foreground shrink-0" />
           </div>
+          <div className="px-3 pb-2">
+            <OnlineUsersWidget />
+          </div>
           <Button
             variant="ghost"
             className="w-full justify-start text-sidebar-foreground/80 hover:bg-sidebar-accent hover:text-sidebar-accent-foreground"
@@ -117,6 +121,7 @@ export function AppLayout({ children }: { children: React.ReactNode }) {
             <span className="font-semibold text-sm">Gestão Colaboradores</span>
           </div>
           <div className="flex items-center gap-1">
+            <OnlineUsersWidget />
             <ThemeToggle className="text-sidebar-foreground hover:bg-sidebar-accent hover:text-sidebar-accent-foreground" />
             <Button
               variant="ghost"
