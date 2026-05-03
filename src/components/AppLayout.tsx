@@ -118,6 +118,7 @@ export function AppLayout({ children }: { children: React.ReactNode }) {
             <span className="font-semibold text-sm">Gestão Colaboradores</span>
           </div>
           <div className="flex items-center gap-1">
+            <OnlineUsersWidget />
             <ThemeToggle className="text-sidebar-foreground hover:bg-sidebar-accent hover:text-sidebar-accent-foreground" />
             <Button
               variant="ghost"
