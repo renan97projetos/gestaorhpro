@@ -98,6 +98,9 @@ export function AppLayout({ children }: { children: React.ReactNode }) {
             </div>
             <ThemeToggle className="text-sidebar-foreground/80 hover:bg-sidebar-accent hover:text-sidebar-accent-foreground shrink-0" />
           </div>
+          <div className="px-3 pb-2">
+            <OnlineUsersWidget />
+          </div>
           <Button
             variant="ghost"
             className="w-full justify-start text-sidebar-foreground/80 hover:bg-sidebar-accent hover:text-sidebar-accent-foreground"
