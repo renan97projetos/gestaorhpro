@@ -7,6 +7,7 @@ import { cn } from "@/lib/utils";
 import { ThemeToggle } from "@/components/ThemeToggle";
 import { OnboardingTour } from "@/components/OnboardingTour";
 import { AniversarioPopup } from "@/components/AniversarioPopup";
+import { OnlineUsersWidget } from "@/components/OnlineUsersWidget";
 
 const baseNav = [
   { to: "/inicio", label: "Menu", icon: LayoutGrid },
