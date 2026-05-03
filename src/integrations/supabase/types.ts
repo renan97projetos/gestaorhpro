@@ -17,52 +17,64 @@ export type Database = {
       admissoes_movimentacao: {
         Row: {
           cargo: string | null
-          colaborador_id: string
-          colaborador_nome: string
+          colaborador_id: string | null
+          colaborador_nome: string | null
           created_at: string
           created_by: string | null
           created_by_nome: string | null
-          data_admissao: string
+          data_abertura: string
+          data_admissao: string | null
+          data_final: string | null
           id: string
           observacao: string | null
           setor: string | null
+          status: string
           substituido_id: string | null
           substituido_nome: string | null
           tipo: string
+          turno: string | null
           updated_at: string
           vaga_id: string | null
         }
         Insert: {
           cargo?: string | null
-          colaborador_id: string
-          colaborador_nome: string
+          colaborador_id?: string | null
+          colaborador_nome?: string | null
           created_at?: string
           created_by?: string | null
           created_by_nome?: string | null
-          data_admissao?: string
+          data_abertura?: string
+          data_admissao?: string | null
+          data_final?: string | null
           id?: string
           observacao?: string | null
           setor?: string | null
+          status?: string
           substituido_id?: string | null
           substituido_nome?: string | null
           tipo?: string
+          turno?: string | null
           updated_at?: string
           vaga_id?: string | null
         }
         Update: {
           cargo?: string | null
-          colaborador_id?: string
-          colaborador_nome?: string
+          colaborador_id?: string | null
+          colaborador_nome?: string | null
           created_at?: string
           created_by?: string | null
           created_by_nome?: string | null
-          data_admissao?: string
+          data_abertura?: string
+          data_admissao?: string | null
+          data_final?: string | null
           id?: string
           observacao?: string | null
           setor?: string | null
+          status?: string
           substituido_id?: string | null
           substituido_nome?: string | null
           tipo?: string
+          turno?: string | null
           updated_at?: string
           vaga_id?: string | null
         }
