@@ -32,6 +32,8 @@ export const Route = createRootRoute({
     meta: [
       { charSet: "utf-8" },
       { name: "viewport", content: "width=device-width, initial-scale=1" },
+      { httpEquiv: "Content-Language", content: "pt-BR" },
+      { name: "google", content: "notranslate" },
       { title: "Lovable App" },
       { name: "description", content: "Colaborador 360 manages employee data, tracks movements, and provides HR insights." },
       { name: "author", content: "Lovable" },
@@ -59,7 +61,7 @@ export const Route = createRootRoute({
 
 function RootShell({ children }: { children: React.ReactNode }) {
   return (
-    <html lang="en">
+    <html lang="pt-BR" translate="no" className="notranslate">
       <head>
         <HeadContent />
       </head>
