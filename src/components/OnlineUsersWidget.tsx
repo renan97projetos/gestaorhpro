@@ -29,7 +29,13 @@ export function OnlineUsersWidget() {
   // Presence tracking
   useEffect(() => {
     if (!user) return;
-    const ch = supabase.channel(CHANNEL, { config: { presence: { key: user.id } } });
+    const channelName = `${CHANNEL}-${user.id}`;
+    supabase.getChannels().forEach((existing) => {
+      if (existing.topic === `realtime:${channelName}`) {
+        supabase.removeChannel(existing);
+      }
+    });
+    const ch = supabase.channel(channelName, { config: { presence: { key: user.id } } });
     channelRef.current = ch;
     ch
       .on("presence", { event: "sync" }, () => {
@@ -50,7 +56,7 @@ export function OnlineUsersWidget() {
       }
     });
     return () => {
-      ch.unsubscribe();
+      supabase.removeChannel(ch);
       channelRef.current = null;
     };
   }, [user, myName]);
