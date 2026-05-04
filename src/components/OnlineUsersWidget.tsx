@@ -31,13 +31,14 @@ export function OnlineUsersWidget() {
     if (!user) return;
     const ch = supabase.channel(CHANNEL, { config: { presence: { key: user.id } } });
     channelRef.current = ch;
-    ch.on("presence", { event: "sync" }, () => {
-      const state = ch.presenceState() as Record<string, Presence[]>;
-      const list: Presence[] = [];
-      Object.values(state).forEach((arr) => arr[0] && list.push(arr[0]));
-      setOnline(list);
-    });
-    ch.subscribe(async (status) => {
+    ch
+      .on("presence", { event: "sync" }, () => {
+        const state = ch.presenceState() as Record<string, Presence[]>;
+        const list: Presence[] = [];
+        Object.values(state).forEach((arr) => arr[0] && list.push(arr[0]));
+        setOnline(list);
+      })
+      .subscribe(async (status) => {
       if (status === "SUBSCRIBED") {
         await ch.track({
           user_id: user.id,
