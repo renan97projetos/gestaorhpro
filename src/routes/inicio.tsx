@@ -5,6 +5,7 @@ import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { ThemeToggle } from "@/components/ThemeToggle";
 import { OnboardingTour } from "@/components/OnboardingTour";
+import { OnlineUsersWidget } from "@/components/OnlineUsersWidget";
 import {
   Building2, Home, Users, UserPlus, UserCog, FileText, LogOut, User, ShieldCheck, ClipboardList, UserCheck, Lightbulb, CalendarClock, Sparkles, AlertTriangle, Cake, ArrowRightLeft,
 } from "lucide-react";
@@ -67,6 +68,7 @@ function InicioPage() {
               <span className="text-xs md:text-sm truncate max-w-[180px]">{user?.email}</span>
             </div>
             <ThemeToggle />
+            <OnlineUsersWidget />
             <Button variant="ghost" size="icon" onClick={handleLogout} className="text-destructive hover:text-destructive hover:bg-destructive/10">
               <LogOut className="h-5 w-5" />
             </Button>
