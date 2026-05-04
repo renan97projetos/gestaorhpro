@@ -29,6 +29,11 @@ export function OnlineUsersWidget() {
   // Presence tracking
   useEffect(() => {
     if (!user) return;
+    supabase.getChannels().forEach((existing) => {
+      if (existing.topic === `realtime:${CHANNEL}`) {
+        supabase.removeChannel(existing);
+      }
+    });
     const ch = supabase.channel(CHANNEL, { config: { presence: { key: user.id } } });
     channelRef.current = ch;
     ch
@@ -39,18 +44,18 @@ export function OnlineUsersWidget() {
         setOnline(list);
       })
       .subscribe(async (status) => {
-      if (status === "SUBSCRIBED") {
-        await ch.track({
-          user_id: user.id,
-          nome: myName,
-          email: user.email,
-          route: location.pathname,
-          online_at: new Date().toISOString(),
-        });
-      }
-    });
+        if (status === "SUBSCRIBED") {
+          await ch.track({
+            user_id: user.id,
+            nome: myName,
+            email: user.email,
+            route: location.pathname,
+            online_at: new Date().toISOString(),
+          });
+        }
+      });
     return () => {
-      ch.unsubscribe();
+      supabase.removeChannel(ch);
       channelRef.current = null;
     };
   }, [user, myName]);

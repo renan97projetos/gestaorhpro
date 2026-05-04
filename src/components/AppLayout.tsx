@@ -8,6 +8,7 @@ import { ThemeToggle } from "@/components/ThemeToggle";
 import { OnboardingTour } from "@/components/OnboardingTour";
 import { AniversarioPopup } from "@/components/AniversarioPopup";
 import { OnlineUsersWidget } from "@/components/OnlineUsersWidget";
+import { useIsMobile } from "@/hooks/use-mobile";
 
 const baseNav = [
   { to: "/inicio", label: "Menu", icon: LayoutGrid },
@@ -32,6 +33,7 @@ export function AppLayout({ children }: { children: React.ReactNode }) {
   const navigate = useNavigate();
   const location = useLocation();
   const router = useRouter();
+  const isMobile = useIsMobile();
   const [open, setOpen] = useState(false);
 
   // Pré-aquece em background os chunks de TODAS as rotas do menu na 1ª montagem.
@@ -99,7 +101,7 @@ export function AppLayout({ children }: { children: React.ReactNode }) {
             <ThemeToggle className="text-sidebar-foreground/80 hover:bg-sidebar-accent hover:text-sidebar-accent-foreground shrink-0" />
           </div>
           <div className="px-3 pb-2">
-            <OnlineUsersWidget />
+            {!isMobile && <OnlineUsersWidget />}
           </div>
           <Button
             variant="ghost"
@@ -121,7 +123,7 @@ export function AppLayout({ children }: { children: React.ReactNode }) {
             <span className="font-semibold text-sm">Gestão Colaboradores</span>
           </div>
           <div className="flex items-center gap-1">
-            <OnlineUsersWidget />
+            {isMobile && <OnlineUsersWidget />}
             <ThemeToggle className="text-sidebar-foreground hover:bg-sidebar-accent hover:text-sidebar-accent-foreground" />
             <Button
               variant="ghost"
