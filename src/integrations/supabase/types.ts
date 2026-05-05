@@ -14,6 +14,36 @@ export type Database = {
   }
   public: {
     Tables: {
+      admissoes_historico: {
+        Row: {
+          created_at: string
+          detalhes: Json | null
+          evento: string
+          id: string
+          movimentacao_id: string | null
+          user_id: string | null
+          user_nome: string | null
+        }
+        Insert: {
+          created_at?: string
+          detalhes?: Json | null
+          evento: string
+          id?: string
+          movimentacao_id?: string | null
+          user_id?: string | null
+          user_nome?: string | null
+        }
+        Update: {
+          created_at?: string
+          detalhes?: Json | null
+          evento?: string
+          id?: string
+          movimentacao_id?: string | null
+          user_id?: string | null
+          user_nome?: string | null
+        }
+        Relationships: []
+      }
       admissoes_movimentacao: {
         Row: {
           cargo: string | null
@@ -77,6 +107,48 @@ export type Database = {
           turno?: string | null
           updated_at?: string
           vaga_id?: string | null
+        }
+        Relationships: []
+      }
+      audit_log: {
+        Row: {
+          acao: string
+          created_at: string
+          detalhes: Json | null
+          entidade: string
+          entidade_id: string | null
+          id: string
+          resumo: string | null
+          rota: string | null
+          user_email: string | null
+          user_id: string | null
+          user_nome: string | null
+        }
+        Insert: {
+          acao: string
+          created_at?: string
+          detalhes?: Json | null
+          entidade: string
+          entidade_id?: string | null
+          id?: string
+          resumo?: string | null
+          rota?: string | null
+          user_email?: string | null
+          user_id?: string | null
+          user_nome?: string | null
+        }
+        Update: {
+          acao?: string
+          created_at?: string
+          detalhes?: Json | null
+          entidade?: string
+          entidade_id?: string | null
+          id?: string
+          resumo?: string | null
+          rota?: string | null
+          user_email?: string | null
+          user_id?: string | null
+          user_nome?: string | null
         }
         Relationships: []
       }
@@ -259,6 +331,157 @@ export type Database = {
         }
         Relationships: []
       }
+      feedback_campanhas: {
+        Row: {
+          created_at: string
+          created_by: string | null
+          created_by_nome: string | null
+          descricao: string | null
+          id: string
+          status: string
+          titulo: string
+          updated_at: string
+        }
+        Insert: {
+          created_at?: string
+          created_by?: string | null
+          created_by_nome?: string | null
+          descricao?: string | null
+          id?: string
+          status?: string
+          titulo: string
+          updated_at?: string
+        }
+        Update: {
+          created_at?: string
+          created_by?: string | null
+          created_by_nome?: string | null
+          descricao?: string | null
+          id?: string
+          status?: string
+          titulo?: string
+          updated_at?: string
+        }
+        Relationships: []
+      }
+      feedback_perguntas: {
+        Row: {
+          campanha_id: string
+          created_at: string
+          id: string
+          obrigatoria: boolean
+          ordem: number
+          texto: string
+          tipo: string
+        }
+        Insert: {
+          campanha_id: string
+          created_at?: string
+          id?: string
+          obrigatoria?: boolean
+          ordem?: number
+          texto: string
+          tipo?: string
+        }
+        Update: {
+          campanha_id?: string
+          created_at?: string
+          id?: string
+          obrigatoria?: boolean
+          ordem?: number
+          texto?: string
+          tipo?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "feedback_perguntas_campanha_id_fkey"
+            columns: ["campanha_id"]
+            isOneToOne: false
+            referencedRelation: "feedback_campanhas"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      feedback_resposta_itens: {
+        Row: {
+          created_at: string
+          id: string
+          pergunta_id: string
+          resposta_id: string
+          valor_nota: number | null
+          valor_texto: string | null
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          pergunta_id: string
+          resposta_id: string
+          valor_nota?: number | null
+          valor_texto?: string | null
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          pergunta_id?: string
+          resposta_id?: string
+          valor_nota?: number | null
+          valor_texto?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "feedback_resposta_itens_pergunta_id_fkey"
+            columns: ["pergunta_id"]
+            isOneToOne: false
+            referencedRelation: "feedback_perguntas"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "feedback_resposta_itens_resposta_id_fkey"
+            columns: ["resposta_id"]
+            isOneToOne: false
+            referencedRelation: "feedback_respostas"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      feedback_respostas: {
+        Row: {
+          campanha_id: string
+          comentario: string | null
+          created_at: string
+          id: string
+          setor: string | null
+          user_id: string | null
+          user_nome: string | null
+        }
+        Insert: {
+          campanha_id: string
+          comentario?: string | null
+          created_at?: string
+          id?: string
+          setor?: string | null
+          user_id?: string | null
+          user_nome?: string | null
+        }
+        Update: {
+          campanha_id?: string
+          comentario?: string | null
+          created_at?: string
+          id?: string
+          setor?: string | null
+          user_id?: string | null
+          user_nome?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "feedback_respostas_campanha_id_fkey"
+            columns: ["campanha_id"]
+            isOneToOne: false
+            referencedRelation: "feedback_campanhas"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       ideias: {
         Row: {
           cargo: string
@@ -347,6 +570,39 @@ export type Database = {
             referencedColumns: ["id"]
           },
         ]
+      }
+      notas: {
+        Row: {
+          conteudo: string | null
+          cor: string | null
+          created_at: string
+          id: string
+          pinned: boolean
+          titulo: string
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          conteudo?: string | null
+          cor?: string | null
+          created_at?: string
+          id?: string
+          pinned?: boolean
+          titulo?: string
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          conteudo?: string | null
+          cor?: string | null
+          created_at?: string
+          id?: string
+          pinned?: boolean
+          titulo?: string
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: []
       }
       pesquisa_perguntas: {
         Row: {
