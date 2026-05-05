@@ -15,6 +15,23 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger, Dialog
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { toast } from "sonner";
 import { Plus, ArrowRightLeft, TrendingUp, Trash2, CheckCircle2, Clock, Timer } from "lucide-react";
+import { logAudit } from "@/lib/audit";
+
+async function logAdmissaoEvento(
+  movimentacao_id: string | null,
+  evento: "criada" | "editada" | "finalizada" | "excluida",
+  detalhes: Record<string, unknown>,
+) {
+  const { data: u } = await supabase.auth.getUser();
+  if (!u.user) return;
+  await supabase.from("admissoes_historico").insert({
+    movimentacao_id,
+    evento,
+    detalhes,
+    user_id: u.user.id,
+    user_nome: (u.user.user_metadata?.nome as string) || u.user.email,
+  } as never);
+}
 
 export const Route = createFileRoute("/movimentacoes-admissoes")({
   component: () => (
