@@ -127,6 +127,8 @@ function Dashboard() {
         <p className="text-muted-foreground text-sm">Indicadores em tempo real de RH</p>
       </div>
 
+      <EstrategicoWidgets data={data} />
+
       {/* KPIs principais */}
       <div className="grid grid-cols-2 lg:grid-cols-4 gap-3">
         <Kpi icon={Users} label="Total de Colaboradores" value={ativosOuAfastados} sub="Ativos + afastados (sem demitidos)" tone="primary" />
