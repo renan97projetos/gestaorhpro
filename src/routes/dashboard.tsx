@@ -579,3 +579,106 @@ function ListPanel({
     </Card>
   );
 }
+
+function EstrategicoWidgets({ data }: { data: ColabFull[] }) {
+  const [faltas, setFaltas] = useState<{ nome: string; faltas: number }[]>([]);
+
+  useEffect(() => {
+    (async () => {
+      const ini = new Date();
+      ini.setDate(ini.getDate() - 90);
+      const { data: ch } = await supabase
+        .from("chamadas")
+        .select("colaborador_id,status")
+        .eq("status", "Falta")
+        .gte("data", ini.toISOString().slice(0, 10));
+      const map = new Map<string, number>();
+      (ch || []).forEach((c: { colaborador_id: string }) => {
+        map.set(c.colaborador_id, (map.get(c.colaborador_id) || 0) + 1);
+      });
+      const top = Array.from(map, ([id, n]) => {
+        const colab = data.find((d) => d.id === id);
+        return { nome: colab?.setor || colab?.colaborador || "—", faltas: n };
+      });
+      const porSetor = new Map<string, number>();
+      top.forEach((t) => porSetor.set(t.nome, (porSetor.get(t.nome) || 0) + t.faltas));
+      setFaltas(Array.from(porSetor, ([nome, faltas]) => ({ nome, faltas })).sort((a, b) => b.faltas - a.faltas).slice(0, 5));
+    })();
+  }, [data]);
+
+  // Evolução HC nos últimos 12 meses
+  const hcEvol = useMemo(() => {
+    const meses: { mes: string; hc: number }[] = [];
+    const hoje = new Date();
+    for (let i = 11; i >= 0; i--) {
+      const ref = new Date(hoje.getFullYear(), hoje.getMonth() - i, 1);
+      const fim = new Date(ref.getFullYear(), ref.getMonth() + 1, 0);
+      const hc = data.filter((c) => {
+        if (!c.admissao || new Date(c.admissao) > fim) return false;
+        if (c.data_demissao && new Date(c.data_demissao) <= fim) return false;
+        return true;
+      }).length;
+      meses.push({ mes: ref.toLocaleDateString("pt-BR", { month: "short" }), hc });
+    }
+    return meses;
+  }, [data]);
+
+  const turnoverMensal = useMemo(() => {
+    const ano = new Date().getFullYear();
+    return MESES.map((m, i) => {
+      const ini = new Date(ano, i, 1);
+      const fim = new Date(ano, i + 1, 0);
+      const dem = data.filter((c) => c.data_demissao && new Date(c.data_demissao) >= ini && new Date(c.data_demissao) <= fim).length;
+      const hc = data.filter((c) => {
+        if (!c.admissao || new Date(c.admissao) > fim) return false;
+        if (c.data_demissao && new Date(c.data_demissao) <= fim) return false;
+        return true;
+      }).length;
+      return { mes: m, taxa: hc > 0 ? Math.round((dem / hc) * 1000) / 10 : 0 };
+    });
+  }, [data]);
+
+  return (
+    <div className="grid grid-cols-1 lg:grid-cols-3 gap-3">
+      <Card className="p-4">
+        <p className="font-semibold mb-2">📊 Evolução do HC (12 meses)</p>
+        <ResponsiveContainer width="100%" height={180}>
+          <BarChart data={hcEvol}>
+            <CartesianGrid strokeDasharray="3 3" />
+            <XAxis dataKey="mes" tick={{ fontSize: 11 }} />
+            <YAxis tick={{ fontSize: 11 }} />
+            <Tooltip />
+            <Bar dataKey="hc" fill="oklch(0.62 0.18 235)" />
+          </BarChart>
+        </ResponsiveContainer>
+      </Card>
+      <Card className="p-4">
+        <p className="font-semibold mb-2">🔄 Turnover mensal ({new Date().getFullYear()})</p>
+        <ResponsiveContainer width="100%" height={180}>
+          <BarChart data={turnoverMensal}>
+            <CartesianGrid strokeDasharray="3 3" />
+            <XAxis dataKey="mes" tick={{ fontSize: 11 }} />
+            <YAxis tick={{ fontSize: 11 }} />
+            <Tooltip />
+            <Bar dataKey="taxa" fill="oklch(0.65 0.20 25)" />
+          </BarChart>
+        </ResponsiveContainer>
+      </Card>
+      <Card className="p-4">
+        <p className="font-semibold mb-2">🚨 Top 5 setores com mais faltas (90d)</p>
+        {faltas.length === 0 ? (
+          <p className="text-sm text-muted-foreground">Sem faltas registradas.</p>
+        ) : (
+          <ul className="space-y-2">
+            {faltas.map((f) => (
+              <li key={f.nome} className="flex items-center justify-between text-sm border-b pb-1">
+                <span className="truncate">{f.nome}</span>
+                <span className="font-bold text-destructive">{f.faltas}</span>
+              </li>
+            ))}
+          </ul>
+        )}
+      </Card>
+    </div>
+  );
+}
