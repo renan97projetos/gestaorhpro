@@ -15,6 +15,23 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger, Dialog
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { toast } from "sonner";
 import { Plus, ArrowRightLeft, TrendingUp, Trash2, CheckCircle2, Clock, Timer } from "lucide-react";
+import { logAudit } from "@/lib/audit";
+
+async function logAdmissaoEvento(
+  movimentacao_id: string | null,
+  evento: "criada" | "editada" | "finalizada" | "excluida",
+  detalhes: Record<string, unknown>,
+) {
+  const { data: u } = await supabase.auth.getUser();
+  if (!u.user) return;
+  await supabase.from("admissoes_historico").insert({
+    movimentacao_id,
+    evento,
+    detalhes,
+    user_id: u.user.id,
+    user_nome: (u.user.user_metadata?.nome as string) || u.user.email,
+  } as never);
+}
 
 export const Route = createFileRoute("/movimentacoes-admissoes")({
   component: () => (
@@ -126,7 +143,7 @@ function Page() {
     if (form.tipo === "substituicao" && !form.substituido_id) return toast.error("Informe quem foi substituído");
     const sub = colabs.find((c) => c.id === form.substituido_id);
     const { data: u } = await supabase.auth.getUser();
-    const { error } = await supabase.from("admissoes_movimentacao").insert({
+    const payload = {
       tipo: form.tipo,
       substituido_id: form.tipo === "substituicao" ? sub?.id ?? null : null,
       substituido_nome: form.tipo === "substituicao" ? sub?.colaborador ?? null : null,
@@ -142,8 +159,12 @@ function Page() {
       observacao: form.observacao || null,
       created_by: u.user?.id ?? null,
       created_by_nome: u.user?.email ?? null,
-    } as never);
+    };
+    const { data: created, error } = await supabase.from("admissoes_movimentacao").insert(payload as never).select().single();
     if (error) return toast.error(error.message);
+    const id = (created as { id: string } | null)?.id || null;
+    await logAdmissaoEvento(id, "criada", payload);
+    logAudit({ acao: "create", entidade: "admissoes_movimentacao", entidade_id: id || undefined, resumo: `Abriu vaga ${form.tipo}` });
     toast.success("Vaga aberta");
     setOpen(false);
     setForm({ tipo: "substituicao", substituido_id: "", vaga_id: "", data_abertura: new Date().toISOString().slice(0, 10), data_final: "", cargo: "", setor: "", observacao: "" });
@@ -157,20 +178,20 @@ function Page() {
     if (!closeForm.turno) return toast.error("Informe o turno");
     const colab = colabs.find((c) => c.id === closeForm.colaborador_id);
     if (!colab) return toast.error("Colaborador inválido");
-    const { error } = await supabase
-      .from("admissoes_movimentacao")
-      .update({
-        colaborador_id: colab.id,
-        colaborador_nome: colab.colaborador,
-        cargo: closeDialog.cargo || colab.cargo,
-        setor: closeDialog.setor || colab.setor,
-        data_admissao: closeForm.data_admissao,
-        data_final: closeForm.data_admissao,
-        turno: closeForm.turno,
-        status: "fechada",
-      } as never)
-      .eq("id", closeDialog.id);
+    const update = {
+      colaborador_id: colab.id,
+      colaborador_nome: colab.colaborador,
+      cargo: closeDialog.cargo || colab.cargo,
+      setor: closeDialog.setor || colab.setor,
+      data_admissao: closeForm.data_admissao,
+      data_final: closeForm.data_admissao,
+      turno: closeForm.turno,
+      status: "fechada",
+    };
+    const { error } = await supabase.from("admissoes_movimentacao").update(update as never).eq("id", closeDialog.id);
     if (error) return toast.error(error.message);
+    await logAdmissaoEvento(closeDialog.id, "finalizada", update);
+    logAudit({ acao: "update", entidade: "admissoes_movimentacao", entidade_id: closeDialog.id, resumo: `Finalizou vaga (entrou ${colab.colaborador})` });
     toast.success("Vaga fechada");
     setCloseDialog(null);
     setCloseForm({ colaborador_id: "", data_admissao: new Date().toISOString().slice(0, 10), turno: "" });
@@ -179,8 +200,11 @@ function Page() {
 
   const handleDelete = async (id: string) => {
     if (!confirm("Excluir este registro?")) return;
+    const row = rows.find((r) => r.id === id);
     const { error } = await supabase.from("admissoes_movimentacao").delete().eq("id", id);
     if (error) return toast.error(error.message);
+    await logAdmissaoEvento(id, "excluida", { ...(row || {}) });
+    logAudit({ acao: "delete", entidade: "admissoes_movimentacao", entidade_id: id, resumo: "Excluiu vaga" });
     toast.success("Excluído");
     load();
   };

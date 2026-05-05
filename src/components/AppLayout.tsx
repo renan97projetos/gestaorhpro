@@ -1,7 +1,7 @@
 import { Link, useLocation, useNavigate, useRouter } from "@tanstack/react-router";
 import { useAuth } from "@/lib/auth-context";
 import { Button } from "@/components/ui/button";
-import { LayoutDashboard, Users, History, LogOut, Menu, X, LayoutGrid, UserCog, ClipboardList, UserCheck, Lightbulb, CalendarClock, Sparkles, AlertTriangle, Cake, ArrowRightLeft } from "lucide-react";
+import { LayoutDashboard, Users, History, LogOut, Menu, X, LayoutGrid, UserCog, ClipboardList, UserCheck, Lightbulb, CalendarClock, Sparkles, AlertTriangle, Cake, ArrowRightLeft, MapPin, MessageSquareHeart, NotebookPen, Activity } from "lucide-react";
 import { useEffect, useState } from "react";
 import { cn } from "@/lib/utils";
 import { ThemeToggle } from "@/components/ThemeToggle";
@@ -19,6 +19,10 @@ const baseNav = [
   { to: "/experiencia", label: "Experiência (90 dias)", icon: CalendarClock },
   { to: "/solicitacao-movimentacao", label: "Movimentações", icon: History },
   { to: "/movimentacoes-admissoes", label: "Mov. Admissões", icon: ArrowRightLeft },
+  { to: "/historico-admissoes", label: "Histórico Admissões", icon: History },
+  { to: "/mapa-alocacao", label: "Mapa de Alocação", icon: MapPin },
+  { to: "/feedbacks", label: "Feedbacks", icon: MessageSquareHeart },
+  { to: "/notas", label: "Bloco de Notas", icon: NotebookPen },
   { to: "/pesquisas", label: "Pesquisas", icon: ClipboardList },
   { to: "/ideias", label: "Ideias", icon: Lightbulb },
   { to: "/geracoes", label: "Gerações", icon: Sparkles },
@@ -28,7 +32,7 @@ const baseNav = [
 export function AppLayout({ children }: { children: React.ReactNode }) {
   const { user, signOut, isAdmin } = useAuth();
   const nav = isAdmin
-    ? [...baseNav, { to: "/usuarios", label: "Usuários", icon: UserCog }]
+    ? [...baseNav, { to: "/auditoria", label: "Histórico de Uso", icon: Activity }, { to: "/usuarios", label: "Usuários", icon: UserCog }]
     : baseNav;
   const navigate = useNavigate();
   const location = useLocation();

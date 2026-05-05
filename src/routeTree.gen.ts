@@ -13,14 +13,19 @@ import { Route as UsuariosRouteImport } from './routes/usuarios'
 import { Route as SolicitacaoMovimentacaoRouteImport } from './routes/solicitacao-movimentacao'
 import { Route as ResetPasswordRouteImport } from './routes/reset-password'
 import { Route as PesquisasRouteImport } from './routes/pesquisas'
+import { Route as NotasRouteImport } from './routes/notas'
 import { Route as MovimentacoesAdmissoesRouteImport } from './routes/movimentacoes-admissoes'
+import { Route as MapaAlocacaoRouteImport } from './routes/mapa-alocacao'
 import { Route as InicioRouteImport } from './routes/inicio'
 import { Route as IdeiasRouteImport } from './routes/ideias'
+import { Route as HistoricoAdmissoesRouteImport } from './routes/historico-admissoes'
 import { Route as GeracoesRouteImport } from './routes/geracoes'
+import { Route as FeedbacksRouteImport } from './routes/feedbacks'
 import { Route as ExperienciaRouteImport } from './routes/experiencia'
 import { Route as DashboardRouteImport } from './routes/dashboard'
 import { Route as ChamadaRouteImport } from './routes/chamada'
 import { Route as CadastroRouteImport } from './routes/cadastro'
+import { Route as AuditoriaRouteImport } from './routes/auditoria'
 import { Route as AniversariantesRouteImport } from './routes/aniversariantes'
 import { Route as AnaliseFaltasRouteImport } from './routes/analise-faltas'
 import { Route as IndexRouteImport } from './routes/index'
@@ -46,9 +51,19 @@ const PesquisasRoute = PesquisasRouteImport.update({
   path: '/pesquisas',
   getParentRoute: () => rootRouteImport,
 } as any)
+const NotasRoute = NotasRouteImport.update({
+  id: '/notas',
+  path: '/notas',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const MovimentacoesAdmissoesRoute = MovimentacoesAdmissoesRouteImport.update({
   id: '/movimentacoes-admissoes',
   path: '/movimentacoes-admissoes',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const MapaAlocacaoRoute = MapaAlocacaoRouteImport.update({
+  id: '/mapa-alocacao',
+  path: '/mapa-alocacao',
   getParentRoute: () => rootRouteImport,
 } as any)
 const InicioRoute = InicioRouteImport.update({
@@ -61,9 +76,19 @@ const IdeiasRoute = IdeiasRouteImport.update({
   path: '/ideias',
   getParentRoute: () => rootRouteImport,
 } as any)
+const HistoricoAdmissoesRoute = HistoricoAdmissoesRouteImport.update({
+  id: '/historico-admissoes',
+  path: '/historico-admissoes',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const GeracoesRoute = GeracoesRouteImport.update({
   id: '/geracoes',
   path: '/geracoes',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const FeedbacksRoute = FeedbacksRouteImport.update({
+  id: '/feedbacks',
+  path: '/feedbacks',
   getParentRoute: () => rootRouteImport,
 } as any)
 const ExperienciaRoute = ExperienciaRouteImport.update({
@@ -84,6 +109,11 @@ const ChamadaRoute = ChamadaRouteImport.update({
 const CadastroRoute = CadastroRouteImport.update({
   id: '/cadastro',
   path: '/cadastro',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const AuditoriaRoute = AuditoriaRouteImport.update({
+  id: '/auditoria',
+  path: '/auditoria',
   getParentRoute: () => rootRouteImport,
 } as any)
 const AniversariantesRoute = AniversariantesRouteImport.update({
@@ -111,14 +141,19 @@ export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/analise-faltas': typeof AnaliseFaltasRoute
   '/aniversariantes': typeof AniversariantesRoute
+  '/auditoria': typeof AuditoriaRoute
   '/cadastro': typeof CadastroRoute
   '/chamada': typeof ChamadaRoute
   '/dashboard': typeof DashboardRoute
   '/experiencia': typeof ExperienciaRoute
+  '/feedbacks': typeof FeedbacksRoute
   '/geracoes': typeof GeracoesRoute
+  '/historico-admissoes': typeof HistoricoAdmissoesRoute
   '/ideias': typeof IdeiasRoute
   '/inicio': typeof InicioRoute
+  '/mapa-alocacao': typeof MapaAlocacaoRoute
   '/movimentacoes-admissoes': typeof MovimentacoesAdmissoesRoute
+  '/notas': typeof NotasRoute
   '/pesquisas': typeof PesquisasRoute
   '/reset-password': typeof ResetPasswordRoute
   '/solicitacao-movimentacao': typeof SolicitacaoMovimentacaoRoute
@@ -129,14 +164,19 @@ export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/analise-faltas': typeof AnaliseFaltasRoute
   '/aniversariantes': typeof AniversariantesRoute
+  '/auditoria': typeof AuditoriaRoute
   '/cadastro': typeof CadastroRoute
   '/chamada': typeof ChamadaRoute
   '/dashboard': typeof DashboardRoute
   '/experiencia': typeof ExperienciaRoute
+  '/feedbacks': typeof FeedbacksRoute
   '/geracoes': typeof GeracoesRoute
+  '/historico-admissoes': typeof HistoricoAdmissoesRoute
   '/ideias': typeof IdeiasRoute
   '/inicio': typeof InicioRoute
+  '/mapa-alocacao': typeof MapaAlocacaoRoute
   '/movimentacoes-admissoes': typeof MovimentacoesAdmissoesRoute
+  '/notas': typeof NotasRoute
   '/pesquisas': typeof PesquisasRoute
   '/reset-password': typeof ResetPasswordRoute
   '/solicitacao-movimentacao': typeof SolicitacaoMovimentacaoRoute
@@ -148,14 +188,19 @@ export interface FileRoutesById {
   '/': typeof IndexRoute
   '/analise-faltas': typeof AnaliseFaltasRoute
   '/aniversariantes': typeof AniversariantesRoute
+  '/auditoria': typeof AuditoriaRoute
   '/cadastro': typeof CadastroRoute
   '/chamada': typeof ChamadaRoute
   '/dashboard': typeof DashboardRoute
   '/experiencia': typeof ExperienciaRoute
+  '/feedbacks': typeof FeedbacksRoute
   '/geracoes': typeof GeracoesRoute
+  '/historico-admissoes': typeof HistoricoAdmissoesRoute
   '/ideias': typeof IdeiasRoute
   '/inicio': typeof InicioRoute
+  '/mapa-alocacao': typeof MapaAlocacaoRoute
   '/movimentacoes-admissoes': typeof MovimentacoesAdmissoesRoute
+  '/notas': typeof NotasRoute
   '/pesquisas': typeof PesquisasRoute
   '/reset-password': typeof ResetPasswordRoute
   '/solicitacao-movimentacao': typeof SolicitacaoMovimentacaoRoute
@@ -168,14 +213,19 @@ export interface FileRouteTypes {
     | '/'
     | '/analise-faltas'
     | '/aniversariantes'
+    | '/auditoria'
     | '/cadastro'
     | '/chamada'
     | '/dashboard'
     | '/experiencia'
+    | '/feedbacks'
     | '/geracoes'
+    | '/historico-admissoes'
     | '/ideias'
     | '/inicio'
+    | '/mapa-alocacao'
     | '/movimentacoes-admissoes'
+    | '/notas'
     | '/pesquisas'
     | '/reset-password'
     | '/solicitacao-movimentacao'
@@ -186,14 +236,19 @@ export interface FileRouteTypes {
     | '/'
     | '/analise-faltas'
     | '/aniversariantes'
+    | '/auditoria'
     | '/cadastro'
     | '/chamada'
     | '/dashboard'
     | '/experiencia'
+    | '/feedbacks'
     | '/geracoes'
+    | '/historico-admissoes'
     | '/ideias'
     | '/inicio'
+    | '/mapa-alocacao'
     | '/movimentacoes-admissoes'
+    | '/notas'
     | '/pesquisas'
     | '/reset-password'
     | '/solicitacao-movimentacao'
@@ -204,14 +259,19 @@ export interface FileRouteTypes {
     | '/'
     | '/analise-faltas'
     | '/aniversariantes'
+    | '/auditoria'
     | '/cadastro'
     | '/chamada'
     | '/dashboard'
     | '/experiencia'
+    | '/feedbacks'
     | '/geracoes'
+    | '/historico-admissoes'
     | '/ideias'
     | '/inicio'
+    | '/mapa-alocacao'
     | '/movimentacoes-admissoes'
+    | '/notas'
     | '/pesquisas'
     | '/reset-password'
     | '/solicitacao-movimentacao'
@@ -223,14 +283,19 @@ export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
   AnaliseFaltasRoute: typeof AnaliseFaltasRoute
   AniversariantesRoute: typeof AniversariantesRoute
+  AuditoriaRoute: typeof AuditoriaRoute
   CadastroRoute: typeof CadastroRoute
   ChamadaRoute: typeof ChamadaRoute
   DashboardRoute: typeof DashboardRoute
   ExperienciaRoute: typeof ExperienciaRoute
+  FeedbacksRoute: typeof FeedbacksRoute
   GeracoesRoute: typeof GeracoesRoute
+  HistoricoAdmissoesRoute: typeof HistoricoAdmissoesRoute
   IdeiasRoute: typeof IdeiasRoute
   InicioRoute: typeof InicioRoute
+  MapaAlocacaoRoute: typeof MapaAlocacaoRoute
   MovimentacoesAdmissoesRoute: typeof MovimentacoesAdmissoesRoute
+  NotasRoute: typeof NotasRoute
   PesquisasRoute: typeof PesquisasRoute
   ResetPasswordRoute: typeof ResetPasswordRoute
   SolicitacaoMovimentacaoRoute: typeof SolicitacaoMovimentacaoRoute
@@ -268,11 +333,25 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof PesquisasRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/notas': {
+      id: '/notas'
+      path: '/notas'
+      fullPath: '/notas'
+      preLoaderRoute: typeof NotasRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/movimentacoes-admissoes': {
       id: '/movimentacoes-admissoes'
       path: '/movimentacoes-admissoes'
       fullPath: '/movimentacoes-admissoes'
       preLoaderRoute: typeof MovimentacoesAdmissoesRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/mapa-alocacao': {
+      id: '/mapa-alocacao'
+      path: '/mapa-alocacao'
+      fullPath: '/mapa-alocacao'
+      preLoaderRoute: typeof MapaAlocacaoRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/inicio': {
@@ -289,11 +368,25 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof IdeiasRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/historico-admissoes': {
+      id: '/historico-admissoes'
+      path: '/historico-admissoes'
+      fullPath: '/historico-admissoes'
+      preLoaderRoute: typeof HistoricoAdmissoesRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/geracoes': {
       id: '/geracoes'
       path: '/geracoes'
       fullPath: '/geracoes'
       preLoaderRoute: typeof GeracoesRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/feedbacks': {
+      id: '/feedbacks'
+      path: '/feedbacks'
+      fullPath: '/feedbacks'
+      preLoaderRoute: typeof FeedbacksRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/experiencia': {
@@ -322,6 +415,13 @@ declare module '@tanstack/react-router' {
       path: '/cadastro'
       fullPath: '/cadastro'
       preLoaderRoute: typeof CadastroRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/auditoria': {
+      id: '/auditoria'
+      path: '/auditoria'
+      fullPath: '/auditoria'
+      preLoaderRoute: typeof AuditoriaRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/aniversariantes': {
@@ -359,14 +459,19 @@ const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   AnaliseFaltasRoute: AnaliseFaltasRoute,
   AniversariantesRoute: AniversariantesRoute,
+  AuditoriaRoute: AuditoriaRoute,
   CadastroRoute: CadastroRoute,
   ChamadaRoute: ChamadaRoute,
   DashboardRoute: DashboardRoute,
   ExperienciaRoute: ExperienciaRoute,
+  FeedbacksRoute: FeedbacksRoute,
   GeracoesRoute: GeracoesRoute,
+  HistoricoAdmissoesRoute: HistoricoAdmissoesRoute,
   IdeiasRoute: IdeiasRoute,
   InicioRoute: InicioRoute,
+  MapaAlocacaoRoute: MapaAlocacaoRoute,
   MovimentacoesAdmissoesRoute: MovimentacoesAdmissoesRoute,
+  NotasRoute: NotasRoute,
   PesquisasRoute: PesquisasRoute,
   ResetPasswordRoute: ResetPasswordRoute,
   SolicitacaoMovimentacaoRoute: SolicitacaoMovimentacaoRoute,
@@ -376,12 +481,3 @@ const rootRouteChildren: RootRouteChildren = {
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
   ._addFileTypes<FileRouteTypes>()
-
-import type { getRouter } from './router.tsx'
-import type { createStart } from '@tanstack/react-start'
-declare module '@tanstack/react-start' {
-  interface Register {
-    ssr: true
-    router: Awaited<ReturnType<typeof getRouter>>
-  }
-}
