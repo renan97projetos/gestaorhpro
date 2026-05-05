@@ -4,7 +4,7 @@ import { useAuth } from "@/lib/auth-context";
 import { Card } from "@/components/ui/card";
 import { AppLayout } from "@/components/AppLayout";
 import {
-  Home, Users, UserPlus, FileText, ShieldCheck, ClipboardList, UserCheck, Lightbulb, CalendarClock, Sparkles, AlertTriangle, Cake, ArrowRightLeft,
+  Home, Users, UserPlus, FileText, ShieldCheck, ClipboardList, UserCheck, Lightbulb, CalendarClock, Sparkles, AlertTriangle, Cake, ArrowRightLeft, MapPin, MessageSquareHeart, NotebookPen, History, Activity,
 } from "lucide-react";
 
 export const Route = createFileRoute("/inicio")({
@@ -25,6 +25,10 @@ const baseItems = [
   { to: "/experiencia", label: "Experiência 90 dias", sub: "Avaliação dos novos", icon: CalendarClock, tone: "from-teal-500 to-teal-600" },
   { to: "/solicitacao-movimentacao", label: "Solicitações", sub: "Movimentações", icon: FileText, tone: "from-amber-500 to-orange-500" },
   { to: "/movimentacoes-admissoes", label: "Mov. Admissões", sub: "Quem entrou no lugar de quem", icon: ArrowRightLeft, tone: "from-indigo-500 to-indigo-600" },
+  { to: "/historico-admissoes", label: "Histórico Admissões", sub: "Tudo que rolou nas vagas", icon: History, tone: "from-slate-500 to-slate-700" },
+  { to: "/mapa-alocacao", label: "Mapa de Alocação", sub: "HC por setor / déficit", icon: MapPin, tone: "from-emerald-500 to-teal-600" },
+  { to: "/feedbacks", label: "Feedbacks", sub: "Pulsos com a equipe", icon: MessageSquareHeart, tone: "from-rose-500 to-pink-600" },
+  { to: "/notas", label: "Bloco de Notas", sub: "Suas anotações privadas", icon: NotebookPen, tone: "from-yellow-500 to-amber-600" },
   { to: "/pesquisas", label: "Pesquisas", sub: "Clima e eNPS", icon: ClipboardList, tone: "from-pink-500 to-pink-600" },
   { to: "/ideias", label: "Diretório de Ideias", sub: "Caixinha de sugestões", icon: Lightbulb, tone: "from-yellow-400 to-orange-500" },
   { to: "/geracoes", label: "Gerações", sub: "Perfil etário da equipe", icon: Sparkles, tone: "from-fuchsia-500 to-purple-600" },
@@ -35,6 +39,7 @@ function InicioPage() {
   const items = isAdmin
     ? [
         ...baseItems,
+        { to: "/auditoria", label: "Histórico de Uso", sub: "Ações de cada usuário", icon: Activity, tone: "from-zinc-500 to-zinc-700" },
         { to: "/usuarios", label: "Usuários", sub: "Permissões e acessos", icon: ShieldCheck, tone: "from-rose-500 to-rose-600" },
       ]
     : baseItems;
