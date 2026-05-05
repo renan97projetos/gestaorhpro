@@ -16,7 +16,7 @@ import {
 } from "recharts";
 import {
   ColabFull, aggregate, contratacoesPorMes, turnoverDoAno, anosDisponiveis,
-  tempoMedioPermanencia, turnoverPorAgrupamento,
+  tempoMedioPermanencia, turnoverPorAgrupamento, MESES,
 } from "@/lib/dashboard-helpers";
 
 export const Route = createFileRoute("/dashboard")({
