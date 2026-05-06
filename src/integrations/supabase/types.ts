@@ -249,6 +249,7 @@ export type Database = {
           sexo: Database["public"]["Enums"]["sexo_tipo"] | null
           status: Database["public"]["Enums"]["colaborador_status"]
           subsetor: string | null
+          tem_filho: string | null
           tipo_demissao: Database["public"]["Enums"]["tipo_demissao"] | null
           turno: string | null
           updated_at: string
@@ -275,6 +276,7 @@ export type Database = {
           sexo?: Database["public"]["Enums"]["sexo_tipo"] | null
           status?: Database["public"]["Enums"]["colaborador_status"]
           subsetor?: string | null
+          tem_filho?: string | null
           tipo_demissao?: Database["public"]["Enums"]["tipo_demissao"] | null
           turno?: string | null
           updated_at?: string
@@ -301,6 +303,7 @@ export type Database = {
           sexo?: Database["public"]["Enums"]["sexo_tipo"] | null
           status?: Database["public"]["Enums"]["colaborador_status"]
           subsetor?: string | null
+          tem_filho?: string | null
           tipo_demissao?: Database["public"]["Enums"]["tipo_demissao"] | null
           turno?: string | null
           updated_at?: string
@@ -328,6 +331,36 @@ export type Database = {
           data?: string
           descricao?: string | null
           id?: string
+        }
+        Relationships: []
+      }
+      experiencia_notas: {
+        Row: {
+          colaborador_id: string
+          conteudo: string
+          created_at: string
+          id: string
+          updated_at: string
+          user_id: string
+          user_nome: string | null
+        }
+        Insert: {
+          colaborador_id: string
+          conteudo: string
+          created_at?: string
+          id?: string
+          updated_at?: string
+          user_id: string
+          user_nome?: string | null
+        }
+        Update: {
+          colaborador_id?: string
+          conteudo?: string
+          created_at?: string
+          id?: string
+          updated_at?: string
+          user_id?: string
+          user_nome?: string | null
         }
         Relationships: []
       }
