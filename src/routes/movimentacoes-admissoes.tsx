@@ -14,7 +14,8 @@ import { Badge } from "@/components/ui/badge";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger, DialogFooter } from "@/components/ui/dialog";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { toast } from "sonner";
-import { Plus, ArrowRightLeft, TrendingUp, Trash2, CheckCircle2, Clock, Timer } from "lucide-react";
+import { Plus, ArrowRightLeft, TrendingUp, Trash2, CheckCircle2, Clock, Timer, Users, Link2, Copy } from "lucide-react";
+import { CandidatosDialog } from "@/components/CandidatosDialog";
 import { logAudit } from "@/lib/audit";
 
 async function logAdmissaoEvento(
@@ -59,6 +60,9 @@ type Mov = {
   turno: string | null;
   status: "aberta" | "fechada" | string;
   observacao: string | null;
+  link_token: string | null;
+  salario: number | null;
+  cargo_oferecido: string | null;
   created_at: string;
 };
 
@@ -213,8 +217,8 @@ function Page() {
     <div className="p-4 md:p-8 space-y-6">
       <div className="flex items-center justify-between flex-wrap gap-3">
         <div>
-          <h1 className="text-2xl md:text-3xl font-bold">Movimentações de Admissão</h1>
-          <p className="text-sm text-muted-foreground">Abertura e fechamento de vagas — substituição ou aumento de quadro.</p>
+          <h1 className="text-2xl md:text-3xl font-bold">Gestão de Vagas</h1>
+          <p className="text-sm text-muted-foreground">Abertura, candidatos e fechamento de vagas — substituição ou aumento de quadro.</p>
         </div>
         {canEdit && (
           <Dialog open={open} onOpenChange={setOpen}>
