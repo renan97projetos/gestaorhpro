@@ -43,7 +43,7 @@ const TRACKED_FIELDS: (keyof ColabFull)[] = [
   "matricula", "colaborador", "status", "cargo", "setor", "subsetor",
   "lideranca", "turno", "sabado_trabalho", "sabado_horario",
   "horario_almoco", "horario_cafe", "admissao", "sexo", "data_nascimento", "data_demissao", "tipo_demissao",
-  "cidade", "bairro",
+  "cidade", "bairro", "tem_filho",
 ];
 const FIELD_LABELS: Record<string, string> = {
   matricula: "Matrícula", colaborador: "Colaborador", status: "Status",
@@ -51,7 +51,7 @@ const FIELD_LABELS: Record<string, string> = {
   turno: "Turno", sabado_trabalho: "Sábado Trabalho", sabado_horario: "Sábado Horário",
   horario_almoco: "Horário Almoço", horario_cafe: "Horário Café", admissao: "Admissão",
   sexo: "Sexo", data_nascimento: "Data Nascimento", data_demissao: "Data Demissão", tipo_demissao: "Tipo Demissão",
-  cidade: "Cidade", bairro: "Bairro",
+  cidade: "Cidade", bairro: "Bairro", tem_filho: "Tem filho",
 };
 
 function CadastroPage() {
@@ -221,7 +221,7 @@ function CadastroPage() {
   };
 
   const exportCsv = (rows: ColabFull[], filename: string) => {
-    const cols = ["matricula", "colaborador", "sexo", "status", "cargo", "setor", "subsetor", "lideranca", "turno", "sabado_trabalho", "sabado_horario", "horario_almoco", "horario_cafe", "admissao", "data_nascimento", "cidade", "bairro", "data_demissao", "tipo_demissao"];
+    const cols = ["matricula", "colaborador", "sexo", "status", "cargo", "setor", "subsetor", "lideranca", "turno", "sabado_trabalho", "sabado_horario", "horario_almoco", "horario_cafe", "admissao", "data_nascimento", "cidade", "bairro", "tem_filho", "data_demissao", "tipo_demissao"];
     const head = cols.join(";");
     const body = rows.map((r) => cols.map((c) => `"${(r as Record<string, unknown>)[c] ?? ""}"`).join(";")).join("\n");
     const blob = new Blob(["\uFEFF" + head + "\n" + body], { type: "text/csv;charset=utf-8;" });
@@ -718,6 +718,16 @@ function ColabDialog({
             </Field>
             <Field label="Bairro (geolocalização)">
               <Input value={form.bairro ?? ""} onChange={(e) => set("bairro", e.target.value || null as any)} placeholder="Ex: Campo Grande" />
+            </Field>
+            <Field label="Tem filho?">
+              <Select value={form.tem_filho ?? "__none"} onValueChange={(v) => set("tem_filho", v === "__none" ? null as any : v)}>
+                <SelectTrigger><SelectValue placeholder="Selecione" /></SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="__none">— Não informado —</SelectItem>
+                  <SelectItem value="Sim">Sim</SelectItem>
+                  <SelectItem value="Não">Não</SelectItem>
+                </SelectContent>
+              </Select>
             </Field>
             {isDemitido && (
               <>
