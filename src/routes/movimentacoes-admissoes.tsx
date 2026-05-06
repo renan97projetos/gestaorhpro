@@ -445,14 +445,32 @@ function Page() {
                   </Select>
                 </div>
               </div>
+              <div className="grid grid-cols-2 gap-3">
+                <div>
+                  <Label>Cargo oferecido</Label>
+                  <Input value={closeForm.cargo_oferecido} onChange={(e) => setCloseForm((f) => ({ ...f, cargo_oferecido: e.target.value }))} placeholder="Ex: Assistente de Estoque Jr" />
+                </div>
+                <div>
+                  <Label>Salário (R$)</Label>
+                  <Input type="number" step="0.01" value={closeForm.salario} onChange={(e) => setCloseForm((f) => ({ ...f, salario: e.target.value }))} placeholder="0,00" />
+                </div>
+              </div>
             </div>
           )}
           <DialogFooter>
             <Button variant="outline" onClick={() => setCloseDialog(null)}>Cancelar</Button>
-            <Button onClick={handleClose}>Finalizar vaga</Button>
+            <Button onClick={handleClose}>Confirmar admissão</Button>
           </DialogFooter>
         </DialogContent>
       </Dialog>
+
+      {candidatosVaga && (
+        <CandidatosDialog
+          vaga={candidatosVaga}
+          canEdit={canEdit}
+          onClose={() => setCandidatosVaga(null)}
+        />
+      )}
     </div>
   );
 }
