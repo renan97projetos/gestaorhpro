@@ -78,7 +78,8 @@ function Page() {
   const [loading, setLoading] = useState(true);
   const [open, setOpen] = useState(false);
   const [closeDialog, setCloseDialog] = useState<Mov | null>(null);
-  const [closeForm, setCloseForm] = useState({ colaborador_id: "", data_admissao: new Date().toISOString().slice(0, 10), turno: "" });
+  const [closeForm, setCloseForm] = useState({ colaborador_id: "", data_admissao: new Date().toISOString().slice(0, 10), turno: "", cargo_oferecido: "", salario: "" });
+  const [candidatosVaga, setCandidatosVaga] = useState<Mov | null>(null);
   const [filtro, setFiltro] = useState("");
   const [form, setForm] = useState({
     tipo: "substituicao" as "substituicao" | "aumento_quadro",
@@ -185,11 +186,13 @@ function Page() {
     const update = {
       colaborador_id: colab.id,
       colaborador_nome: colab.colaborador,
-      cargo: closeDialog.cargo || colab.cargo,
+      cargo: closeForm.cargo_oferecido || closeDialog.cargo || colab.cargo,
+      cargo_oferecido: closeForm.cargo_oferecido || null,
       setor: closeDialog.setor || colab.setor,
       data_admissao: closeForm.data_admissao,
       data_final: closeForm.data_admissao,
       turno: closeForm.turno,
+      salario: closeForm.salario ? Number(closeForm.salario) : null,
       status: "fechada",
     };
     const { error } = await supabase.from("admissoes_movimentacao").update(update as never).eq("id", closeDialog.id);
@@ -198,7 +201,7 @@ function Page() {
     logAudit({ acao: "update", entidade: "admissoes_movimentacao", entidade_id: closeDialog.id, resumo: `Finalizou vaga (entrou ${colab.colaborador})` });
     toast.success("Vaga fechada");
     setCloseDialog(null);
-    setCloseForm({ colaborador_id: "", data_admissao: new Date().toISOString().slice(0, 10), turno: "" });
+    setCloseForm({ colaborador_id: "", data_admissao: new Date().toISOString().slice(0, 10), turno: "", cargo_oferecido: "", salario: "" });
     load();
   };
 
@@ -375,10 +378,23 @@ function Page() {
                   <TableCell className="text-sm">{r.vaga_id || "—"}</TableCell>
                   {canEdit && (
                     <TableCell>
-                      <div className="flex gap-1">
+                      <div className="flex gap-1 flex-wrap">
+                        <Button variant="outline" size="sm" onClick={() => setCandidatosVaga(r)}>
+                          <Users className="h-3.5 w-3.5 mr-1" /> Candidatos
+                        </Button>
+                        {r.link_token && r.status === "aberta" && (
+                          <Button variant="ghost" size="sm" title="Copiar link público de candidatura"
+                            onClick={() => {
+                              const url = `${window.location.origin}/vaga/${r.link_token}`;
+                              navigator.clipboard.writeText(url);
+                              toast.success("Link copiado!");
+                            }}>
+                            <Link2 className="h-3.5 w-3.5 mr-1" /> Link
+                          </Button>
+                        )}
                         {r.status === "aberta" && (
-                          <Button variant="outline" size="sm" onClick={() => { setCloseDialog(r); setCloseForm({ colaborador_id: "", data_admissao: new Date().toISOString().slice(0, 10), turno: "" }); }}>
-                            Finalizar
+                          <Button variant="outline" size="sm" onClick={() => { setCloseDialog(r); setCloseForm({ colaborador_id: "", data_admissao: new Date().toISOString().slice(0, 10), turno: "", cargo_oferecido: r.cargo || "", salario: "" }); }}>
+                            Mover p/ Admissão
                           </Button>
                         )}
                         {isAdmin && (
