@@ -18,7 +18,7 @@ const baseNav = [
   { to: "/analise-faltas", label: "Análise de Faltas", icon: AlertTriangle },
   { to: "/experiencia", label: "Experiência (90 dias)", icon: CalendarClock },
   { to: "/solicitacao-movimentacao", label: "Movimentações", icon: History },
-  { to: "/movimentacoes-admissoes", label: "Mov. Admissões", icon: ArrowRightLeft },
+  { to: "/movimentacoes-admissoes", label: "Gestão de Vagas", icon: ArrowRightLeft },
   { to: "/historico-admissoes", label: "Histórico Admissões", icon: History },
   { to: "/mapa-alocacao", label: "Mapa de Alocação", icon: MapPin },
   { to: "/feedbacks", label: "Feedbacks", icon: MessageSquareHeart },
