@@ -206,3 +206,12 @@
     color: var(--color-foreground);
   }
 }
+
+@keyframes walk-right {
+  0%   { transform: translateX(0); }
+  100% { transform: translateX(calc(100% + 220px)); }
+}
+@keyframes walk-left {
+  0%   { transform: translateX(calc(100% + 220px)); }
+  100% { transform: translateX(0); }
+}
