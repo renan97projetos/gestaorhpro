@@ -14,7 +14,8 @@ import { Badge } from "@/components/ui/badge";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger, DialogFooter } from "@/components/ui/dialog";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { toast } from "sonner";
-import { Plus, ArrowRightLeft, TrendingUp, Trash2, CheckCircle2, Clock, Timer } from "lucide-react";
+import { Plus, ArrowRightLeft, TrendingUp, Trash2, CheckCircle2, Clock, Timer, Users, Link2, Copy } from "lucide-react";
+import { CandidatosDialog } from "@/components/CandidatosDialog";
 import { logAudit } from "@/lib/audit";
 
 async function logAdmissaoEvento(
@@ -59,6 +60,9 @@ type Mov = {
   turno: string | null;
   status: "aberta" | "fechada" | string;
   observacao: string | null;
+  link_token: string | null;
+  salario: number | null;
+  cargo_oferecido: string | null;
   created_at: string;
 };
 
@@ -74,7 +78,8 @@ function Page() {
   const [loading, setLoading] = useState(true);
   const [open, setOpen] = useState(false);
   const [closeDialog, setCloseDialog] = useState<Mov | null>(null);
-  const [closeForm, setCloseForm] = useState({ colaborador_id: "", data_admissao: new Date().toISOString().slice(0, 10), turno: "" });
+  const [closeForm, setCloseForm] = useState({ colaborador_id: "", data_admissao: new Date().toISOString().slice(0, 10), turno: "", cargo_oferecido: "", salario: "" });
+  const [candidatosVaga, setCandidatosVaga] = useState<Mov | null>(null);
   const [filtro, setFiltro] = useState("");
   const [form, setForm] = useState({
     tipo: "substituicao" as "substituicao" | "aumento_quadro",
@@ -181,11 +186,13 @@ function Page() {
     const update = {
       colaborador_id: colab.id,
       colaborador_nome: colab.colaborador,
-      cargo: closeDialog.cargo || colab.cargo,
+      cargo: closeForm.cargo_oferecido || closeDialog.cargo || colab.cargo,
+      cargo_oferecido: closeForm.cargo_oferecido || null,
       setor: closeDialog.setor || colab.setor,
       data_admissao: closeForm.data_admissao,
       data_final: closeForm.data_admissao,
       turno: closeForm.turno,
+      salario: closeForm.salario ? Number(closeForm.salario) : null,
       status: "fechada",
     };
     const { error } = await supabase.from("admissoes_movimentacao").update(update as never).eq("id", closeDialog.id);
@@ -194,7 +201,7 @@ function Page() {
     logAudit({ acao: "update", entidade: "admissoes_movimentacao", entidade_id: closeDialog.id, resumo: `Finalizou vaga (entrou ${colab.colaborador})` });
     toast.success("Vaga fechada");
     setCloseDialog(null);
-    setCloseForm({ colaborador_id: "", data_admissao: new Date().toISOString().slice(0, 10), turno: "" });
+    setCloseForm({ colaborador_id: "", data_admissao: new Date().toISOString().slice(0, 10), turno: "", cargo_oferecido: "", salario: "" });
     load();
   };
 
@@ -213,8 +220,8 @@ function Page() {
     <div className="p-4 md:p-8 space-y-6">
       <div className="flex items-center justify-between flex-wrap gap-3">
         <div>
-          <h1 className="text-2xl md:text-3xl font-bold">Movimentações de Admissão</h1>
-          <p className="text-sm text-muted-foreground">Abertura e fechamento de vagas — substituição ou aumento de quadro.</p>
+          <h1 className="text-2xl md:text-3xl font-bold">Gestão de Vagas</h1>
+          <p className="text-sm text-muted-foreground">Abertura, candidatos e fechamento de vagas — substituição ou aumento de quadro.</p>
         </div>
         {canEdit && (
           <Dialog open={open} onOpenChange={setOpen}>
@@ -371,10 +378,23 @@ function Page() {
                   <TableCell className="text-sm">{r.vaga_id || "—"}</TableCell>
                   {canEdit && (
                     <TableCell>
-                      <div className="flex gap-1">
+                      <div className="flex gap-1 flex-wrap">
+                        <Button variant="outline" size="sm" onClick={() => setCandidatosVaga(r)}>
+                          <Users className="h-3.5 w-3.5 mr-1" /> Candidatos
+                        </Button>
+                        {r.link_token && r.status === "aberta" && (
+                          <Button variant="ghost" size="sm" title="Copiar link público de candidatura"
+                            onClick={() => {
+                              const url = `${window.location.origin}/vaga/${r.link_token}`;
+                              navigator.clipboard.writeText(url);
+                              toast.success("Link copiado!");
+                            }}>
+                            <Link2 className="h-3.5 w-3.5 mr-1" /> Link
+                          </Button>
+                        )}
                         {r.status === "aberta" && (
-                          <Button variant="outline" size="sm" onClick={() => { setCloseDialog(r); setCloseForm({ colaborador_id: "", data_admissao: new Date().toISOString().slice(0, 10), turno: "" }); }}>
-                            Finalizar
+                          <Button variant="outline" size="sm" onClick={() => { setCloseDialog(r); setCloseForm({ colaborador_id: "", data_admissao: new Date().toISOString().slice(0, 10), turno: "", cargo_oferecido: r.cargo || "", salario: "" }); }}>
+                            Mover p/ Admissão
                           </Button>
                         )}
                         {isAdmin && (
@@ -425,14 +445,32 @@ function Page() {
                   </Select>
                 </div>
               </div>
+              <div className="grid grid-cols-2 gap-3">
+                <div>
+                  <Label>Cargo oferecido</Label>
+                  <Input value={closeForm.cargo_oferecido} onChange={(e) => setCloseForm((f) => ({ ...f, cargo_oferecido: e.target.value }))} placeholder="Ex: Assistente de Estoque Jr" />
+                </div>
+                <div>
+                  <Label>Salário (R$)</Label>
+                  <Input type="number" step="0.01" value={closeForm.salario} onChange={(e) => setCloseForm((f) => ({ ...f, salario: e.target.value }))} placeholder="0,00" />
+                </div>
+              </div>
             </div>
           )}
           <DialogFooter>
             <Button variant="outline" onClick={() => setCloseDialog(null)}>Cancelar</Button>
-            <Button onClick={handleClose}>Finalizar vaga</Button>
+            <Button onClick={handleClose}>Confirmar admissão</Button>
           </DialogFooter>
         </DialogContent>
       </Dialog>
+
+      {candidatosVaga && (
+        <CandidatosDialog
+          vaga={candidatosVaga}
+          canEdit={canEdit}
+          onClose={() => setCandidatosVaga(null)}
+        />
+      )}
     </div>
   );
 }

@@ -47,6 +47,7 @@ export type Database = {
       admissoes_movimentacao: {
         Row: {
           cargo: string | null
+          cargo_oferecido: string | null
           colaborador_id: string | null
           colaborador_nome: string | null
           created_at: string
@@ -56,7 +57,9 @@ export type Database = {
           data_admissao: string | null
           data_final: string | null
           id: string
+          link_token: string | null
           observacao: string | null
+          salario: number | null
           setor: string | null
           status: string
           substituido_id: string | null
@@ -68,6 +71,7 @@ export type Database = {
         }
         Insert: {
           cargo?: string | null
+          cargo_oferecido?: string | null
           colaborador_id?: string | null
           colaborador_nome?: string | null
           created_at?: string
@@ -77,7 +81,9 @@ export type Database = {
           data_admissao?: string | null
           data_final?: string | null
           id?: string
+          link_token?: string | null
           observacao?: string | null
+          salario?: number | null
           setor?: string | null
           status?: string
           substituido_id?: string | null
@@ -89,6 +95,7 @@ export type Database = {
         }
         Update: {
           cargo?: string | null
+          cargo_oferecido?: string | null
           colaborador_id?: string | null
           colaborador_nome?: string | null
           created_at?: string
@@ -98,7 +105,9 @@ export type Database = {
           data_admissao?: string | null
           data_final?: string | null
           id?: string
+          link_token?: string | null
           observacao?: string | null
+          salario?: number | null
           setor?: string | null
           status?: string
           substituido_id?: string | null
@@ -915,6 +924,71 @@ export type Database = {
           user_id?: string
         }
         Relationships: []
+      }
+      vaga_candidatos: {
+        Row: {
+          cargo_oferecido: string | null
+          cidade: string | null
+          created_at: string
+          curriculo_url: string | null
+          data_inicio: string | null
+          email: string | null
+          endereco: string | null
+          etapa: string
+          id: string
+          nome: string
+          observacao: string | null
+          origem: string
+          salario: number | null
+          telefone: string | null
+          updated_at: string
+          vaga_id: string
+        }
+        Insert: {
+          cargo_oferecido?: string | null
+          cidade?: string | null
+          created_at?: string
+          curriculo_url?: string | null
+          data_inicio?: string | null
+          email?: string | null
+          endereco?: string | null
+          etapa?: string
+          id?: string
+          nome: string
+          observacao?: string | null
+          origem?: string
+          salario?: number | null
+          telefone?: string | null
+          updated_at?: string
+          vaga_id: string
+        }
+        Update: {
+          cargo_oferecido?: string | null
+          cidade?: string | null
+          created_at?: string
+          curriculo_url?: string | null
+          data_inicio?: string | null
+          email?: string | null
+          endereco?: string | null
+          etapa?: string
+          id?: string
+          nome?: string
+          observacao?: string | null
+          origem?: string
+          salario?: number | null
+          telefone?: string | null
+          updated_at?: string
+          vaga_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "vaga_candidatos_vaga_id_fkey"
+            columns: ["vaga_id"]
+            isOneToOne: false
+            referencedRelation: "admissoes_movimentacao"
+            referencedColumns: ["id"]
+          },
+        ]
       }
     }
     Views: {

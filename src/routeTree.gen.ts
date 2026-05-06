@@ -29,6 +29,7 @@ import { Route as AuditoriaRouteImport } from './routes/auditoria'
 import { Route as AniversariantesRouteImport } from './routes/aniversariantes'
 import { Route as AnaliseFaltasRouteImport } from './routes/analise-faltas'
 import { Route as IndexRouteImport } from './routes/index'
+import { Route as VagaTokenRouteImport } from './routes/vaga.$token'
 import { Route as PTokenRouteImport } from './routes/p.$token'
 
 const UsuariosRoute = UsuariosRouteImport.update({
@@ -131,6 +132,11 @@ const IndexRoute = IndexRouteImport.update({
   path: '/',
   getParentRoute: () => rootRouteImport,
 } as any)
+const VagaTokenRoute = VagaTokenRouteImport.update({
+  id: '/vaga/$token',
+  path: '/vaga/$token',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const PTokenRoute = PTokenRouteImport.update({
   id: '/p/$token',
   path: '/p/$token',
@@ -159,6 +165,7 @@ export interface FileRoutesByFullPath {
   '/solicitacao-movimentacao': typeof SolicitacaoMovimentacaoRoute
   '/usuarios': typeof UsuariosRoute
   '/p/$token': typeof PTokenRoute
+  '/vaga/$token': typeof VagaTokenRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
@@ -182,6 +189,7 @@ export interface FileRoutesByTo {
   '/solicitacao-movimentacao': typeof SolicitacaoMovimentacaoRoute
   '/usuarios': typeof UsuariosRoute
   '/p/$token': typeof PTokenRoute
+  '/vaga/$token': typeof VagaTokenRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
@@ -206,6 +214,7 @@ export interface FileRoutesById {
   '/solicitacao-movimentacao': typeof SolicitacaoMovimentacaoRoute
   '/usuarios': typeof UsuariosRoute
   '/p/$token': typeof PTokenRoute
+  '/vaga/$token': typeof VagaTokenRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
@@ -231,6 +240,7 @@ export interface FileRouteTypes {
     | '/solicitacao-movimentacao'
     | '/usuarios'
     | '/p/$token'
+    | '/vaga/$token'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
@@ -254,6 +264,7 @@ export interface FileRouteTypes {
     | '/solicitacao-movimentacao'
     | '/usuarios'
     | '/p/$token'
+    | '/vaga/$token'
   id:
     | '__root__'
     | '/'
@@ -277,6 +288,7 @@ export interface FileRouteTypes {
     | '/solicitacao-movimentacao'
     | '/usuarios'
     | '/p/$token'
+    | '/vaga/$token'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
@@ -301,6 +313,7 @@ export interface RootRouteChildren {
   SolicitacaoMovimentacaoRoute: typeof SolicitacaoMovimentacaoRoute
   UsuariosRoute: typeof UsuariosRoute
   PTokenRoute: typeof PTokenRoute
+  VagaTokenRoute: typeof VagaTokenRoute
 }
 
 declare module '@tanstack/react-router' {
@@ -445,6 +458,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof IndexRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/vaga/$token': {
+      id: '/vaga/$token'
+      path: '/vaga/$token'
+      fullPath: '/vaga/$token'
+      preLoaderRoute: typeof VagaTokenRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/p/$token': {
       id: '/p/$token'
       path: '/p/$token'
@@ -477,6 +497,7 @@ const rootRouteChildren: RootRouteChildren = {
   SolicitacaoMovimentacaoRoute: SolicitacaoMovimentacaoRoute,
   UsuariosRoute: UsuariosRoute,
   PTokenRoute: PTokenRoute,
+  VagaTokenRoute: VagaTokenRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)

@@ -24,7 +24,7 @@ const baseItems = [
   { to: "/aniversariantes", label: "Aniversariantes", sub: "Aniversários do mês", icon: Cake, tone: "from-pink-400 to-rose-500" },
   { to: "/experiencia", label: "Experiência 90 dias", sub: "Avaliação dos novos", icon: CalendarClock, tone: "from-teal-500 to-teal-600" },
   { to: "/solicitacao-movimentacao", label: "Solicitações", sub: "Movimentações", icon: FileText, tone: "from-amber-500 to-orange-500" },
-  { to: "/movimentacoes-admissoes", label: "Mov. Admissões", sub: "Quem entrou no lugar de quem", icon: ArrowRightLeft, tone: "from-indigo-500 to-indigo-600" },
+  { to: "/movimentacoes-admissoes", label: "Gestão de Vagas", sub: "Quem entrou no lugar de quem", icon: ArrowRightLeft, tone: "from-indigo-500 to-indigo-600" },
   { to: "/historico-admissoes", label: "Histórico Admissões", sub: "Tudo que rolou nas vagas", icon: History, tone: "from-slate-500 to-slate-700" },
   { to: "/mapa-alocacao", label: "Mapa de Alocação", sub: "HC por setor / déficit", icon: MapPin, tone: "from-emerald-500 to-teal-600" },
   { to: "/feedbacks", label: "Feedbacks", sub: "Pulsos com a equipe", icon: MessageSquareHeart, tone: "from-rose-500 to-pink-600" },
