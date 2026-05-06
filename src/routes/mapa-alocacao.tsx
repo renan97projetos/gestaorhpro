@@ -30,7 +30,7 @@ function Page() {
 
   useEffect(() => {
     (async () => {
-      const { data } = await supabase.from("colaboradores").select("*").neq("status", "Demitido");
+      const { data } = await supabase.from("colaboradores").select("id, colaborador, setor, sexo, cargo, status").neq("status", "Demitido");
       setData((data as ColabFull[]) || []);
       setLoading(false);
     })();
@@ -94,27 +94,45 @@ function Page() {
                 {status && <Badge className={`${status.tone} text-white`}>{status.txt}</Badge>}
               </div>
 
-              {/* Mini "mapa" 2D do setor com avatares animados */}
-              <div className="relative h-24 rounded-lg border-2 border-dashed bg-muted/30 overflow-hidden">
+              {/* Mini "mapa" 2D do setor com bonecos andando (azul=M, rosa=F) */}
+              <div className="relative h-28 rounded-lg border-2 border-dashed bg-gradient-to-b from-sky-50 to-emerald-50 dark:from-slate-900 dark:to-slate-800 overflow-hidden">
                 {Array.from({ length: max }).map((_, i) => {
                   const p = s.pessoas[i];
-                  const top = 10 + (i % 3) * 28;
-                  const left = 8 + Math.floor(i / 3) * 28;
+                  const isF = (p?.sexo || "").toLowerCase().startsWith("f");
+                  const cor = isF ? "#ec4899" : "#3b82f6";
+                  const delay = (i * 0.4) % 3;
+                  const dur = 4 + (i % 4);
+                  const top = 8 + (i % 3) * 30;
                   const initials = (p?.colaborador || "?").split(" ").slice(0, 2).map((x) => x[0]).join("").toUpperCase();
                   return (
                     <div
                       key={i}
-                      title={p?.colaborador}
-                      className="absolute h-7 w-7 rounded-full bg-primary text-primary-foreground flex items-center justify-center text-[10px] font-bold shadow animate-pulse"
-                      style={{ top, left, animationDelay: `${i * 120}ms`, animationDuration: "2.4s" }}
+                      title={`${p?.colaborador || "?"}${p?.cargo ? " — " + p.cargo : ""}`}
+                      className="absolute group"
+                      style={{
+                        top,
+                        left: 0,
+                        animation: `walk-${i % 2 === 0 ? "right" : "left"} ${dur}s ease-in-out ${delay}s infinite alternate`,
+                      }}
                     >
-                      {initials}
+                      {/* Bonequinho SVG */}
+                      <svg width="22" height="28" viewBox="0 0 22 28" className="drop-shadow cursor-pointer hover:scale-125 transition">
+                        <circle cx="11" cy="5" r="4" fill={cor} />
+                        <rect x="6" y="10" width="10" height="11" rx="2" fill={cor} />
+                        <rect x="7" y="20" width="3" height="6" rx="1" fill={cor} />
+                        <rect x="12" y="20" width="3" height="6" rx="1" fill={cor} />
+                        <text x="11" y="7.5" textAnchor="middle" fontSize="4" fill="white" fontWeight="bold">{initials.charAt(0)}</text>
+                      </svg>
                     </div>
                   );
                 })}
                 {atual > 12 && (
-                  <div className="absolute bottom-1 right-2 text-xs font-semibold text-muted-foreground">+{atual - 12}</div>
+                  <div className="absolute bottom-1 right-2 text-xs font-semibold text-muted-foreground bg-background/80 px-1.5 rounded">+{atual - 12}</div>
                 )}
+                <div className="absolute top-1 left-2 flex items-center gap-2 text-[10px] text-muted-foreground">
+                  <span className="flex items-center gap-1"><span className="h-2 w-2 rounded-full bg-blue-500" />M</span>
+                  <span className="flex items-center gap-1"><span className="h-2 w-2 rounded-full bg-pink-500" />F</span>
+                </div>
               </div>
 
               <div className="flex items-center gap-2">
