@@ -5,7 +5,7 @@ import { useEmpresa } from "@/lib/empresa-context";
 import { Card } from "@/components/ui/card";
 import { AppLayout } from "@/components/AppLayout";
 import {
-  Home, Users, UserPlus, FileText, ShieldCheck, ClipboardList, UserCheck, Lightbulb, CalendarClock, Sparkles, AlertTriangle, Cake, ArrowRightLeft, MapPin, MessageSquareHeart, NotebookPen, History, Activity, Settings, UserCog, Crown, Handshake,
+  Home, Users, UserPlus, FileText, ShieldCheck, ClipboardList, UserCheck, Lightbulb, CalendarClock, Sparkles, AlertTriangle, Cake, ArrowRightLeft, MapPin, MessageSquareHeart, NotebookPen, History, Activity, Settings, UserCog, Crown, Handshake, FolderArchive,
 } from "lucide-react";
 
 export const Route = createFileRoute("/inicio")({
@@ -28,6 +28,7 @@ const baseItems = [
   { to: "/solicitacao-movimentacao", label: "Solicitações", sub: "Movimentações", icon: FileText, tone: "from-amber-500 to-orange-500" },
   { to: "/movimentacoes-admissoes", label: "Gestão de Vagas", sub: "Quem entrou no lugar de quem", icon: ArrowRightLeft, tone: "from-indigo-500 to-indigo-600" },
   { to: "/historico-admissoes", label: "Histórico Admissões", sub: "Tudo que rolou nas vagas", icon: History, tone: "from-slate-500 to-slate-700" },
+  { to: "/documentos-admissao", label: "Documentos Admissão", sub: "Coleta de docs do novo colaborador", icon: FolderArchive, tone: "from-orange-500 to-amber-600" },
   { to: "/mapa-alocacao", label: "Mapa de Alocação", sub: "HC por setor / déficit", icon: MapPin, tone: "from-emerald-500 to-teal-600" },
   { to: "/feedbacks", label: "Feedbacks", sub: "Pulsos com a equipe", icon: MessageSquareHeart, tone: "from-rose-500 to-pink-600" },
   { to: "/notas", label: "Bloco de Notas", sub: "Suas anotações privadas", icon: NotebookPen, tone: "from-yellow-500 to-amber-600" },

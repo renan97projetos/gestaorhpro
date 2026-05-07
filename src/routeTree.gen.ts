@@ -25,6 +25,7 @@ import { Route as FeedbacksRouteImport } from './routes/feedbacks'
 import { Route as ExperienciaRouteImport } from './routes/experiencia'
 import { Route as EmpresaMembrosRouteImport } from './routes/empresa-membros'
 import { Route as EmpresaConfigRouteImport } from './routes/empresa-config'
+import { Route as DocumentosAdmissaoRouteImport } from './routes/documentos-admissao'
 import { Route as DashboardRouteImport } from './routes/dashboard'
 import { Route as ChamadaTerceirosRouteImport } from './routes/chamada-terceiros'
 import { Route as ChamadaRouteImport } from './routes/chamada'
@@ -36,6 +37,7 @@ import { Route as IndexRouteImport } from './routes/index'
 import { Route as VagaTokenRouteImport } from './routes/vaga.$token'
 import { Route as PTokenRouteImport } from './routes/p.$token'
 import { Route as ESlugRouteImport } from './routes/e.$slug'
+import { Route as DocTokenRouteImport } from './routes/doc.$token'
 import { Route as ESlugLoginRouteImport } from './routes/e.$slug.login'
 
 const UsuariosRoute = UsuariosRouteImport.update({
@@ -118,6 +120,11 @@ const EmpresaConfigRoute = EmpresaConfigRouteImport.update({
   path: '/empresa-config',
   getParentRoute: () => rootRouteImport,
 } as any)
+const DocumentosAdmissaoRoute = DocumentosAdmissaoRouteImport.update({
+  id: '/documentos-admissao',
+  path: '/documentos-admissao',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const DashboardRoute = DashboardRouteImport.update({
   id: '/dashboard',
   path: '/dashboard',
@@ -173,6 +180,11 @@ const ESlugRoute = ESlugRouteImport.update({
   path: '/e/$slug',
   getParentRoute: () => rootRouteImport,
 } as any)
+const DocTokenRoute = DocTokenRouteImport.update({
+  id: '/doc/$token',
+  path: '/doc/$token',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const ESlugLoginRoute = ESlugLoginRouteImport.update({
   id: '/login',
   path: '/login',
@@ -188,6 +200,7 @@ export interface FileRoutesByFullPath {
   '/chamada': typeof ChamadaRoute
   '/chamada-terceiros': typeof ChamadaTerceirosRoute
   '/dashboard': typeof DashboardRoute
+  '/documentos-admissao': typeof DocumentosAdmissaoRoute
   '/empresa-config': typeof EmpresaConfigRoute
   '/empresa-membros': typeof EmpresaMembrosRoute
   '/experiencia': typeof ExperienciaRoute
@@ -204,6 +217,7 @@ export interface FileRoutesByFullPath {
   '/reset-password': typeof ResetPasswordRoute
   '/solicitacao-movimentacao': typeof SolicitacaoMovimentacaoRoute
   '/usuarios': typeof UsuariosRoute
+  '/doc/$token': typeof DocTokenRoute
   '/e/$slug': typeof ESlugRouteWithChildren
   '/p/$token': typeof PTokenRoute
   '/vaga/$token': typeof VagaTokenRoute
@@ -218,6 +232,7 @@ export interface FileRoutesByTo {
   '/chamada': typeof ChamadaRoute
   '/chamada-terceiros': typeof ChamadaTerceirosRoute
   '/dashboard': typeof DashboardRoute
+  '/documentos-admissao': typeof DocumentosAdmissaoRoute
   '/empresa-config': typeof EmpresaConfigRoute
   '/empresa-membros': typeof EmpresaMembrosRoute
   '/experiencia': typeof ExperienciaRoute
@@ -234,6 +249,7 @@ export interface FileRoutesByTo {
   '/reset-password': typeof ResetPasswordRoute
   '/solicitacao-movimentacao': typeof SolicitacaoMovimentacaoRoute
   '/usuarios': typeof UsuariosRoute
+  '/doc/$token': typeof DocTokenRoute
   '/e/$slug': typeof ESlugRouteWithChildren
   '/p/$token': typeof PTokenRoute
   '/vaga/$token': typeof VagaTokenRoute
@@ -249,6 +265,7 @@ export interface FileRoutesById {
   '/chamada': typeof ChamadaRoute
   '/chamada-terceiros': typeof ChamadaTerceirosRoute
   '/dashboard': typeof DashboardRoute
+  '/documentos-admissao': typeof DocumentosAdmissaoRoute
   '/empresa-config': typeof EmpresaConfigRoute
   '/empresa-membros': typeof EmpresaMembrosRoute
   '/experiencia': typeof ExperienciaRoute
@@ -265,6 +282,7 @@ export interface FileRoutesById {
   '/reset-password': typeof ResetPasswordRoute
   '/solicitacao-movimentacao': typeof SolicitacaoMovimentacaoRoute
   '/usuarios': typeof UsuariosRoute
+  '/doc/$token': typeof DocTokenRoute
   '/e/$slug': typeof ESlugRouteWithChildren
   '/p/$token': typeof PTokenRoute
   '/vaga/$token': typeof VagaTokenRoute
@@ -281,6 +299,7 @@ export interface FileRouteTypes {
     | '/chamada'
     | '/chamada-terceiros'
     | '/dashboard'
+    | '/documentos-admissao'
     | '/empresa-config'
     | '/empresa-membros'
     | '/experiencia'
@@ -297,6 +316,7 @@ export interface FileRouteTypes {
     | '/reset-password'
     | '/solicitacao-movimentacao'
     | '/usuarios'
+    | '/doc/$token'
     | '/e/$slug'
     | '/p/$token'
     | '/vaga/$token'
@@ -311,6 +331,7 @@ export interface FileRouteTypes {
     | '/chamada'
     | '/chamada-terceiros'
     | '/dashboard'
+    | '/documentos-admissao'
     | '/empresa-config'
     | '/empresa-membros'
     | '/experiencia'
@@ -327,6 +348,7 @@ export interface FileRouteTypes {
     | '/reset-password'
     | '/solicitacao-movimentacao'
     | '/usuarios'
+    | '/doc/$token'
     | '/e/$slug'
     | '/p/$token'
     | '/vaga/$token'
@@ -341,6 +363,7 @@ export interface FileRouteTypes {
     | '/chamada'
     | '/chamada-terceiros'
     | '/dashboard'
+    | '/documentos-admissao'
     | '/empresa-config'
     | '/empresa-membros'
     | '/experiencia'
@@ -357,6 +380,7 @@ export interface FileRouteTypes {
     | '/reset-password'
     | '/solicitacao-movimentacao'
     | '/usuarios'
+    | '/doc/$token'
     | '/e/$slug'
     | '/p/$token'
     | '/vaga/$token'
@@ -372,6 +396,7 @@ export interface RootRouteChildren {
   ChamadaRoute: typeof ChamadaRoute
   ChamadaTerceirosRoute: typeof ChamadaTerceirosRoute
   DashboardRoute: typeof DashboardRoute
+  DocumentosAdmissaoRoute: typeof DocumentosAdmissaoRoute
   EmpresaConfigRoute: typeof EmpresaConfigRoute
   EmpresaMembrosRoute: typeof EmpresaMembrosRoute
   ExperienciaRoute: typeof ExperienciaRoute
@@ -388,6 +413,7 @@ export interface RootRouteChildren {
   ResetPasswordRoute: typeof ResetPasswordRoute
   SolicitacaoMovimentacaoRoute: typeof SolicitacaoMovimentacaoRoute
   UsuariosRoute: typeof UsuariosRoute
+  DocTokenRoute: typeof DocTokenRoute
   ESlugRoute: typeof ESlugRouteWithChildren
   PTokenRoute: typeof PTokenRoute
   VagaTokenRoute: typeof VagaTokenRoute
@@ -507,6 +533,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof EmpresaConfigRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/documentos-admissao': {
+      id: '/documentos-admissao'
+      path: '/documentos-admissao'
+      fullPath: '/documentos-admissao'
+      preLoaderRoute: typeof DocumentosAdmissaoRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/dashboard': {
       id: '/dashboard'
       path: '/dashboard'
@@ -584,6 +617,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ESlugRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/doc/$token': {
+      id: '/doc/$token'
+      path: '/doc/$token'
+      fullPath: '/doc/$token'
+      preLoaderRoute: typeof DocTokenRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/e/$slug/login': {
       id: '/e/$slug/login'
       path: '/login'
@@ -613,6 +653,7 @@ const rootRouteChildren: RootRouteChildren = {
   ChamadaRoute: ChamadaRoute,
   ChamadaTerceirosRoute: ChamadaTerceirosRoute,
   DashboardRoute: DashboardRoute,
+  DocumentosAdmissaoRoute: DocumentosAdmissaoRoute,
   EmpresaConfigRoute: EmpresaConfigRoute,
   EmpresaMembrosRoute: EmpresaMembrosRoute,
   ExperienciaRoute: ExperienciaRoute,
@@ -629,6 +670,7 @@ const rootRouteChildren: RootRouteChildren = {
   ResetPasswordRoute: ResetPasswordRoute,
   SolicitacaoMovimentacaoRoute: SolicitacaoMovimentacaoRoute,
   UsuariosRoute: UsuariosRoute,
+  DocTokenRoute: DocTokenRoute,
   ESlugRoute: ESlugRouteWithChildren,
   PTokenRoute: PTokenRoute,
   VagaTokenRoute: VagaTokenRoute,
