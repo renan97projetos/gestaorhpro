@@ -11,6 +11,7 @@ import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { toast } from "sonner";
 import { Save, Upload } from "lucide-react";
+import { autoFitImage } from "@/lib/image-fit";
 
 export const Route = createFileRoute("/empresa-config")({
   component: () => (<RequireAuth><AppLayout><Page /></AppLayout></RequireAuth>),
@@ -41,8 +42,12 @@ function Page() {
   if (!isGestorEmpresa) return <div className="p-8"><Card className="p-6">Apenas administradores ou gestores da empresa podem editar.</Card></div>;
 
   const upload = async (field: "logo_url" | "capa_url", file: File) => {
-    const path = `${empresaAtual.id}/${field}-${Date.now()}-${file.name}`;
-    const { error } = await supabase.storage.from("empresa-assets").upload(path, file, { upsert: true });
+    // Logo => quadrado 512 com padding; capa => banner 1600x500 sem cortar conteúdo
+    const fitted = field === "logo_url"
+      ? await autoFitImage(file, { size: 512, padding: 0.1 })
+      : await autoFitImage(file, { size: 1200, padding: 0.04, format: "image/jpeg", background: "#ffffff" });
+    const path = `${empresaAtual.id}/${field}-${Date.now()}-${fitted.name}`;
+    const { error } = await supabase.storage.from("empresa-assets").upload(path, fitted, { upsert: true, contentType: fitted.type });
     if (error) return toast.error(error.message);
     const { data } = supabase.storage.from("empresa-assets").getPublicUrl(path);
     // Persistir imediatamente para evitar perda se o usuário não clicar em Salvar
