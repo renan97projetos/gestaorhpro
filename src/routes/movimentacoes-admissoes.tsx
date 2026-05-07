@@ -395,6 +395,16 @@ function Page() {
                         <Button variant="outline" size="sm" onClick={() => setCandidatosVaga(r)}>
                           <Users className="h-3.5 w-3.5 mr-1" /> Candidatos
                         </Button>
+                        {r.status === "aberta" && (
+                          <Button
+                            variant={r.publicada ? "default" : "outline"}
+                            size="sm"
+                            onClick={() => togglePublicada(r)}
+                            title="Tornar visível na landing pública"
+                          >
+                            {r.publicada ? "Publicada" : "Publicar"}
+                          </Button>
+                        )}
                         {r.link_token && r.status === "aberta" && (
                           <Button variant="ghost" size="sm" title="Copiar link público de candidatura"
                             onClick={() => {
