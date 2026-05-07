@@ -291,11 +291,18 @@ function EmpresaDetalheDialog({ empresa, onClose, onChanged }: { empresa: Empres
   };
 
   const resetar = async (m: Membro) => {
-    const pwd = prompt(`Nova senha para ${m.profiles?.email || m.user_id}:`);
+    const escolha = confirm(`Gerar senha aleatória para ${m.profiles?.email}?\n\nOK = gerar automática | Cancelar = digitar manualmente`);
+    let pwd: string | null;
+    if (escolha) {
+      pwd = gerarSenha(12);
+    } else {
+      pwd = prompt(`Nova senha para ${m.profiles?.email}: (mín. 6)`);
+    }
     if (!pwd || pwd.length < 6) return;
     try {
       await resetFn({ data: { user_id: m.user_id, password: pwd } });
-      toast.success("Senha redefinida");
+      await navigator.clipboard.writeText(pwd).catch(() => {});
+      toast.success(`Senha redefinida e copiada: ${pwd}`);
     } catch (e) { toast.error((e as Error).message); }
   };
 
