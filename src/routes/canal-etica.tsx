@@ -352,7 +352,13 @@ function DetalheDenuncia({ denuncia, onClose }: { denuncia: Denuncia; onClose: (
     if (tErr) { setSaving(false); return toast.error(tErr.message); }
 
     if (statusMudou || concluiu) {
-      const update: Record<string, unknown> = {
+      const update: {
+        status: string;
+        responsavel_id: string;
+        responsavel_nome: string | null;
+        conclusao?: string | null;
+        concluida_em?: string;
+      } = {
         status: novoStatus,
         responsavel_id: user!.id,
         responsavel_nome: user?.user_metadata?.nome ?? user?.email ?? null,
