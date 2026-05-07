@@ -282,7 +282,7 @@ function EmpresaDetalheDialog({ empresa, onClose, onChanged }: { empresa: Empres
   });
   const [modulos, setModulos] = useState<string[]>(empresa.modulos_desabilitados || []);
   const [membros, setMembros] = useState<Membro[]>([]);
-  const [novo, setNovo] = useState({ nome: "", email: "", password: "", role: "visualizador" as EmpresaRole });
+  const [novo, setNovo] = useState({ nome: "", email: "", password: "", role: "visualizador" as EmpresaRole, modo: "convite" as "convite" | "senha" });
   const [busy, setBusy] = useState(false);
 
   const criarFn = useServerFn(mestreCriarUsuario);
