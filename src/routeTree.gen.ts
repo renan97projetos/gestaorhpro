@@ -15,6 +15,7 @@ import { Route as ResetPasswordRouteImport } from './routes/reset-password'
 import { Route as PesquisasRouteImport } from './routes/pesquisas'
 import { Route as NotasRouteImport } from './routes/notas'
 import { Route as MovimentacoesAdmissoesRouteImport } from './routes/movimentacoes-admissoes'
+import { Route as MestreRouteImport } from './routes/mestre'
 import { Route as MapaAlocacaoRouteImport } from './routes/mapa-alocacao'
 import { Route as InicioRouteImport } from './routes/inicio'
 import { Route as IdeiasRouteImport } from './routes/ideias'
@@ -22,6 +23,8 @@ import { Route as HistoricoAdmissoesRouteImport } from './routes/historico-admis
 import { Route as GeracoesRouteImport } from './routes/geracoes'
 import { Route as FeedbacksRouteImport } from './routes/feedbacks'
 import { Route as ExperienciaRouteImport } from './routes/experiencia'
+import { Route as EmpresaMembrosRouteImport } from './routes/empresa-membros'
+import { Route as EmpresaConfigRouteImport } from './routes/empresa-config'
 import { Route as DashboardRouteImport } from './routes/dashboard'
 import { Route as ChamadaRouteImport } from './routes/chamada'
 import { Route as CadastroRouteImport } from './routes/cadastro'
@@ -62,6 +65,11 @@ const MovimentacoesAdmissoesRoute = MovimentacoesAdmissoesRouteImport.update({
   path: '/movimentacoes-admissoes',
   getParentRoute: () => rootRouteImport,
 } as any)
+const MestreRoute = MestreRouteImport.update({
+  id: '/mestre',
+  path: '/mestre',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const MapaAlocacaoRoute = MapaAlocacaoRouteImport.update({
   id: '/mapa-alocacao',
   path: '/mapa-alocacao',
@@ -95,6 +103,16 @@ const FeedbacksRoute = FeedbacksRouteImport.update({
 const ExperienciaRoute = ExperienciaRouteImport.update({
   id: '/experiencia',
   path: '/experiencia',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const EmpresaMembrosRoute = EmpresaMembrosRouteImport.update({
+  id: '/empresa-membros',
+  path: '/empresa-membros',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const EmpresaConfigRoute = EmpresaConfigRouteImport.update({
+  id: '/empresa-config',
+  path: '/empresa-config',
   getParentRoute: () => rootRouteImport,
 } as any)
 const DashboardRoute = DashboardRouteImport.update({
@@ -151,6 +169,8 @@ export interface FileRoutesByFullPath {
   '/cadastro': typeof CadastroRoute
   '/chamada': typeof ChamadaRoute
   '/dashboard': typeof DashboardRoute
+  '/empresa-config': typeof EmpresaConfigRoute
+  '/empresa-membros': typeof EmpresaMembrosRoute
   '/experiencia': typeof ExperienciaRoute
   '/feedbacks': typeof FeedbacksRoute
   '/geracoes': typeof GeracoesRoute
@@ -158,6 +178,7 @@ export interface FileRoutesByFullPath {
   '/ideias': typeof IdeiasRoute
   '/inicio': typeof InicioRoute
   '/mapa-alocacao': typeof MapaAlocacaoRoute
+  '/mestre': typeof MestreRoute
   '/movimentacoes-admissoes': typeof MovimentacoesAdmissoesRoute
   '/notas': typeof NotasRoute
   '/pesquisas': typeof PesquisasRoute
@@ -175,6 +196,8 @@ export interface FileRoutesByTo {
   '/cadastro': typeof CadastroRoute
   '/chamada': typeof ChamadaRoute
   '/dashboard': typeof DashboardRoute
+  '/empresa-config': typeof EmpresaConfigRoute
+  '/empresa-membros': typeof EmpresaMembrosRoute
   '/experiencia': typeof ExperienciaRoute
   '/feedbacks': typeof FeedbacksRoute
   '/geracoes': typeof GeracoesRoute
@@ -182,6 +205,7 @@ export interface FileRoutesByTo {
   '/ideias': typeof IdeiasRoute
   '/inicio': typeof InicioRoute
   '/mapa-alocacao': typeof MapaAlocacaoRoute
+  '/mestre': typeof MestreRoute
   '/movimentacoes-admissoes': typeof MovimentacoesAdmissoesRoute
   '/notas': typeof NotasRoute
   '/pesquisas': typeof PesquisasRoute
@@ -200,6 +224,8 @@ export interface FileRoutesById {
   '/cadastro': typeof CadastroRoute
   '/chamada': typeof ChamadaRoute
   '/dashboard': typeof DashboardRoute
+  '/empresa-config': typeof EmpresaConfigRoute
+  '/empresa-membros': typeof EmpresaMembrosRoute
   '/experiencia': typeof ExperienciaRoute
   '/feedbacks': typeof FeedbacksRoute
   '/geracoes': typeof GeracoesRoute
@@ -207,6 +233,7 @@ export interface FileRoutesById {
   '/ideias': typeof IdeiasRoute
   '/inicio': typeof InicioRoute
   '/mapa-alocacao': typeof MapaAlocacaoRoute
+  '/mestre': typeof MestreRoute
   '/movimentacoes-admissoes': typeof MovimentacoesAdmissoesRoute
   '/notas': typeof NotasRoute
   '/pesquisas': typeof PesquisasRoute
@@ -226,6 +253,8 @@ export interface FileRouteTypes {
     | '/cadastro'
     | '/chamada'
     | '/dashboard'
+    | '/empresa-config'
+    | '/empresa-membros'
     | '/experiencia'
     | '/feedbacks'
     | '/geracoes'
@@ -233,6 +262,7 @@ export interface FileRouteTypes {
     | '/ideias'
     | '/inicio'
     | '/mapa-alocacao'
+    | '/mestre'
     | '/movimentacoes-admissoes'
     | '/notas'
     | '/pesquisas'
@@ -250,6 +280,8 @@ export interface FileRouteTypes {
     | '/cadastro'
     | '/chamada'
     | '/dashboard'
+    | '/empresa-config'
+    | '/empresa-membros'
     | '/experiencia'
     | '/feedbacks'
     | '/geracoes'
@@ -257,6 +289,7 @@ export interface FileRouteTypes {
     | '/ideias'
     | '/inicio'
     | '/mapa-alocacao'
+    | '/mestre'
     | '/movimentacoes-admissoes'
     | '/notas'
     | '/pesquisas'
@@ -274,6 +307,8 @@ export interface FileRouteTypes {
     | '/cadastro'
     | '/chamada'
     | '/dashboard'
+    | '/empresa-config'
+    | '/empresa-membros'
     | '/experiencia'
     | '/feedbacks'
     | '/geracoes'
@@ -281,6 +316,7 @@ export interface FileRouteTypes {
     | '/ideias'
     | '/inicio'
     | '/mapa-alocacao'
+    | '/mestre'
     | '/movimentacoes-admissoes'
     | '/notas'
     | '/pesquisas'
@@ -299,6 +335,8 @@ export interface RootRouteChildren {
   CadastroRoute: typeof CadastroRoute
   ChamadaRoute: typeof ChamadaRoute
   DashboardRoute: typeof DashboardRoute
+  EmpresaConfigRoute: typeof EmpresaConfigRoute
+  EmpresaMembrosRoute: typeof EmpresaMembrosRoute
   ExperienciaRoute: typeof ExperienciaRoute
   FeedbacksRoute: typeof FeedbacksRoute
   GeracoesRoute: typeof GeracoesRoute
@@ -306,6 +344,7 @@ export interface RootRouteChildren {
   IdeiasRoute: typeof IdeiasRoute
   InicioRoute: typeof InicioRoute
   MapaAlocacaoRoute: typeof MapaAlocacaoRoute
+  MestreRoute: typeof MestreRoute
   MovimentacoesAdmissoesRoute: typeof MovimentacoesAdmissoesRoute
   NotasRoute: typeof NotasRoute
   PesquisasRoute: typeof PesquisasRoute
@@ -360,6 +399,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof MovimentacoesAdmissoesRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/mestre': {
+      id: '/mestre'
+      path: '/mestre'
+      fullPath: '/mestre'
+      preLoaderRoute: typeof MestreRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/mapa-alocacao': {
       id: '/mapa-alocacao'
       path: '/mapa-alocacao'
@@ -407,6 +453,20 @@ declare module '@tanstack/react-router' {
       path: '/experiencia'
       fullPath: '/experiencia'
       preLoaderRoute: typeof ExperienciaRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/empresa-membros': {
+      id: '/empresa-membros'
+      path: '/empresa-membros'
+      fullPath: '/empresa-membros'
+      preLoaderRoute: typeof EmpresaMembrosRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/empresa-config': {
+      id: '/empresa-config'
+      path: '/empresa-config'
+      fullPath: '/empresa-config'
+      preLoaderRoute: typeof EmpresaConfigRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/dashboard': {
@@ -483,6 +543,8 @@ const rootRouteChildren: RootRouteChildren = {
   CadastroRoute: CadastroRoute,
   ChamadaRoute: ChamadaRoute,
   DashboardRoute: DashboardRoute,
+  EmpresaConfigRoute: EmpresaConfigRoute,
+  EmpresaMembrosRoute: EmpresaMembrosRoute,
   ExperienciaRoute: ExperienciaRoute,
   FeedbacksRoute: FeedbacksRoute,
   GeracoesRoute: GeracoesRoute,
@@ -490,6 +552,7 @@ const rootRouteChildren: RootRouteChildren = {
   IdeiasRoute: IdeiasRoute,
   InicioRoute: InicioRoute,
   MapaAlocacaoRoute: MapaAlocacaoRoute,
+  MestreRoute: MestreRoute,
   MovimentacoesAdmissoesRoute: MovimentacoesAdmissoesRoute,
   NotasRoute: NotasRoute,
   PesquisasRoute: PesquisasRoute,
