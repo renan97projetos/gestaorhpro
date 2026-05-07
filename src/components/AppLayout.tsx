@@ -17,6 +17,7 @@ const baseNav = [
   { to: "/inicio", label: "Menu", icon: LayoutGrid },
   { to: "/avisos", label: "Avisos", icon: Megaphone },
   { to: "/chamados", label: "Chamados", icon: LifeBuoy },
+  { to: "/base-conhecimento", label: "Base de Conhecimento", icon: BookOpen },
   { to: "/dashboard", label: "Dashboard", icon: LayoutDashboard },
   { to: "/cadastro", label: "Colaboradores", icon: Users },
   { to: "/chamada", label: "Chamada", icon: UserCheck },
