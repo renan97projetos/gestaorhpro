@@ -95,10 +95,11 @@ function Page() {
   });
 
   const load = async () => {
+    if (!empresaAtual) { setRows([]); setColabs([]); setLoading(false); return; }
     setLoading(true);
     const [m, c] = await Promise.all([
-      supabase.from("admissoes_movimentacao").select("*").order("data_abertura", { ascending: false }),
-      supabase.from("colaboradores").select("id,colaborador,cargo,setor,status").order("colaborador"),
+      supabase.from("admissoes_movimentacao").select("*").eq("empresa_id", empresaAtual.id).order("data_abertura", { ascending: false }),
+      supabase.from("colaboradores").select("id,colaborador,cargo,setor,status").eq("empresa_id", empresaAtual.id).order("colaborador"),
     ]);
     if (m.error) toast.error(m.error.message);
     setRows((m.data as Mov[]) || []);
@@ -106,7 +107,7 @@ function Page() {
     setLoading(false);
   };
 
-  useEffect(() => { load(); }, []);
+  useEffect(() => { load(); /* eslint-disable-next-line */ }, [empresaAtual?.id]);
 
   const stats = useMemo(() => {
     const total = rows.length;
