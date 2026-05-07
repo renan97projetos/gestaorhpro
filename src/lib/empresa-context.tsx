@@ -24,6 +24,7 @@ export type Empresa = {
   limite_usuarios?: number;
   limite_vagas?: number;
   ultimo_acesso?: string | null;
+  modulos_desabilitados?: string[];
 };
 
 type EmpresaCtx = {
