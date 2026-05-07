@@ -85,77 +85,187 @@ export function AppLayout({ children }: { children: React.ReactNode }) {
 
   return (
     <div className="min-h-screen bg-background flex">
-      {/* Sidebar desktop — dark */}
-      <aside className="hidden md:flex w-64 flex-col border-r border-sidebar-border bg-sidebar text-sidebar-foreground">
-        <div className="px-4 py-3 border-b border-sidebar-border space-y-2">
-          <div className="flex items-center gap-2">
-            {empresaAtual?.logo_url ? (
-              <img src={empresaAtual.logo_url} alt={empresaAtual.nome} className="h-9 w-9 rounded-lg object-cover bg-sidebar-primary" />
-            ) : (
-              <div className="h-9 w-9 rounded-lg bg-sidebar-primary flex items-center justify-center text-sidebar-primary-foreground font-bold text-xs">
-                {(empresaAtual?.nome || "—").slice(0, 2).toUpperCase()}
-              </div>
-            )}
+      {/* Sidebar desktop */}
+      {isAdminMestre ? (
+        <aside className="hidden md:flex w-72 flex-col border-r border-sidebar-border bg-sidebar text-sidebar-foreground">
+          <div className="px-4 py-3 border-b border-sidebar-border flex items-center gap-2">
+            <Crown className="h-4 w-4 text-sidebar-primary" />
             <div className="min-w-0 flex-1">
-              <p className="text-sm font-semibold leading-none text-sidebar-foreground truncate">{empresaAtual?.nome || "Selecione"}</p>
-              <p className="text-xs text-sidebar-foreground/60 mt-0.5">GestãoRHPRO</p>
-            </div>
-          </div>
-          {empresas.length > 1 && (
-            <Select value={empresaAtual?.id || ""} onValueChange={setEmpresaId}>
-              <SelectTrigger className="h-8 text-xs bg-sidebar-accent text-sidebar-foreground border-sidebar-border"><SelectValue /></SelectTrigger>
-              <SelectContent>
-                {empresas.map((e) => <SelectItem key={e.id} value={e.id}><Building2 className="h-3 w-3 inline mr-1" />{e.nome}</SelectItem>)}
-              </SelectContent>
-            </Select>
-          )}
-          {empresaAtual && (
-            <a href={`/e/${empresaAtual.slug}`} target="_blank" rel="noopener" className="flex items-center gap-1 text-[11px] text-sidebar-foreground/60 hover:text-sidebar-foreground">
-              <ExternalLink className="h-3 w-3" /> Página pública: /e/{empresaAtual.slug}
-            </a>
-          )}
-        </div>
-        <nav className="flex-1 px-3 py-4 space-y-1">
-          {nav.map((n) => {
-            const active = location.pathname.startsWith(n.to);
-            return (
-              <Link
-                key={n.to}
-                to={n.to}
-                preload="intent"
-                className={cn(
-                  "flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium transition-colors",
-                  active
-                    ? "bg-sidebar-primary text-sidebar-primary-foreground shadow-[var(--shadow-elegant)]"
-                    : "text-sidebar-foreground/70 hover:bg-sidebar-accent hover:text-sidebar-accent-foreground"
-                )}
-              >
-                <n.icon className="h-4 w-4" />
-                {n.label}
-              </Link>
-            );
-          })}
-        </nav>
-        <div className="p-3 border-t border-sidebar-border">
-          <div className="px-3 py-2 mb-2 flex items-center justify-between gap-2">
-            <div className="min-w-0">
-              <p className="text-xs text-sidebar-foreground/60">Conectado como</p>
-              <p className="text-sm font-medium truncate text-sidebar-foreground">{user?.email}</p>
+              <p className="text-sm font-semibold leading-none truncate">Painel Mestre</p>
+              <p className="text-[11px] text-sidebar-foreground/60 mt-0.5">GestãoRHPRO</p>
             </div>
             <ThemeToggle className="text-sidebar-foreground/80 hover:bg-sidebar-accent hover:text-sidebar-accent-foreground shrink-0" />
           </div>
-          <div className="px-3 pb-2">
-            {!isMobile && <OnlineUsersWidget />}
+
+          {/* Empresas — foco principal */}
+          <div className="px-3 py-3 border-b border-sidebar-border">
+            <div className="flex items-center justify-between px-1 mb-2">
+              <p className="text-[11px] uppercase tracking-wide text-sidebar-foreground/60 font-medium">
+                Empresas ({empresas.length})
+              </p>
+              <Link
+                to="/mestre"
+                preload="intent"
+                title="Painel Mestre (SaaS)"
+                className="text-[11px] text-sidebar-foreground/70 hover:text-sidebar-foreground inline-flex items-center gap-1"
+              >
+                <Settings className="h-3 w-3" /> Gerenciar
+              </Link>
+            </div>
+            <div className="max-h-[55vh] overflow-y-auto space-y-1 pr-1">
+              {empresas.map((e) => {
+                const active = empresaAtual?.id === e.id;
+                return (
+                  <button
+                    key={e.id}
+                    onClick={() => setEmpresaId(e.id)}
+                    className={cn(
+                      "w-full flex items-center gap-2 px-2 py-2 rounded-lg text-left transition-colors",
+                      active
+                        ? "bg-sidebar-primary text-sidebar-primary-foreground"
+                        : "text-sidebar-foreground/80 hover:bg-sidebar-accent hover:text-sidebar-accent-foreground"
+                    )}
+                  >
+                    {e.logo_url ? (
+                      <img src={e.logo_url} alt={e.nome} className="h-7 w-7 rounded-md object-cover bg-sidebar-accent shrink-0" />
+                    ) : (
+                      <div className="h-7 w-7 rounded-md bg-sidebar-accent text-sidebar-accent-foreground flex items-center justify-center text-[10px] font-bold shrink-0">
+                        {(e.nome || "—").slice(0, 2).toUpperCase()}
+                      </div>
+                    )}
+                    <div className="min-w-0 flex-1">
+                      <p className="text-xs font-medium truncate">{e.nome}</p>
+                      <p className={cn("text-[10px] truncate", active ? "text-sidebar-primary-foreground/80" : "text-sidebar-foreground/50")}>
+                        /e/{e.slug}
+                      </p>
+                    </div>
+                  </button>
+                );
+              })}
+              {empresas.length === 0 && (
+                <p className="text-xs text-sidebar-foreground/50 px-2 py-3 text-center">Nenhuma empresa</p>
+              )}
+            </div>
           </div>
-          <Button
-            variant="ghost"
-            className="w-full justify-start text-sidebar-foreground/80 hover:bg-sidebar-accent hover:text-sidebar-accent-foreground"
-            onClick={handleLogout}
-          >
-            <LogOut className="h-4 w-4 mr-2" /> Sair
-          </Button>
-        </div>
-      </aside>
+
+          {/* Abas minimizadas — apenas ícones */}
+          <nav className="flex-1 px-2 py-3 overflow-y-auto">
+            <p className="text-[10px] uppercase tracking-wide text-sidebar-foreground/50 font-medium px-2 mb-2">
+              Atalhos
+            </p>
+            <div className="grid grid-cols-5 gap-1">
+              {nav.map((n) => {
+                const active = location.pathname.startsWith(n.to);
+                return (
+                  <Link
+                    key={n.to}
+                    to={n.to}
+                    preload="intent"
+                    title={n.label}
+                    className={cn(
+                      "flex items-center justify-center h-9 w-full rounded-md transition-colors",
+                      active
+                        ? "bg-sidebar-primary text-sidebar-primary-foreground"
+                        : "text-sidebar-foreground/70 hover:bg-sidebar-accent hover:text-sidebar-accent-foreground"
+                    )}
+                  >
+                    <n.icon className="h-4 w-4" />
+                  </Link>
+                );
+              })}
+            </div>
+          </nav>
+
+          <div className="p-3 border-t border-sidebar-border">
+            <div className="px-2 pb-2">
+              {!isMobile && <OnlineUsersWidget />}
+            </div>
+            <div className="px-2 pb-2">
+              <p className="text-[10px] text-sidebar-foreground/60">Conectado como</p>
+              <p className="text-xs font-medium truncate text-sidebar-foreground">{user?.email}</p>
+            </div>
+            <Button
+              variant="ghost"
+              size="sm"
+              className="w-full justify-start text-sidebar-foreground/80 hover:bg-sidebar-accent hover:text-sidebar-accent-foreground"
+              onClick={handleLogout}
+            >
+              <LogOut className="h-4 w-4 mr-2" /> Sair
+            </Button>
+          </div>
+        </aside>
+      ) : (
+        <aside className="hidden md:flex w-64 flex-col border-r border-sidebar-border bg-sidebar text-sidebar-foreground">
+          <div className="px-4 py-3 border-b border-sidebar-border space-y-2">
+            <div className="flex items-center gap-2">
+              {empresaAtual?.logo_url ? (
+                <img src={empresaAtual.logo_url} alt={empresaAtual.nome} className="h-9 w-9 rounded-lg object-cover bg-sidebar-primary" />
+              ) : (
+                <div className="h-9 w-9 rounded-lg bg-sidebar-primary flex items-center justify-center text-sidebar-primary-foreground font-bold text-xs">
+                  {(empresaAtual?.nome || "—").slice(0, 2).toUpperCase()}
+                </div>
+              )}
+              <div className="min-w-0 flex-1">
+                <p className="text-sm font-semibold leading-none text-sidebar-foreground truncate">{empresaAtual?.nome || "Selecione"}</p>
+                <p className="text-xs text-sidebar-foreground/60 mt-0.5">GestãoRHPRO</p>
+              </div>
+            </div>
+            {empresas.length > 1 && (
+              <Select value={empresaAtual?.id || ""} onValueChange={setEmpresaId}>
+                <SelectTrigger className="h-8 text-xs bg-sidebar-accent text-sidebar-foreground border-sidebar-border"><SelectValue /></SelectTrigger>
+                <SelectContent>
+                  {empresas.map((e) => <SelectItem key={e.id} value={e.id}><Building2 className="h-3 w-3 inline mr-1" />{e.nome}</SelectItem>)}
+                </SelectContent>
+              </Select>
+            )}
+            {empresaAtual && (
+              <a href={`/e/${empresaAtual.slug}`} target="_blank" rel="noopener" className="flex items-center gap-1 text-[11px] text-sidebar-foreground/60 hover:text-sidebar-foreground">
+                <ExternalLink className="h-3 w-3" /> Página pública: /e/{empresaAtual.slug}
+              </a>
+            )}
+          </div>
+          <nav className="flex-1 px-3 py-4 space-y-1 overflow-y-auto">
+            {nav.map((n) => {
+              const active = location.pathname.startsWith(n.to);
+              return (
+                <Link
+                  key={n.to}
+                  to={n.to}
+                  preload="intent"
+                  className={cn(
+                    "flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium transition-colors",
+                    active
+                      ? "bg-sidebar-primary text-sidebar-primary-foreground shadow-[var(--shadow-elegant)]"
+                      : "text-sidebar-foreground/70 hover:bg-sidebar-accent hover:text-sidebar-accent-foreground"
+                  )}
+                >
+                  <n.icon className="h-4 w-4" />
+                  {n.label}
+                </Link>
+              );
+            })}
+          </nav>
+          <div className="p-3 border-t border-sidebar-border">
+            <div className="px-3 py-2 mb-2 flex items-center justify-between gap-2">
+              <div className="min-w-0">
+                <p className="text-xs text-sidebar-foreground/60">Conectado como</p>
+                <p className="text-sm font-medium truncate text-sidebar-foreground">{user?.email}</p>
+              </div>
+              <ThemeToggle className="text-sidebar-foreground/80 hover:bg-sidebar-accent hover:text-sidebar-accent-foreground shrink-0" />
+            </div>
+            <div className="px-3 pb-2">
+              {!isMobile && <OnlineUsersWidget />}
+            </div>
+            <Button
+              variant="ghost"
+              className="w-full justify-start text-sidebar-foreground/80 hover:bg-sidebar-accent hover:text-sidebar-accent-foreground"
+              onClick={handleLogout}
+            >
+              <LogOut className="h-4 w-4 mr-2" /> Sair
+            </Button>
+          </div>
+        </aside>
+      )}
 
       {/* Mobile header */}
       <div className="flex-1 flex flex-col min-w-0">
