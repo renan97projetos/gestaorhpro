@@ -57,6 +57,7 @@ const FIELD_LABELS: Record<string, string> = {
 
 function CadastroPage() {
   const { user, isGestor } = useAuth();
+  const { empresaAtual } = useEmpresa();
   const [list, setList] = useState<ColabFull[]>([]);
   const [loading, setLoading] = useState(true);
   const [tab, setTab] = useState("ativos");
@@ -84,14 +85,15 @@ function CadastroPage() {
   const [fLiderancaD, setFLiderancaD] = useState("all");
 
   const load = async () => {
+    if (!empresaAtual) { setList([]); setLoading(false); return; }
     setLoading(true);
-    const { data, error } = await supabase.from("colaboradores").select("*").order("colaborador");
+    const { data, error } = await supabase.from("colaboradores").select("*").eq("empresa_id", empresaAtual.id).order("colaborador");
     if (error) toast.error(error.message);
     setList((data as ColabFull[]) ?? []);
     setLoading(false);
   };
 
-  useEffect(() => { load(); }, []);
+  useEffect(() => { load(); /* eslint-disable-next-line */ }, [empresaAtual?.id]);
 
   const ativos = useMemo(() => list.filter((c) => c.status !== "Demitido"), [list]);
   const demitidos = useMemo(() => list.filter((c) => c.status === "Demitido"), [list]);
@@ -180,9 +182,9 @@ function CadastroPage() {
   };
 
   const handleCreate = async (newC: Partial<ColabFull>) => {
-    if (!user) return;
+    if (!user || !empresaAtual) return;
     const { data, error } = await supabase.from("colaboradores")
-      .insert({ ...newC, created_by: user.id } as never).select().single();
+      .insert({ ...newC, created_by: user.id, empresa_id: empresaAtual.id } as never).select().single();
     if (error) { toast.error(error.message); return; }
     await supabase.from("movimentacoes").insert({
       colaborador_id: data.id, matricula: data.matricula, colaborador_nome: data.colaborador,

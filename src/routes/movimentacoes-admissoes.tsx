@@ -17,6 +17,7 @@ import { toast } from "sonner";
 import { Plus, ArrowRightLeft, TrendingUp, Trash2, CheckCircle2, Clock, Timer, Users, Link2, Copy } from "lucide-react";
 import { CandidatosDialog } from "@/components/CandidatosDialog";
 import { logAudit } from "@/lib/audit";
+import { useEmpresa } from "@/lib/empresa-context";
 
 async function logAdmissaoEvento(
   movimentacao_id: string | null,
@@ -72,6 +73,7 @@ const TURNOS = ["Manhã", "Tarde", "Noite", "Comercial", "12x36", "Integral"];
 
 function Page() {
   const { isAdmin, isGestor } = useAuth() as { isAdmin: boolean; isGestor?: boolean };
+  const { empresaAtual } = useEmpresa();
   const canEdit = isAdmin || !!isGestor;
   const [rows, setRows] = useState<Mov[]>([]);
   const [colabs, setColabs] = useState<ColabLite[]>([]);
@@ -93,10 +95,11 @@ function Page() {
   });
 
   const load = async () => {
+    if (!empresaAtual) { setRows([]); setColabs([]); setLoading(false); return; }
     setLoading(true);
     const [m, c] = await Promise.all([
-      supabase.from("admissoes_movimentacao").select("*").order("data_abertura", { ascending: false }),
-      supabase.from("colaboradores").select("id,colaborador,cargo,setor,status").order("colaborador"),
+      supabase.from("admissoes_movimentacao").select("*").eq("empresa_id", empresaAtual.id).order("data_abertura", { ascending: false }),
+      supabase.from("colaboradores").select("id,colaborador,cargo,setor,status").eq("empresa_id", empresaAtual.id).order("colaborador"),
     ]);
     if (m.error) toast.error(m.error.message);
     setRows((m.data as Mov[]) || []);
@@ -104,7 +107,7 @@ function Page() {
     setLoading(false);
   };
 
-  useEffect(() => { load(); }, []);
+  useEffect(() => { load(); /* eslint-disable-next-line */ }, [empresaAtual?.id]);
 
   const stats = useMemo(() => {
     const total = rows.length;
@@ -145,10 +148,12 @@ function Page() {
   }, [rows, filtro]);
 
   const handleSave = async () => {
+    if (!empresaAtual) return toast.error("Selecione uma empresa");
     if (form.tipo === "substituicao" && !form.substituido_id) return toast.error("Informe quem foi substituído");
     const sub = colabs.find((c) => c.id === form.substituido_id);
     const { data: u } = await supabase.auth.getUser();
     const payload = {
+      empresa_id: empresaAtual.id,
       tipo: form.tipo,
       substituido_id: form.tipo === "substituicao" ? sub?.id ?? null : null,
       substituido_nome: form.tipo === "substituicao" ? sub?.colaborador ?? null : null,
