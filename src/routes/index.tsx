@@ -1,13 +1,13 @@
 import { createFileRoute, useNavigate } from "@tanstack/react-router";
 import { useEffect, useState } from "react";
 import { useAuth } from "@/lib/auth-context";
-import { Card } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Button } from "@/components/ui/button";
-import { Eye, EyeOff, Loader2 } from "lucide-react";
+import { Eye, EyeOff, Loader2, ArrowRight } from "lucide-react";
 import { toast } from "sonner";
 import { ThemeToggle } from "@/components/ThemeToggle";
+import logo from "@/assets/gestaorhpro-logo.png";
 
 export const Route = createFileRoute("/")({
   component: AuthPage,
@@ -22,34 +22,52 @@ function AuthPage() {
   }, [user, loading, navigate]);
 
   return (
-    <div className="min-h-screen flex items-center justify-center px-4 bg-[image:var(--gradient-soft)] relative overflow-hidden">
-      <div className="absolute -top-32 -left-32 h-96 w-96 rounded-full bg-primary/15 blur-3xl" />
-      <div className="absolute -bottom-32 -right-32 h-96 w-96 rounded-full bg-primary-glow/20 blur-3xl" />
+    <div className="min-h-screen bg-background text-foreground flex flex-col">
       <div className="absolute top-4 right-4 z-10">
-        <ThemeToggle variant="outline" />
+        <ThemeToggle variant="ghost" />
       </div>
-      <Card className="relative w-full max-w-md p-8 shadow-[var(--shadow-elegant)]">
-        <div className="flex flex-col items-center mb-6">
-          <div className="h-20 w-20 rounded-full bg-card border-4 border-background shadow-[var(--shadow-card)] flex items-center justify-center mb-4">
-            <div className="h-14 w-14 rounded-full bg-[image:var(--gradient-primary)] flex items-center justify-center text-primary-foreground text-xl font-bold">
-              GR
-            </div>
+
+      <div className="flex-1 grid lg:grid-cols-2">
+        {/* Left: brand panel */}
+        <div className="hidden lg:flex relative items-center justify-center bg-primary text-primary-foreground p-12 overflow-hidden">
+          <div className="absolute inset-0 opacity-90 bg-[image:var(--gradient-primary)]" />
+          <div className="relative z-10 max-w-md w-full flex flex-col items-center text-center">
+            <img
+              src={logo}
+              alt="GestãoRHPRO"
+              className="h-28 w-28 mb-8 drop-shadow-xl"
+            />
+            <h2 className="text-4xl font-bold tracking-tight">
+              Bem-vindo de volta
+            </h2>
+            <p className="mt-3 text-base text-primary-foreground/80">
+              Continue gerindo sua equipe com simplicidade e inteligência.
+            </p>
           </div>
-          <h1 className="text-2xl font-bold bg-[image:var(--gradient-primary)] bg-clip-text text-transparent">
-            Gestão de Colaboradores
-          </h1>
-          <p className="text-sm text-muted-foreground text-center mt-1">
-            Sistema Inteligente de Gestão de Colaboradores
-          </p>
         </div>
 
-        <div className="mt-6">
-          <LoginForm onSubmit={signIn} onForgot={resetPassword} />
-          <p className="mt-6 text-center text-xs text-muted-foreground">
-            O cadastro de novos usuários é feito apenas pela Central Master.
-          </p>
+        {/* Right: form */}
+        <div className="flex items-center justify-center p-6 sm:p-12">
+          <div className="w-full max-w-sm">
+            <div className="lg:hidden flex flex-col items-center mb-8">
+              <img src={logo} alt="GestãoRHPRO" className="h-16 w-16 mb-3" />
+            </div>
+
+            <h1 className="text-3xl font-semibold tracking-tight">Entrar</h1>
+            <p className="mt-2 text-sm text-muted-foreground">
+              Acesse sua conta GestãoRHPRO.
+            </p>
+
+            <div className="mt-8">
+              <LoginForm onSubmit={signIn} onForgot={resetPassword} />
+            </div>
+
+            <p className="mt-10 text-center text-xs text-muted-foreground">
+              O cadastro de novos usuários é feito apenas pela Central Master.
+            </p>
+          </div>
         </div>
-      </Card>
+      </div>
     </div>
   );
 }
@@ -89,20 +107,34 @@ function LoginForm({
   };
 
   return (
-    <form onSubmit={submit} className="space-y-4">
+    <form onSubmit={submit} className="space-y-5">
       <div className="space-y-2">
-        <Label>Email</Label>
-        <Input type="email" placeholder="seu@email.com" value={email} onChange={(e) => setEmail(e.target.value)} required />
+        <Label htmlFor="email" className="text-xs font-medium uppercase tracking-wide text-muted-foreground">
+          Email
+        </Label>
+        <Input
+          id="email"
+          type="email"
+          placeholder="seu@email.com"
+          value={email}
+          onChange={(e) => setEmail(e.target.value)}
+          required
+          className="h-11"
+        />
       </div>
       <div className="space-y-2">
-        <Label>Senha</Label>
+        <Label htmlFor="password" className="text-xs font-medium uppercase tracking-wide text-muted-foreground">
+          Senha
+        </Label>
         <div className="relative">
           <Input
+            id="password"
             type={show ? "text" : "password"}
-            placeholder="Sua senha"
+            placeholder="••••••••"
             value={password}
             onChange={(e) => setPassword(e.target.value)}
             required
+            className="h-11 pr-10"
           />
           <button
             type="button"
@@ -112,18 +144,29 @@ function LoginForm({
             {show ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
           </button>
         </div>
+        <div className="flex justify-end">
+          <button
+            type="button"
+            onClick={forgot}
+            className="text-xs text-primary hover:underline"
+          >
+            Esqueci minha senha
+          </button>
+        </div>
       </div>
-      <Button type="submit" className="w-full bg-[image:var(--gradient-primary)] hover:opacity-90" disabled={loading}>
-        {loading ? <Loader2 className="h-4 w-4 animate-spin" /> : "Entrar"}
-      </Button>
-      <button
-        type="button"
-        onClick={forgot}
-        className="block w-full text-sm text-muted-foreground hover:text-primary text-center"
+      <Button
+        type="submit"
+        className="w-full h-11 bg-primary hover:bg-primary/90 text-primary-foreground font-medium"
+        disabled={loading}
       >
-        Esqueci minha senha
-      </button>
+        {loading ? (
+          <Loader2 className="h-4 w-4 animate-spin" />
+        ) : (
+          <>
+            Entrar <ArrowRight className="ml-2 h-4 w-4" />
+          </>
+        )}
+      </Button>
     </form>
   );
 }
-
