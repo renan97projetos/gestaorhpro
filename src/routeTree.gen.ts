@@ -33,6 +33,7 @@ import { Route as ChamadaTerceirosRouteImport } from './routes/chamada-terceiros
 import { Route as ChamadaRouteImport } from './routes/chamada'
 import { Route as CadastroRouteImport } from './routes/cadastro'
 import { Route as BaseConhecimentoRouteImport } from './routes/base-conhecimento'
+import { Route as BancoTalentosRouteImport } from './routes/banco-talentos'
 import { Route as AvisosRouteImport } from './routes/avisos'
 import { Route as AuditoriaRouteImport } from './routes/auditoria'
 import { Route as AniversariantesRouteImport } from './routes/aniversariantes'
@@ -164,6 +165,11 @@ const BaseConhecimentoRoute = BaseConhecimentoRouteImport.update({
   path: '/base-conhecimento',
   getParentRoute: () => rootRouteImport,
 } as any)
+const BancoTalentosRoute = BancoTalentosRouteImport.update({
+  id: '/banco-talentos',
+  path: '/banco-talentos',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const AvisosRoute = AvisosRouteImport.update({
   id: '/avisos',
   path: '/avisos',
@@ -221,6 +227,7 @@ export interface FileRoutesByFullPath {
   '/aniversariantes': typeof AniversariantesRoute
   '/auditoria': typeof AuditoriaRoute
   '/avisos': typeof AvisosRoute
+  '/banco-talentos': typeof BancoTalentosRoute
   '/base-conhecimento': typeof BaseConhecimentoRoute
   '/cadastro': typeof CadastroRoute
   '/chamada': typeof ChamadaRoute
@@ -257,6 +264,7 @@ export interface FileRoutesByTo {
   '/aniversariantes': typeof AniversariantesRoute
   '/auditoria': typeof AuditoriaRoute
   '/avisos': typeof AvisosRoute
+  '/banco-talentos': typeof BancoTalentosRoute
   '/base-conhecimento': typeof BaseConhecimentoRoute
   '/cadastro': typeof CadastroRoute
   '/chamada': typeof ChamadaRoute
@@ -294,6 +302,7 @@ export interface FileRoutesById {
   '/aniversariantes': typeof AniversariantesRoute
   '/auditoria': typeof AuditoriaRoute
   '/avisos': typeof AvisosRoute
+  '/banco-talentos': typeof BancoTalentosRoute
   '/base-conhecimento': typeof BaseConhecimentoRoute
   '/cadastro': typeof CadastroRoute
   '/chamada': typeof ChamadaRoute
@@ -332,6 +341,7 @@ export interface FileRouteTypes {
     | '/aniversariantes'
     | '/auditoria'
     | '/avisos'
+    | '/banco-talentos'
     | '/base-conhecimento'
     | '/cadastro'
     | '/chamada'
@@ -368,6 +378,7 @@ export interface FileRouteTypes {
     | '/aniversariantes'
     | '/auditoria'
     | '/avisos'
+    | '/banco-talentos'
     | '/base-conhecimento'
     | '/cadastro'
     | '/chamada'
@@ -404,6 +415,7 @@ export interface FileRouteTypes {
     | '/aniversariantes'
     | '/auditoria'
     | '/avisos'
+    | '/banco-talentos'
     | '/base-conhecimento'
     | '/cadastro'
     | '/chamada'
@@ -441,6 +453,7 @@ export interface RootRouteChildren {
   AniversariantesRoute: typeof AniversariantesRoute
   AuditoriaRoute: typeof AuditoriaRoute
   AvisosRoute: typeof AvisosRoute
+  BancoTalentosRoute: typeof BancoTalentosRoute
   BaseConhecimentoRoute: typeof BaseConhecimentoRoute
   CadastroRoute: typeof CadastroRoute
   ChamadaRoute: typeof ChamadaRoute
@@ -641,6 +654,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof BaseConhecimentoRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/banco-talentos': {
+      id: '/banco-talentos'
+      path: '/banco-talentos'
+      fullPath: '/banco-talentos'
+      preLoaderRoute: typeof BancoTalentosRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/avisos': {
       id: '/avisos'
       path: '/avisos'
@@ -730,6 +750,7 @@ const rootRouteChildren: RootRouteChildren = {
   AniversariantesRoute: AniversariantesRoute,
   AuditoriaRoute: AuditoriaRoute,
   AvisosRoute: AvisosRoute,
+  BancoTalentosRoute: BancoTalentosRoute,
   BaseConhecimentoRoute: BaseConhecimentoRoute,
   CadastroRoute: CadastroRoute,
   ChamadaRoute: ChamadaRoute,
