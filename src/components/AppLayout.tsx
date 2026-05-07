@@ -17,6 +17,7 @@ const baseNav = [
   { to: "/dashboard", label: "Dashboard", icon: LayoutDashboard },
   { to: "/cadastro", label: "Colaboradores", icon: Users },
   { to: "/chamada", label: "Chamada", icon: UserCheck },
+  { to: "/chamada-terceiros", label: "Chamada Terceiros", icon: Handshake },
   { to: "/analise-faltas", label: "Análise de Faltas", icon: AlertTriangle },
   { to: "/experiencia", label: "Experiência (90 dias)", icon: CalendarClock },
   { to: "/solicitacao-movimentacao", label: "Movimentações", icon: History },
