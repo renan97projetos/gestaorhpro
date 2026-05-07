@@ -28,7 +28,7 @@ function Page() {
   useEffect(() => {
     (async () => {
       const { data } = await supabase.from("empresas_publicas" as never).select("id,nome,slug,logo_url,capa_url").eq("slug", slug).maybeSingle();
-      setEmpresa((data as Empresa) || null);
+      setEmpresa((data as unknown as Empresa) || null);
       setLoading(false);
     })();
   }, [slug]);
