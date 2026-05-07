@@ -35,6 +35,7 @@ import { Route as IndexRouteImport } from './routes/index'
 import { Route as VagaTokenRouteImport } from './routes/vaga.$token'
 import { Route as PTokenRouteImport } from './routes/p.$token'
 import { Route as ESlugRouteImport } from './routes/e.$slug'
+import { Route as ESlugLoginRouteImport } from './routes/e.$slug.login'
 
 const UsuariosRoute = UsuariosRouteImport.update({
   id: '/usuarios',
@@ -166,6 +167,11 @@ const ESlugRoute = ESlugRouteImport.update({
   path: '/e/$slug',
   getParentRoute: () => rootRouteImport,
 } as any)
+const ESlugLoginRoute = ESlugLoginRouteImport.update({
+  id: '/login',
+  path: '/login',
+  getParentRoute: () => ESlugRoute,
+} as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
@@ -191,9 +197,10 @@ export interface FileRoutesByFullPath {
   '/reset-password': typeof ResetPasswordRoute
   '/solicitacao-movimentacao': typeof SolicitacaoMovimentacaoRoute
   '/usuarios': typeof UsuariosRoute
-  '/e/$slug': typeof ESlugRoute
+  '/e/$slug': typeof ESlugRouteWithChildren
   '/p/$token': typeof PTokenRoute
   '/vaga/$token': typeof VagaTokenRoute
+  '/e/$slug/login': typeof ESlugLoginRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
@@ -219,9 +226,10 @@ export interface FileRoutesByTo {
   '/reset-password': typeof ResetPasswordRoute
   '/solicitacao-movimentacao': typeof SolicitacaoMovimentacaoRoute
   '/usuarios': typeof UsuariosRoute
-  '/e/$slug': typeof ESlugRoute
+  '/e/$slug': typeof ESlugRouteWithChildren
   '/p/$token': typeof PTokenRoute
   '/vaga/$token': typeof VagaTokenRoute
+  '/e/$slug/login': typeof ESlugLoginRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
@@ -248,9 +256,10 @@ export interface FileRoutesById {
   '/reset-password': typeof ResetPasswordRoute
   '/solicitacao-movimentacao': typeof SolicitacaoMovimentacaoRoute
   '/usuarios': typeof UsuariosRoute
-  '/e/$slug': typeof ESlugRoute
+  '/e/$slug': typeof ESlugRouteWithChildren
   '/p/$token': typeof PTokenRoute
   '/vaga/$token': typeof VagaTokenRoute
+  '/e/$slug/login': typeof ESlugLoginRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
@@ -281,6 +290,7 @@ export interface FileRouteTypes {
     | '/e/$slug'
     | '/p/$token'
     | '/vaga/$token'
+    | '/e/$slug/login'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
@@ -309,6 +319,7 @@ export interface FileRouteTypes {
     | '/e/$slug'
     | '/p/$token'
     | '/vaga/$token'
+    | '/e/$slug/login'
   id:
     | '__root__'
     | '/'
@@ -337,6 +348,7 @@ export interface FileRouteTypes {
     | '/e/$slug'
     | '/p/$token'
     | '/vaga/$token'
+    | '/e/$slug/login'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
@@ -363,7 +375,7 @@ export interface RootRouteChildren {
   ResetPasswordRoute: typeof ResetPasswordRoute
   SolicitacaoMovimentacaoRoute: typeof SolicitacaoMovimentacaoRoute
   UsuariosRoute: typeof UsuariosRoute
-  ESlugRoute: typeof ESlugRoute
+  ESlugRoute: typeof ESlugRouteWithChildren
   PTokenRoute: typeof PTokenRoute
   VagaTokenRoute: typeof VagaTokenRoute
 }
@@ -552,8 +564,25 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ESlugRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/e/$slug/login': {
+      id: '/e/$slug/login'
+      path: '/login'
+      fullPath: '/e/$slug/login'
+      preLoaderRoute: typeof ESlugLoginRouteImport
+      parentRoute: typeof ESlugRoute
+    }
   }
 }
+
+interface ESlugRouteChildren {
+  ESlugLoginRoute: typeof ESlugLoginRoute
+}
+
+const ESlugRouteChildren: ESlugRouteChildren = {
+  ESlugLoginRoute: ESlugLoginRoute,
+}
+
+const ESlugRouteWithChildren = ESlugRoute._addFileChildren(ESlugRouteChildren)
 
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
@@ -579,7 +608,7 @@ const rootRouteChildren: RootRouteChildren = {
   ResetPasswordRoute: ResetPasswordRoute,
   SolicitacaoMovimentacaoRoute: SolicitacaoMovimentacaoRoute,
   UsuariosRoute: UsuariosRoute,
-  ESlugRoute: ESlugRoute,
+  ESlugRoute: ESlugRouteWithChildren,
   PTokenRoute: PTokenRoute,
   VagaTokenRoute: VagaTokenRoute,
 }

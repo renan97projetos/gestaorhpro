@@ -64,6 +64,7 @@ type Mov = {
   link_token: string | null;
   salario: number | null;
   cargo_oferecido: string | null;
+  publicada: boolean;
   created_at: string;
 };
 
@@ -218,6 +219,13 @@ function Page() {
     await logAdmissaoEvento(id, "excluida", { ...(row || {}) });
     logAudit({ acao: "delete", entidade: "admissoes_movimentacao", entidade_id: id, resumo: "Excluiu vaga" });
     toast.success("Excluído");
+    load();
+  };
+
+  const togglePublicada = async (r: Mov) => {
+    const { error } = await supabase.from("admissoes_movimentacao").update({ publicada: !r.publicada } as never).eq("id", r.id);
+    if (error) return toast.error(error.message);
+    toast.success(r.publicada ? "Vaga despublicada" : "Vaga publicada na landing");
     load();
   };
 
@@ -387,6 +395,16 @@ function Page() {
                         <Button variant="outline" size="sm" onClick={() => setCandidatosVaga(r)}>
                           <Users className="h-3.5 w-3.5 mr-1" /> Candidatos
                         </Button>
+                        {r.status === "aberta" && (
+                          <Button
+                            variant={r.publicada ? "default" : "outline"}
+                            size="sm"
+                            onClick={() => togglePublicada(r)}
+                            title="Tornar visível na landing pública"
+                          >
+                            {r.publicada ? "Publicada" : "Publicar"}
+                          </Button>
+                        )}
                         {r.link_token && r.status === "aberta" && (
                           <Button variant="ghost" size="sm" title="Copiar link público de candidatura"
                             onClick={() => {
