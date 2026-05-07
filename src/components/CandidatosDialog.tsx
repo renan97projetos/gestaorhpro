@@ -237,10 +237,20 @@ export function CandidatosDialog({ vaga, canEdit, onClose }: { vaga: Vaga; canEd
                         <Badge className={`${et.color} text-white`}>{et.l}</Badge>
                       )}
                       {c.etapa === "admissao" && (
-                        <div className="text-[11px] text-emerald-700 dark:text-emerald-400 mt-1">
-                          {c.data_inicio && <>Início: {new Date(c.data_inicio).toLocaleDateString("pt-BR")}<br /></>}
-                          {c.cargo_oferecido}
-                          {c.salario != null && <> — R$ {Number(c.salario).toFixed(2)}</>}
+                        <div className="text-[11px] text-emerald-700 dark:text-emerald-400 mt-1 space-y-0.5">
+                          {c.data_inicio && <div>Início: {new Date(c.data_inicio).toLocaleDateString("pt-BR")}</div>}
+                          <div>{c.cargo_oferecido}{c.salario != null && <> — R$ {Number(c.salario).toFixed(2)}</>}</div>
+                          <button
+                            type="button"
+                            className="text-primary hover:underline inline-flex items-center gap-1"
+                            onClick={() => {
+                              const link = `${window.location.origin}/doc/${(c as unknown as { doc_token?: string }).doc_token}`;
+                              navigator.clipboard.writeText(link);
+                              toast.success("Link de coleta de documentos copiado!");
+                            }}
+                          >
+                            <Link2 className="h-3 w-3" /> Copiar link de documentos
+                          </button>
                         </div>
                       )}
                     </TableCell>
