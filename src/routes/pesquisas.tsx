@@ -107,6 +107,7 @@ function PesquisasPage() {
 
   const handleCreate = async () => {
     if (!titulo.trim()) return toast.error("Informe o título");
+    if (!empresaAtual) return toast.error("Selecione uma empresa");
     const { data, error } = await supabase
       .from("pesquisas")
       .insert({
@@ -114,6 +115,7 @@ function PesquisasPage() {
         descricao: descricao.trim() || null,
         introducao: introducao.trim() || null,
         tipo: "enps",
+        empresa_id: empresaAtual.id,
       })
       .select()
       .single();
