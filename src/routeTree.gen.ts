@@ -34,6 +34,7 @@ import { Route as AnaliseFaltasRouteImport } from './routes/analise-faltas'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as VagaTokenRouteImport } from './routes/vaga.$token'
 import { Route as PTokenRouteImport } from './routes/p.$token'
+import { Route as ESlugRouteImport } from './routes/e.$slug'
 
 const UsuariosRoute = UsuariosRouteImport.update({
   id: '/usuarios',
@@ -160,6 +161,11 @@ const PTokenRoute = PTokenRouteImport.update({
   path: '/p/$token',
   getParentRoute: () => rootRouteImport,
 } as any)
+const ESlugRoute = ESlugRouteImport.update({
+  id: '/e/$slug',
+  path: '/e/$slug',
+  getParentRoute: () => rootRouteImport,
+} as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
@@ -185,6 +191,7 @@ export interface FileRoutesByFullPath {
   '/reset-password': typeof ResetPasswordRoute
   '/solicitacao-movimentacao': typeof SolicitacaoMovimentacaoRoute
   '/usuarios': typeof UsuariosRoute
+  '/e/$slug': typeof ESlugRoute
   '/p/$token': typeof PTokenRoute
   '/vaga/$token': typeof VagaTokenRoute
 }
@@ -212,6 +219,7 @@ export interface FileRoutesByTo {
   '/reset-password': typeof ResetPasswordRoute
   '/solicitacao-movimentacao': typeof SolicitacaoMovimentacaoRoute
   '/usuarios': typeof UsuariosRoute
+  '/e/$slug': typeof ESlugRoute
   '/p/$token': typeof PTokenRoute
   '/vaga/$token': typeof VagaTokenRoute
 }
@@ -240,6 +248,7 @@ export interface FileRoutesById {
   '/reset-password': typeof ResetPasswordRoute
   '/solicitacao-movimentacao': typeof SolicitacaoMovimentacaoRoute
   '/usuarios': typeof UsuariosRoute
+  '/e/$slug': typeof ESlugRoute
   '/p/$token': typeof PTokenRoute
   '/vaga/$token': typeof VagaTokenRoute
 }
@@ -269,6 +278,7 @@ export interface FileRouteTypes {
     | '/reset-password'
     | '/solicitacao-movimentacao'
     | '/usuarios'
+    | '/e/$slug'
     | '/p/$token'
     | '/vaga/$token'
   fileRoutesByTo: FileRoutesByTo
@@ -296,6 +306,7 @@ export interface FileRouteTypes {
     | '/reset-password'
     | '/solicitacao-movimentacao'
     | '/usuarios'
+    | '/e/$slug'
     | '/p/$token'
     | '/vaga/$token'
   id:
@@ -323,6 +334,7 @@ export interface FileRouteTypes {
     | '/reset-password'
     | '/solicitacao-movimentacao'
     | '/usuarios'
+    | '/e/$slug'
     | '/p/$token'
     | '/vaga/$token'
   fileRoutesById: FileRoutesById
@@ -351,6 +363,7 @@ export interface RootRouteChildren {
   ResetPasswordRoute: typeof ResetPasswordRoute
   SolicitacaoMovimentacaoRoute: typeof SolicitacaoMovimentacaoRoute
   UsuariosRoute: typeof UsuariosRoute
+  ESlugRoute: typeof ESlugRoute
   PTokenRoute: typeof PTokenRoute
   VagaTokenRoute: typeof VagaTokenRoute
 }
@@ -532,6 +545,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof PTokenRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/e/$slug': {
+      id: '/e/$slug'
+      path: '/e/$slug'
+      fullPath: '/e/$slug'
+      preLoaderRoute: typeof ESlugRouteImport
+      parentRoute: typeof rootRouteImport
+    }
   }
 }
 
@@ -559,6 +579,7 @@ const rootRouteChildren: RootRouteChildren = {
   ResetPasswordRoute: ResetPasswordRoute,
   SolicitacaoMovimentacaoRoute: SolicitacaoMovimentacaoRoute,
   UsuariosRoute: UsuariosRoute,
+  ESlugRoute: ESlugRoute,
   PTokenRoute: PTokenRoute,
   VagaTokenRoute: VagaTokenRoute,
 }
