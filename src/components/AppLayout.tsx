@@ -7,6 +7,7 @@ import { LayoutDashboard, Users, History, LogOut, Menu, X, LayoutGrid, UserCog, 
 import { useEffect, useRef, useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
+import { autoFitImage } from "@/lib/image-fit";
 import { cn } from "@/lib/utils";
 import { ThemeToggle } from "@/components/ThemeToggle";
 import { OnboardingTour } from "@/components/OnboardingTour";
@@ -57,8 +58,10 @@ export function AppLayout({ children }: { children: React.ReactNode }) {
     }
     setUploadingLogo(true);
     try {
-      const path = `${empresaAtual.id}/logo_url-${Date.now()}-${file.name}`;
-      const { error: upErr } = await supabase.storage.from("empresa-assets").upload(path, file, { upsert: true });
+      // Auto-ajuste: detecta conteúdo, centraliza num quadrado 512x512 com padding
+      const fitted = await autoFitImage(file, { size: 512, padding: 0.1 });
+      const path = `${empresaAtual.id}/logo_url-${Date.now()}-${fitted.name}`;
+      const { error: upErr } = await supabase.storage.from("empresa-assets").upload(path, fitted, { upsert: true, contentType: fitted.type });
       if (upErr) throw upErr;
       const { data } = supabase.storage.from("empresa-assets").getPublicUrl(path);
       const { data: updated, error: updErr } = await supabase
