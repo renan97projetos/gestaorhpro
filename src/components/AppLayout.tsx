@@ -33,11 +33,13 @@ const baseNav = [
 
 export function AppLayout({ children }: { children: React.ReactNode }) {
   const { user, signOut, isAdmin } = useAuth();
-  const { empresas, empresaAtual, setEmpresaId, isAdminMestre, isAdminEmpresa } = useEmpresa();
+  const { empresas, empresaAtual, setEmpresaId, isAdminMestre, isAdminEmpresa, isGestorEmpresa } = useEmpresa();
   const nav = [
     ...baseNav,
-    ...(isAdminEmpresa ? [
+    ...(isGestorEmpresa ? [
       { to: "/empresa-config", label: "Configurações da Empresa", icon: Settings },
+    ] : []),
+    ...(isAdminEmpresa ? [
       { to: "/empresa-membros", label: "Usuários da Empresa", icon: UserCog },
     ] : []),
     ...(isAdmin ? [
