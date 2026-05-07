@@ -411,12 +411,17 @@ function EmpresaDetalheDialog({ empresa, onClose, onChanged }: { empresa: Empres
 
           <TabsContent value="info" className="space-y-4 mt-4">
             <div className="grid grid-cols-2 gap-3 text-sm">
-              <Field label="Nome" value={empresa.nome} />
               <Field label="Slug" value={empresa.slug} />
               <Field label="Data de criação" value={new Date((empresa as unknown as { created_at?: string }).created_at || "").toLocaleDateString("pt-BR")} />
               <Field label="Último acesso" value={empresa.ultimo_acesso ? new Date(empresa.ultimo_acesso).toLocaleString("pt-BR") : "—"} />
             </div>
             <div className="grid md:grid-cols-2 gap-3">
+              <div className="md:col-span-2"><Label>Nome</Label><Input value={info.nome} onChange={(e) => setInfo({ ...info, nome: e.target.value })} /></div>
+              <div><Label>CNPJ</Label><Input value={info.cnpj} onChange={(e) => setInfo({ ...info, cnpj: e.target.value })} /></div>
+              <div><Label>Responsável</Label><Input value={info.responsavel} onChange={(e) => setInfo({ ...info, responsavel: e.target.value })} /></div>
+              <div><Label>Telefone</Label><Input value={info.telefone} onChange={(e) => setInfo({ ...info, telefone: e.target.value })} /></div>
+              <div><Label>E-mail de contato</Label><Input type="email" value={info.email_contato} onChange={(e) => setInfo({ ...info, email_contato: e.target.value })} /></div>
+              <div className="md:col-span-2"><Label>Endereço</Label><Input value={info.endereco} onChange={(e) => setInfo({ ...info, endereco: e.target.value })} /></div>
               <div><Label>Plano</Label>
                 <Select value={info.plano} onValueChange={(v) => setInfo({ ...info, plano: v })}>
                   <SelectTrigger><SelectValue /></SelectTrigger>
@@ -428,8 +433,20 @@ function EmpresaDetalheDialog({ empresa, onClose, onChanged }: { empresa: Empres
                   </SelectContent>
                 </Select>
               </div>
-              <div><Label>Responsável</Label><Input value={info.responsavel} onChange={(e) => setInfo({ ...info, responsavel: e.target.value })} /></div>
-              <div><Label>MRR (R$)</Label><Input type="number" step="0.01" value={info.mrr} onChange={(e) => setInfo({ ...info, mrr: Number(e.target.value) })} /></div>
+              <div><Label>Mensalidade R$ (MRR)</Label><Input type="number" step="0.01" value={info.mrr} onChange={(e) => setInfo({ ...info, mrr: Number(e.target.value) })} /></div>
+              <div><Label>Forma de pagamento</Label>
+                <Select value={info.forma_pagamento || "—"} onValueChange={(v) => setInfo({ ...info, forma_pagamento: v === "—" ? "" : v })}>
+                  <SelectTrigger><SelectValue placeholder="Selecione" /></SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="pix">PIX</SelectItem>
+                    <SelectItem value="boleto">Boleto</SelectItem>
+                    <SelectItem value="cartao">Cartão de crédito</SelectItem>
+                    <SelectItem value="transferencia">Transferência</SelectItem>
+                  </SelectContent>
+                </Select>
+              </div>
+              <div><Label>Dia do vencimento</Label><Input type="number" min={1} max={31} value={info.dia_vencimento} onChange={(e) => setInfo({ ...info, dia_vencimento: Number(e.target.value) })} /></div>
+              <div><Label>Início do contrato</Label><Input type="date" value={info.data_inicio_contrato} onChange={(e) => setInfo({ ...info, data_inicio_contrato: e.target.value })} /></div>
               <div><Label>Limite de usuários</Label><Input type="number" value={info.limite_usuarios} onChange={(e) => setInfo({ ...info, limite_usuarios: Number(e.target.value) })} /></div>
               <div><Label>Limite de vagas</Label><Input type="number" value={info.limite_vagas} onChange={(e) => setInfo({ ...info, limite_vagas: Number(e.target.value) })} /></div>
               <div><Label>Status</Label>
