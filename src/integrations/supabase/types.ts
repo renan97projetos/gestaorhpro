@@ -1096,6 +1096,131 @@ export type Database = {
           },
         ]
       }
+      terceiros: {
+        Row: {
+          ativo: boolean
+          banco: string | null
+          chave_pix: string | null
+          created_at: string
+          created_by: string | null
+          documento: string | null
+          email: string | null
+          empresa_id: string
+          funcao: string | null
+          id: string
+          nome: string
+          observacoes: string | null
+          telefone: string | null
+          tipo_pix: string | null
+          updated_at: string
+        }
+        Insert: {
+          ativo?: boolean
+          banco?: string | null
+          chave_pix?: string | null
+          created_at?: string
+          created_by?: string | null
+          documento?: string | null
+          email?: string | null
+          empresa_id: string
+          funcao?: string | null
+          id?: string
+          nome: string
+          observacoes?: string | null
+          telefone?: string | null
+          tipo_pix?: string | null
+          updated_at?: string
+        }
+        Update: {
+          ativo?: boolean
+          banco?: string | null
+          chave_pix?: string | null
+          created_at?: string
+          created_by?: string | null
+          documento?: string | null
+          email?: string | null
+          empresa_id?: string
+          funcao?: string | null
+          id?: string
+          nome?: string
+          observacoes?: string | null
+          telefone?: string | null
+          tipo_pix?: string | null
+          updated_at?: string
+        }
+        Relationships: []
+      }
+      terceiros_chamadas: {
+        Row: {
+          banco_destino: string | null
+          chave_pix: string | null
+          comprovante_url: string | null
+          created_at: string
+          created_by: string | null
+          created_by_nome: string | null
+          data: string
+          data_deposito: string | null
+          descricao: string | null
+          empresa_id: string
+          id: string
+          observacao: string | null
+          status: string
+          terceiro_id: string
+          tipo_pix: string | null
+          titular_destino: string | null
+          updated_at: string
+          valor: number | null
+        }
+        Insert: {
+          banco_destino?: string | null
+          chave_pix?: string | null
+          comprovante_url?: string | null
+          created_at?: string
+          created_by?: string | null
+          created_by_nome?: string | null
+          data?: string
+          data_deposito?: string | null
+          descricao?: string | null
+          empresa_id: string
+          id?: string
+          observacao?: string | null
+          status?: string
+          terceiro_id: string
+          tipo_pix?: string | null
+          titular_destino?: string | null
+          updated_at?: string
+          valor?: number | null
+        }
+        Update: {
+          banco_destino?: string | null
+          chave_pix?: string | null
+          comprovante_url?: string | null
+          created_at?: string
+          created_by?: string | null
+          created_by_nome?: string | null
+          data?: string
+          data_deposito?: string | null
+          descricao?: string | null
+          empresa_id?: string
+          id?: string
+          observacao?: string | null
+          status?: string
+          terceiro_id?: string
+          tipo_pix?: string | null
+          titular_destino?: string | null
+          updated_at?: string
+          valor?: number | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "terceiros_chamadas_terceiro_id_fkey"
+            columns: ["terceiro_id"]
+            isOneToOne: false
+            referencedRelation: "terceiros"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       user_roles: {
         Row: {
           created_at: string
