@@ -356,6 +356,101 @@ export type Database = {
           },
         ]
       }
+      chamados: {
+        Row: {
+          categoria: string
+          created_at: string
+          created_by: string | null
+          created_by_nome: string | null
+          descricao: string
+          empresa_id: string
+          id: string
+          motivo: string | null
+          prioridade: string
+          respondido_em: string | null
+          respondido_por: string | null
+          respondido_por_nome: string | null
+          resposta: string | null
+          status: string
+          titulo: string
+          updated_at: string
+        }
+        Insert: {
+          categoria?: string
+          created_at?: string
+          created_by?: string | null
+          created_by_nome?: string | null
+          descricao: string
+          empresa_id: string
+          id?: string
+          motivo?: string | null
+          prioridade?: string
+          respondido_em?: string | null
+          respondido_por?: string | null
+          respondido_por_nome?: string | null
+          resposta?: string | null
+          status?: string
+          titulo: string
+          updated_at?: string
+        }
+        Update: {
+          categoria?: string
+          created_at?: string
+          created_by?: string | null
+          created_by_nome?: string | null
+          descricao?: string
+          empresa_id?: string
+          id?: string
+          motivo?: string | null
+          prioridade?: string
+          respondido_em?: string | null
+          respondido_por?: string | null
+          respondido_por_nome?: string | null
+          resposta?: string | null
+          status?: string
+          titulo?: string
+          updated_at?: string
+        }
+        Relationships: []
+      }
+      chamados_mensagens: {
+        Row: {
+          chamado_id: string
+          conteudo: string
+          created_at: string
+          id: string
+          is_mestre: boolean
+          user_id: string
+          user_nome: string | null
+        }
+        Insert: {
+          chamado_id: string
+          conteudo: string
+          created_at?: string
+          id?: string
+          is_mestre?: boolean
+          user_id: string
+          user_nome?: string | null
+        }
+        Update: {
+          chamado_id?: string
+          conteudo?: string
+          created_at?: string
+          id?: string
+          is_mestre?: boolean
+          user_id?: string
+          user_nome?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "chamados_mensagens_chamado_id_fkey"
+            columns: ["chamado_id"]
+            isOneToOne: false
+            referencedRelation: "chamados"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       chat_messages: {
         Row: {
           content: string
