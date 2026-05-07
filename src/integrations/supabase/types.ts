@@ -29,6 +29,47 @@ export type Database = {
         }
         Relationships: []
       }
+      admissao_documentos: {
+        Row: {
+          candidato_id: string
+          id: string
+          nome_arquivo: string | null
+          observacao: string | null
+          storage_path: string | null
+          tipo: string
+          uploaded_at: string
+          url: string
+        }
+        Insert: {
+          candidato_id: string
+          id?: string
+          nome_arquivo?: string | null
+          observacao?: string | null
+          storage_path?: string | null
+          tipo: string
+          uploaded_at?: string
+          url: string
+        }
+        Update: {
+          candidato_id?: string
+          id?: string
+          nome_arquivo?: string | null
+          observacao?: string | null
+          storage_path?: string | null
+          tipo?: string
+          uploaded_at?: string
+          url?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "admissao_documentos_candidato_id_fkey"
+            columns: ["candidato_id"]
+            isOneToOne: false
+            referencedRelation: "vaga_candidatos"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       admissoes_historico: {
         Row: {
           created_at: string
@@ -1246,9 +1287,12 @@ export type Database = {
         Row: {
           cargo_oferecido: string | null
           cidade: string | null
+          cpf: string | null
           created_at: string
           curriculo_url: string | null
           data_inicio: string | null
+          data_nascimento: string | null
+          doc_token: string | null
           email: string | null
           empresa_id: string | null
           endereco: string | null
@@ -1265,9 +1309,12 @@ export type Database = {
         Insert: {
           cargo_oferecido?: string | null
           cidade?: string | null
+          cpf?: string | null
           created_at?: string
           curriculo_url?: string | null
           data_inicio?: string | null
+          data_nascimento?: string | null
+          doc_token?: string | null
           email?: string | null
           empresa_id?: string | null
           endereco?: string | null
@@ -1284,9 +1331,12 @@ export type Database = {
         Update: {
           cargo_oferecido?: string | null
           cidade?: string | null
+          cpf?: string | null
           created_at?: string
           curriculo_url?: string | null
           data_inicio?: string | null
+          data_nascimento?: string | null
+          doc_token?: string | null
           email?: string | null
           empresa_id?: string | null
           endereco?: string | null
