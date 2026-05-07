@@ -9,6 +9,7 @@ import { ScrollArea } from "@/components/ui/scroll-area";
 import { PieChart, Pie, Cell, ResponsiveContainer, Tooltip, BarChart, Bar, XAxis, YAxis, CartesianGrid, Legend } from "recharts";
 import { Users, Sparkles, Briefcase, Heart, AlertCircle, Eye } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
+import { useEmpresa } from "@/lib/empresa-context";
 
 export const Route = createFileRoute("/geracoes")({
   component: () => (
