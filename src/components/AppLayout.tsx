@@ -3,7 +3,7 @@ import { useAuth } from "@/lib/auth-context";
 import { useEmpresa } from "@/lib/empresa-context";
 import { Button } from "@/components/ui/button";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { LayoutDashboard, Users, History, LogOut, Menu, X, LayoutGrid, UserCog, ClipboardList, UserCheck, Lightbulb, CalendarClock, Sparkles, AlertTriangle, Cake, ArrowRightLeft, MapPin, MessageSquareHeart, NotebookPen, Activity, Building2, Crown, Settings, ExternalLink, Handshake, FolderArchive, Megaphone, LifeBuoy, BookOpen, Users2 } from "lucide-react";
+import { LayoutDashboard, Users, History, LogOut, Menu, X, LayoutGrid, UserCog, ClipboardList, UserCheck, Lightbulb, CalendarClock, Sparkles, AlertTriangle, Cake, ArrowRightLeft, MapPin, MessageSquareHeart, NotebookPen, Activity, Building2, Crown, Settings, ExternalLink, Handshake, FolderArchive, Megaphone, LifeBuoy, BookOpen, Users2, Upload } from "lucide-react";
 import { useEffect, useRef, useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
