@@ -57,6 +57,7 @@ const FIELD_LABELS: Record<string, string> = {
 
 function CadastroPage() {
   const { user, isGestor } = useAuth();
+  const { empresaAtual } = useEmpresa();
   const [list, setList] = useState<ColabFull[]>([]);
   const [loading, setLoading] = useState(true);
   const [tab, setTab] = useState("ativos");
