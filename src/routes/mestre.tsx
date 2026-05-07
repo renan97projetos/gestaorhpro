@@ -11,6 +11,8 @@ import {
   mestreToggleBloqueio,
   mestreAtualizarEmpresa,
   mestreCriarEmpresa,
+  mestreCriarAdminMestre,
+  mestreRemoverAdminMestre,
 } from "@/server/mestre.functions";
 import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
