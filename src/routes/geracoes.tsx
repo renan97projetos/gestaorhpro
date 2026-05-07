@@ -122,14 +122,17 @@ function calcIdade(dataNasc: string): number {
 type ColabMin = { id: string; matricula: string; colaborador: string; setor: string | null; cargo: string | null; data_nascimento: string | null; status?: string };
 
 function GeracoesPage() {
+  const { empresaAtual } = useEmpresa();
   const [colabs, setColabs] = useState<ColabMin[]>([]);
   const [loading, setLoading] = useState(true);
   const [openSemData, setOpenSemData] = useState(false);
 
   const carregar = async () => {
+    if (!empresaAtual) { setColabs([]); setLoading(false); return; }
     const { data } = await supabase
       .from("colaboradores")
       .select("id, matricula, colaborador, setor, cargo, data_nascimento, status")
+      .eq("empresa_id", empresaAtual.id)
       .in("status", ["Ativo", "Afastado"])
       .order("colaborador");
     setColabs(data ?? []);
@@ -137,13 +140,15 @@ function GeracoesPage() {
   };
 
   useEffect(() => {
+    setLoading(true);
     carregar();
     const ch = supabase
       .channel("geracoes-colab")
       .on("postgres_changes", { event: "*", schema: "public", table: "colaboradores" }, () => carregar())
       .subscribe();
     return () => { supabase.removeChannel(ch); };
-  }, []);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [empresaAtual?.id]);
 
   const { totalAtivos, comData, semData, semDataLista, contagem, histograma, ordemKeys } = useMemo(() => {
     const cont: Record<GenKey, number> = { ALPHA: 0, Z: 0, M: 0, X: 0, BB: 0 };
