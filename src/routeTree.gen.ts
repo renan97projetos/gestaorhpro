@@ -31,6 +31,7 @@ import { Route as DashboardRouteImport } from './routes/dashboard'
 import { Route as ChamadosRouteImport } from './routes/chamados'
 import { Route as ChamadaTerceirosRouteImport } from './routes/chamada-terceiros'
 import { Route as ChamadaRouteImport } from './routes/chamada'
+import { Route as CanalEticaRouteImport } from './routes/canal-etica'
 import { Route as CadastroRouteImport } from './routes/cadastro'
 import { Route as BaseConhecimentoRouteImport } from './routes/base-conhecimento'
 import { Route as BancoTalentosRouteImport } from './routes/banco-talentos'
@@ -155,6 +156,11 @@ const ChamadaRoute = ChamadaRouteImport.update({
   path: '/chamada',
   getParentRoute: () => rootRouteImport,
 } as any)
+const CanalEticaRoute = CanalEticaRouteImport.update({
+  id: '/canal-etica',
+  path: '/canal-etica',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const CadastroRoute = CadastroRouteImport.update({
   id: '/cadastro',
   path: '/cadastro',
@@ -230,6 +236,7 @@ export interface FileRoutesByFullPath {
   '/banco-talentos': typeof BancoTalentosRoute
   '/base-conhecimento': typeof BaseConhecimentoRoute
   '/cadastro': typeof CadastroRoute
+  '/canal-etica': typeof CanalEticaRoute
   '/chamada': typeof ChamadaRoute
   '/chamada-terceiros': typeof ChamadaTerceirosRoute
   '/chamados': typeof ChamadosRoute
@@ -267,6 +274,7 @@ export interface FileRoutesByTo {
   '/banco-talentos': typeof BancoTalentosRoute
   '/base-conhecimento': typeof BaseConhecimentoRoute
   '/cadastro': typeof CadastroRoute
+  '/canal-etica': typeof CanalEticaRoute
   '/chamada': typeof ChamadaRoute
   '/chamada-terceiros': typeof ChamadaTerceirosRoute
   '/chamados': typeof ChamadosRoute
@@ -305,6 +313,7 @@ export interface FileRoutesById {
   '/banco-talentos': typeof BancoTalentosRoute
   '/base-conhecimento': typeof BaseConhecimentoRoute
   '/cadastro': typeof CadastroRoute
+  '/canal-etica': typeof CanalEticaRoute
   '/chamada': typeof ChamadaRoute
   '/chamada-terceiros': typeof ChamadaTerceirosRoute
   '/chamados': typeof ChamadosRoute
@@ -344,6 +353,7 @@ export interface FileRouteTypes {
     | '/banco-talentos'
     | '/base-conhecimento'
     | '/cadastro'
+    | '/canal-etica'
     | '/chamada'
     | '/chamada-terceiros'
     | '/chamados'
@@ -381,6 +391,7 @@ export interface FileRouteTypes {
     | '/banco-talentos'
     | '/base-conhecimento'
     | '/cadastro'
+    | '/canal-etica'
     | '/chamada'
     | '/chamada-terceiros'
     | '/chamados'
@@ -418,6 +429,7 @@ export interface FileRouteTypes {
     | '/banco-talentos'
     | '/base-conhecimento'
     | '/cadastro'
+    | '/canal-etica'
     | '/chamada'
     | '/chamada-terceiros'
     | '/chamados'
@@ -456,6 +468,7 @@ export interface RootRouteChildren {
   BancoTalentosRoute: typeof BancoTalentosRoute
   BaseConhecimentoRoute: typeof BaseConhecimentoRoute
   CadastroRoute: typeof CadastroRoute
+  CanalEticaRoute: typeof CanalEticaRoute
   ChamadaRoute: typeof ChamadaRoute
   ChamadaTerceirosRoute: typeof ChamadaTerceirosRoute
   ChamadosRoute: typeof ChamadosRoute
@@ -640,6 +653,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ChamadaRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/canal-etica': {
+      id: '/canal-etica'
+      path: '/canal-etica'
+      fullPath: '/canal-etica'
+      preLoaderRoute: typeof CanalEticaRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/cadastro': {
       id: '/cadastro'
       path: '/cadastro'
@@ -753,6 +773,7 @@ const rootRouteChildren: RootRouteChildren = {
   BancoTalentosRoute: BancoTalentosRoute,
   BaseConhecimentoRoute: BaseConhecimentoRoute,
   CadastroRoute: CadastroRoute,
+  CanalEticaRoute: CanalEticaRoute,
   ChamadaRoute: ChamadaRoute,
   ChamadaTerceirosRoute: ChamadaTerceirosRoute,
   ChamadosRoute: ChamadosRoute,
@@ -783,3 +804,12 @@ const rootRouteChildren: RootRouteChildren = {
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
   ._addFileTypes<FileRouteTypes>()
+
+import type { getRouter } from './router.tsx'
+import type { createStart } from '@tanstack/react-start'
+declare module '@tanstack/react-start' {
+  interface Register {
+    ssr: true
+    router: Awaited<ReturnType<typeof getRouter>>
+  }
+}
