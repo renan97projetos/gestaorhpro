@@ -3,6 +3,7 @@ import { useEffect, useMemo, useState } from "react";
 import { RequireAuth } from "@/components/RequireAuth";
 import { AppLayout } from "@/components/AppLayout";
 import { supabase } from "@/integrations/supabase/client";
+import { useEmpresa } from "@/lib/empresa-context";
 import { Card } from "@/components/ui/card";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } from "@/components/ui/dialog";
@@ -30,6 +31,7 @@ export const Route = createFileRoute("/dashboard")({
 });
 
 function Dashboard() {
+  const { empresaAtual } = useEmpresa();
   const [data, setData] = useState<ColabFull[]>([]);
   const [loading, setLoading] = useState(true);
   const [anoContratacao, setAnoContratacao] = useState<number>(new Date().getFullYear());
@@ -38,16 +40,16 @@ function Dashboard() {
 
   useEffect(() => {
     let mounted = true;
+    setLoading(true);
     (async () => {
-      const { data } = await supabase.from("colaboradores").select("*");
+      if (!empresaAtual) { if (mounted) { setData([]); setLoading(false); } return; }
+      const { data } = await supabase.from("colaboradores").select("*").eq("empresa_id", empresaAtual.id);
       if (!mounted) return;
       setData((data as ColabFull[]) ?? []);
       setLoading(false);
     })();
-    return () => {
-      mounted = false;
-    };
-  }, []);
+    return () => { mounted = false; };
+  }, [empresaAtual?.id]);
 
   // Cálculos memoizados — evitam reprocessar a cada render
   const stats = useMemo(() => {

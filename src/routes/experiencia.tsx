@@ -4,6 +4,7 @@ import { AppLayout } from "@/components/AppLayout";
 import { useEffect, useMemo, useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/lib/auth-context";
+import { useEmpresa } from "@/lib/empresa-context";
 import { Card } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Progress } from "@/components/ui/progress";
@@ -58,6 +59,7 @@ function formatDate(d: string): string {
 function ExperienciaPage() {
   const { user, isAdmin, isGestor } = useAuth();
   const podeAnotar = isAdmin || isGestor;
+  const { empresaAtual } = useEmpresa();
   const [data, setData] = useState<Colab[]>([]);
   const [loading, setLoading] = useState(true);
   const [, setTick] = useState(0);
@@ -65,10 +67,13 @@ function ExperienciaPage() {
 
   useEffect(() => {
     let mounted = true;
+    setLoading(true);
     (async () => {
+      if (!empresaAtual) { if (mounted) { setData([]); setLoading(false); } return; }
       const { data: rows } = await supabase
         .from("colaboradores")
         .select("id, matricula, colaborador, cargo, setor, lideranca, admissao, status")
+        .eq("empresa_id", empresaAtual.id)
         .eq("status", "Ativo")
         .not("admissao", "is", null);
       if (!mounted) return;
@@ -77,7 +82,7 @@ function ExperienciaPage() {
     })();
     const id = setInterval(() => setTick((t) => t + 1), 60 * 60 * 1000);
     return () => { mounted = false; clearInterval(id); };
-  }, []);
+  }, [empresaAtual?.id]);
 
   const lista = useMemo(() => {
     return data

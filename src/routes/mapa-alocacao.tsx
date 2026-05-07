@@ -3,6 +3,7 @@ import { RequireAuth } from "@/components/RequireAuth";
 import { AppLayout } from "@/components/AppLayout";
 import { useEffect, useMemo, useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
+import { useEmpresa } from "@/lib/empresa-context";
 import { Card } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Badge } from "@/components/ui/badge";
@@ -22,6 +23,7 @@ export const Route = createFileRoute("/mapa-alocacao")({
 type SetorMeta = { setor: string; ideal: number };
 
 function Page() {
+  const { empresaAtual } = useEmpresa();
   const [data, setData] = useState<ColabFull[]>([]);
   const [loading, setLoading] = useState(true);
   const [ideais, setIdeais] = useState<Record<string, number>>(() => {
@@ -29,12 +31,17 @@ function Page() {
   });
 
   useEffect(() => {
+    setLoading(true);
     (async () => {
-      const { data } = await supabase.from("colaboradores").select("id, colaborador, setor, sexo, cargo, status").neq("status", "Demitido");
+      if (!empresaAtual) { setData([]); setLoading(false); return; }
+      const { data } = await supabase.from("colaboradores")
+        .select("id, colaborador, setor, sexo, cargo, status")
+        .eq("empresa_id", empresaAtual.id)
+        .neq("status", "Demitido");
       setData((data as ColabFull[]) || []);
       setLoading(false);
     })();
-  }, []);
+  }, [empresaAtual?.id]);
 
   const setores = useMemo(() => {
     const map = new Map<string, ColabFull[]>();
