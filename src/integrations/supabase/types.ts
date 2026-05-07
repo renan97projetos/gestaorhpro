@@ -447,8 +447,11 @@ export type Database = {
           cnpj: string | null
           cor_primaria: string | null
           created_at: string
+          data_inicio_contrato: string | null
+          dia_vencimento: number | null
           email_contato: string | null
           endereco: string | null
+          forma_pagamento: string | null
           id: string
           limite_usuarios: number
           limite_vagas: number
@@ -471,8 +474,11 @@ export type Database = {
           cnpj?: string | null
           cor_primaria?: string | null
           created_at?: string
+          data_inicio_contrato?: string | null
+          dia_vencimento?: number | null
           email_contato?: string | null
           endereco?: string | null
+          forma_pagamento?: string | null
           id?: string
           limite_usuarios?: number
           limite_vagas?: number
@@ -495,8 +501,11 @@ export type Database = {
           cnpj?: string | null
           cor_primaria?: string | null
           created_at?: string
+          data_inicio_contrato?: string | null
+          dia_vencimento?: number | null
           email_contato?: string | null
           endereco?: string | null
+          forma_pagamento?: string | null
           id?: string
           limite_usuarios?: number
           limite_vagas?: number

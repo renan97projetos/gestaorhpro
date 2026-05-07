@@ -25,6 +25,9 @@ export type Empresa = {
   limite_vagas?: number;
   ultimo_acesso?: string | null;
   modulos_desabilitados?: string[];
+  forma_pagamento?: string | null;
+  data_inicio_contrato?: string | null;
+  dia_vencimento?: number | null;
 };
 
 type EmpresaCtx = {
