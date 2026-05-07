@@ -85,14 +85,15 @@ function CadastroPage() {
   const [fLiderancaD, setFLiderancaD] = useState("all");
 
   const load = async () => {
+    if (!empresaAtual) { setList([]); setLoading(false); return; }
     setLoading(true);
-    const { data, error } = await supabase.from("colaboradores").select("*").order("colaborador");
+    const { data, error } = await supabase.from("colaboradores").select("*").eq("empresa_id", empresaAtual.id).order("colaborador");
     if (error) toast.error(error.message);
     setList((data as ColabFull[]) ?? []);
     setLoading(false);
   };
 
-  useEffect(() => { load(); }, []);
+  useEffect(() => { load(); /* eslint-disable-next-line */ }, [empresaAtual?.id]);
 
   const ativos = useMemo(() => list.filter((c) => c.status !== "Demitido"), [list]);
   const demitidos = useMemo(() => list.filter((c) => c.status === "Demitido"), [list]);
