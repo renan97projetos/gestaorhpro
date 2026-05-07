@@ -149,6 +149,13 @@ export type Database = {
             referencedRelation: "empresas"
             referencedColumns: ["id"]
           },
+          {
+            foreignKeyName: "admissoes_movimentacao_empresa_id_fkey"
+            columns: ["empresa_id"]
+            isOneToOne: false
+            referencedRelation: "empresas_publicas"
+            referencedColumns: ["id"]
+          },
         ]
       }
       audit_log: {
@@ -360,6 +367,13 @@ export type Database = {
             referencedRelation: "empresas"
             referencedColumns: ["id"]
           },
+          {
+            foreignKeyName: "colaboradores_empresa_id_fkey"
+            columns: ["empresa_id"]
+            isOneToOne: false
+            referencedRelation: "empresas_publicas"
+            referencedColumns: ["id"]
+          },
         ]
       }
       domingos_especiais: {
@@ -414,6 +428,13 @@ export type Database = {
             columns: ["empresa_id"]
             isOneToOne: false
             referencedRelation: "empresas"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "empresa_membros_empresa_id_fkey"
+            columns: ["empresa_id"]
+            isOneToOne: false
+            referencedRelation: "empresas_publicas"
             referencedColumns: ["id"]
           },
         ]
@@ -1118,6 +1139,13 @@ export type Database = {
             referencedColumns: ["id"]
           },
           {
+            foreignKeyName: "vaga_candidatos_empresa_id_fkey"
+            columns: ["empresa_id"]
+            isOneToOne: false
+            referencedRelation: "empresas_publicas"
+            referencedColumns: ["id"]
+          },
+          {
             foreignKeyName: "vaga_candidatos_vaga_id_fkey"
             columns: ["vaga_id"]
             isOneToOne: false
@@ -1128,7 +1156,36 @@ export type Database = {
       }
     }
     Views: {
-      [_ in never]: never
+      empresas_publicas: {
+        Row: {
+          capa_url: string | null
+          cor_primaria: string | null
+          id: string | null
+          logo_url: string | null
+          nome: string | null
+          slug: string | null
+          sobre: string | null
+        }
+        Insert: {
+          capa_url?: string | null
+          cor_primaria?: string | null
+          id?: string | null
+          logo_url?: string | null
+          nome?: string | null
+          slug?: string | null
+          sobre?: string | null
+        }
+        Update: {
+          capa_url?: string | null
+          cor_primaria?: string | null
+          id?: string | null
+          logo_url?: string | null
+          nome?: string | null
+          slug?: string | null
+          sobre?: string | null
+        }
+        Relationships: []
+      }
     }
     Functions: {
       can_edit_empresa: {
