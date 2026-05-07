@@ -21,6 +21,7 @@ const baseItems = [
   { to: "/cadastro", label: "Lista de Colaboradores", sub: "Visualizar e gerenciar", icon: Users, tone: "from-emerald-500 to-emerald-600" },
   { to: "/cadastro", label: "Cadastro", sub: "Cadastrar colaboradores", icon: UserPlus, tone: "from-violet-500 to-violet-600" },
   { to: "/chamada", label: "Chamada", sub: "Controle de presença diária", icon: UserCheck, tone: "from-cyan-500 to-cyan-600" },
+  { to: "/chamada-terceiros", label: "Chamada Terceiros", sub: "Prestadores e pagamentos PIX", icon: Handshake, tone: "from-lime-500 to-green-600" },
   { to: "/analise-faltas", label: "Análise de Faltas", sub: "Padrões e custo oculto", icon: AlertTriangle, tone: "from-red-500 to-red-600" },
   { to: "/aniversariantes", label: "Aniversariantes", sub: "Aniversários do mês", icon: Cake, tone: "from-pink-400 to-rose-500" },
   { to: "/experiencia", label: "Experiência 90 dias", sub: "Avaliação dos novos", icon: CalendarClock, tone: "from-teal-500 to-teal-600" },
