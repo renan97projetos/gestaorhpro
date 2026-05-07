@@ -23,7 +23,7 @@ const baseNav = [
   { to: "/base-conhecimento", label: "Base de Conhecimento", icon: BookOpen },
   { to: "/rede-social", label: "Rede Social (em breve)", icon: Users2 },
   { to: "/banco-talentos", label: "Banco de Talentos PRO (em breve)", icon: Briefcase },
-  { to: "/canal-etica", label: "Canal de Ética (em breve)", icon: ShieldCheck },
+  { to: "/canal-etica", label: "Canal de Ética", icon: ShieldCheck },
   { to: "/dashboard", label: "Dashboard", icon: LayoutDashboard },
   { to: "/cadastro", label: "Colaboradores", icon: Users },
   { to: "/chamada", label: "Chamada", icon: UserCheck },

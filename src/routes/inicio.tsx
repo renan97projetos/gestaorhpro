@@ -23,7 +23,7 @@ const baseItems = [
   { to: "/base-conhecimento", label: "Base de Conhecimento", sub: "Treinamentos e novidades", icon: BookOpen, tone: "from-purple-500 to-fuchsia-600" },
   { to: "/rede-social", label: "Rede Social", sub: "Em breve — corporativa", icon: Users2, tone: "from-pink-500 to-rose-600" },
   { to: "/banco-talentos", label: "Banco de Talentos PRO", sub: "Em breve — triagem com IA", icon: Briefcase, tone: "from-indigo-500 to-violet-600" },
-  { to: "/canal-etica", label: "Canal de Ética", sub: "Em breve — denúncias sigilosas", icon: ShieldCheck, tone: "from-emerald-500 to-teal-600" },
+  { to: "/canal-etica", label: "Canal de Ética", sub: "Denúncias sigilosas e tratativa", icon: ShieldCheck, tone: "from-emerald-500 to-teal-600" },
   { to: "/cadastro", label: "Lista de Colaboradores", sub: "Visualizar e gerenciar", icon: Users, tone: "from-emerald-500 to-emerald-600" },
   { to: "/cadastro", label: "Cadastro", sub: "Cadastrar colaboradores", icon: UserPlus, tone: "from-violet-500 to-violet-600" },
   { to: "/chamada", label: "Chamada", sub: "Controle de presença diária", icon: UserCheck, tone: "from-cyan-500 to-cyan-600" },
