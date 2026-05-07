@@ -425,14 +425,26 @@ function EmpresaDetalheDialog({ empresa, onClose, onChanged }: { empresa: Empres
             <div className="grid md:grid-cols-2 gap-3">
               <div><Label>Nome *</Label><Input value={novo.nome} onChange={(e) => setNovo({ ...novo, nome: e.target.value })} /></div>
               <div><Label>E-mail *</Label><Input type="email" value={novo.email} onChange={(e) => setNovo({ ...novo, email: e.target.value })} /></div>
-              <div><Label>Senha *</Label><Input type="text" value={novo.password} onChange={(e) => setNovo({ ...novo, password: e.target.value })} placeholder="mínimo 6 caracteres" /></div>
-              <div><Label>Papel</Label>
+              <div className="md:col-span-2">
+                <Label>Senha *</Label>
+                <div className="flex gap-2">
+                  <Input type="text" value={novo.password} onChange={(e) => setNovo({ ...novo, password: e.target.value })} placeholder="mínimo 6 caracteres" />
+                  <Button type="button" variant="outline" onClick={() => setNovo({ ...novo, password: gerarSenha(12) })}>
+                    <RefreshCw className="h-4 w-4 mr-1" /> Gerar
+                  </Button>
+                  <Button type="button" variant="outline" disabled={!novo.password} onClick={() => { navigator.clipboard.writeText(novo.password); toast.success("Senha copiada"); }}>
+                    <Copy className="h-4 w-4" />
+                  </Button>
+                </div>
+                <p className="text-xs text-muted-foreground mt-1">Anote ou copie a senha — ela não será mostrada novamente.</p>
+              </div>
+              <div className="md:col-span-2"><Label>Papel na empresa *</Label>
                 <Select value={novo.role} onValueChange={(v) => setNovo({ ...novo, role: v as EmpresaRole })}>
-                  <SelectTrigger><SelectValue /></SelectTrigger>
+                  <SelectTrigger><SelectValue placeholder="Selecione admin, gestor ou visualizador" /></SelectTrigger>
                   <SelectContent>
-                    <SelectItem value="admin">Admin (gerencia tudo)</SelectItem>
-                    <SelectItem value="gestor">Gestor (edita)</SelectItem>
-                    <SelectItem value="visualizador">Visualizador</SelectItem>
+                    <SelectItem value="admin">Admin — gerencia empresa, módulos e usuários</SelectItem>
+                    <SelectItem value="gestor">Gestor — edita dados (não gerencia usuários)</SelectItem>
+                    <SelectItem value="visualizador">Visualizador — apenas leitura</SelectItem>
                   </SelectContent>
                 </Select>
               </div>
