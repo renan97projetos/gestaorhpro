@@ -10,7 +10,7 @@ export const Route = createFileRoute("/e/$slug")({
   component: Page,
 });
 
-type Empresa = { id: string; nome: string; slug: string; logo_url: string | null; capa_url: string | null; sobre: string | null; endereco: string | null; telefone: string | null; email_contato: string | null; cnpj: string | null };
+type Empresa = { id: string; nome: string; slug: string; logo_url: string | null; capa_url: string | null; sobre: string | null; cor_primaria: string | null };
 type Vaga = { id: string; cargo: string | null; setor: string | null; descricao: string | null; link_token: string | null };
 
 function Page() {
