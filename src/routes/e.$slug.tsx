@@ -71,11 +71,6 @@ function Page() {
         <Card className="p-5">
           <h2 className="font-semibold mb-3 flex items-center gap-2"><Building2 className="h-4 w-4" /> Sobre</h2>
           <p className="text-sm text-muted-foreground whitespace-pre-line">{empresa.sobre || "—"}</p>
-          <div className="grid md:grid-cols-3 gap-3 mt-4 text-sm">
-            {empresa.endereco && <div className="flex items-center gap-2"><MapPin className="h-4 w-4 text-muted-foreground" />{empresa.endereco}</div>}
-            {empresa.telefone && <div className="flex items-center gap-2"><Phone className="h-4 w-4 text-muted-foreground" />{empresa.telefone}</div>}
-            {empresa.email_contato && <div className="flex items-center gap-2"><Mail className="h-4 w-4 text-muted-foreground" />{empresa.email_contato}</div>}
-          </div>
         </Card>
 
         <div>
