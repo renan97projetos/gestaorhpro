@@ -58,6 +58,7 @@ type Resposta = {
 function PesquisasPage() {
   const { isAdmin } = useAuth();
   const { isGestor } = useAuth();
+  const { empresaAtual } = useEmpresa();
   const { guard, dialog: bloqueioDialog } = useReadOnlyGuard(
     isGestor,
     "Criar, editar ou excluir pesquisas",
