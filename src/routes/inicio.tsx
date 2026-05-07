@@ -5,7 +5,7 @@ import { useEmpresa } from "@/lib/empresa-context";
 import { Card } from "@/components/ui/card";
 import { AppLayout } from "@/components/AppLayout";
 import {
-  Home, Users, UserPlus, FileText, ShieldCheck, ClipboardList, UserCheck, Lightbulb, CalendarClock, Sparkles, AlertTriangle, Cake, ArrowRightLeft, MapPin, MessageSquareHeart, NotebookPen, History, Activity, Settings, UserCog, Crown, Handshake, FolderArchive, Megaphone, LifeBuoy, BookOpen,
+  Home, Users, UserPlus, FileText, ShieldCheck, ClipboardList, UserCheck, Lightbulb, CalendarClock, Sparkles, AlertTriangle, Cake, ArrowRightLeft, MapPin, MessageSquareHeart, NotebookPen, History, Activity, Settings, UserCog, Crown, Handshake, FolderArchive, Megaphone, LifeBuoy, BookOpen, Users2,
 } from "lucide-react";
 
 export const Route = createFileRoute("/inicio")({
@@ -21,6 +21,7 @@ const baseItems = [
   { to: "/avisos", label: "Avisos", sub: "Comunicados e alertas", icon: Megaphone, tone: "from-amber-500 to-red-500" },
   { to: "/chamados", label: "Chamados", sub: "Erros e melhorias", icon: LifeBuoy, tone: "from-sky-500 to-indigo-600" },
   { to: "/base-conhecimento", label: "Base de Conhecimento", sub: "Treinamentos e novidades", icon: BookOpen, tone: "from-purple-500 to-fuchsia-600" },
+  { to: "/rede-social", label: "Rede Social", sub: "Em breve — corporativa", icon: Users2, tone: "from-pink-500 to-rose-600" },
   { to: "/cadastro", label: "Lista de Colaboradores", sub: "Visualizar e gerenciar", icon: Users, tone: "from-emerald-500 to-emerald-600" },
   { to: "/cadastro", label: "Cadastro", sub: "Cadastrar colaboradores", icon: UserPlus, tone: "from-violet-500 to-violet-600" },
   { to: "/chamada", label: "Chamada", sub: "Controle de presença diária", icon: UserCheck, tone: "from-cyan-500 to-cyan-600" },
