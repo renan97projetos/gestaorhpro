@@ -12,6 +12,7 @@ import { Route as rootRouteImport } from './routes/__root'
 import { Route as UsuariosRouteImport } from './routes/usuarios'
 import { Route as SolicitacaoMovimentacaoRouteImport } from './routes/solicitacao-movimentacao'
 import { Route as ResetPasswordRouteImport } from './routes/reset-password'
+import { Route as RedeSocialRouteImport } from './routes/rede-social'
 import { Route as PesquisasRouteImport } from './routes/pesquisas'
 import { Route as NotasRouteImport } from './routes/notas'
 import { Route as MovimentacoesAdmissoesRouteImport } from './routes/movimentacoes-admissoes'
@@ -56,6 +57,11 @@ const SolicitacaoMovimentacaoRoute = SolicitacaoMovimentacaoRouteImport.update({
 const ResetPasswordRoute = ResetPasswordRouteImport.update({
   id: '/reset-password',
   path: '/reset-password',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const RedeSocialRoute = RedeSocialRouteImport.update({
+  id: '/rede-social',
+  path: '/rede-social',
   getParentRoute: () => rootRouteImport,
 } as any)
 const PesquisasRoute = PesquisasRouteImport.update({
@@ -235,6 +241,7 @@ export interface FileRoutesByFullPath {
   '/movimentacoes-admissoes': typeof MovimentacoesAdmissoesRoute
   '/notas': typeof NotasRoute
   '/pesquisas': typeof PesquisasRoute
+  '/rede-social': typeof RedeSocialRoute
   '/reset-password': typeof ResetPasswordRoute
   '/solicitacao-movimentacao': typeof SolicitacaoMovimentacaoRoute
   '/usuarios': typeof UsuariosRoute
@@ -270,6 +277,7 @@ export interface FileRoutesByTo {
   '/movimentacoes-admissoes': typeof MovimentacoesAdmissoesRoute
   '/notas': typeof NotasRoute
   '/pesquisas': typeof PesquisasRoute
+  '/rede-social': typeof RedeSocialRoute
   '/reset-password': typeof ResetPasswordRoute
   '/solicitacao-movimentacao': typeof SolicitacaoMovimentacaoRoute
   '/usuarios': typeof UsuariosRoute
@@ -306,6 +314,7 @@ export interface FileRoutesById {
   '/movimentacoes-admissoes': typeof MovimentacoesAdmissoesRoute
   '/notas': typeof NotasRoute
   '/pesquisas': typeof PesquisasRoute
+  '/rede-social': typeof RedeSocialRoute
   '/reset-password': typeof ResetPasswordRoute
   '/solicitacao-movimentacao': typeof SolicitacaoMovimentacaoRoute
   '/usuarios': typeof UsuariosRoute
@@ -343,6 +352,7 @@ export interface FileRouteTypes {
     | '/movimentacoes-admissoes'
     | '/notas'
     | '/pesquisas'
+    | '/rede-social'
     | '/reset-password'
     | '/solicitacao-movimentacao'
     | '/usuarios'
@@ -378,6 +388,7 @@ export interface FileRouteTypes {
     | '/movimentacoes-admissoes'
     | '/notas'
     | '/pesquisas'
+    | '/rede-social'
     | '/reset-password'
     | '/solicitacao-movimentacao'
     | '/usuarios'
@@ -413,6 +424,7 @@ export interface FileRouteTypes {
     | '/movimentacoes-admissoes'
     | '/notas'
     | '/pesquisas'
+    | '/rede-social'
     | '/reset-password'
     | '/solicitacao-movimentacao'
     | '/usuarios'
@@ -449,6 +461,7 @@ export interface RootRouteChildren {
   MovimentacoesAdmissoesRoute: typeof MovimentacoesAdmissoesRoute
   NotasRoute: typeof NotasRoute
   PesquisasRoute: typeof PesquisasRoute
+  RedeSocialRoute: typeof RedeSocialRoute
   ResetPasswordRoute: typeof ResetPasswordRoute
   SolicitacaoMovimentacaoRoute: typeof SolicitacaoMovimentacaoRoute
   UsuariosRoute: typeof UsuariosRoute
@@ -479,6 +492,13 @@ declare module '@tanstack/react-router' {
       path: '/reset-password'
       fullPath: '/reset-password'
       preLoaderRoute: typeof ResetPasswordRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/rede-social': {
+      id: '/rede-social'
+      path: '/rede-social'
+      fullPath: '/rede-social'
+      preLoaderRoute: typeof RedeSocialRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/pesquisas': {
@@ -730,6 +750,7 @@ const rootRouteChildren: RootRouteChildren = {
   MovimentacoesAdmissoesRoute: MovimentacoesAdmissoesRoute,
   NotasRoute: NotasRoute,
   PesquisasRoute: PesquisasRoute,
+  RedeSocialRoute: RedeSocialRoute,
   ResetPasswordRoute: ResetPasswordRoute,
   SolicitacaoMovimentacaoRoute: SolicitacaoMovimentacaoRoute,
   UsuariosRoute: UsuariosRoute,
