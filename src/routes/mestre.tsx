@@ -2,6 +2,7 @@ import { createFileRoute } from "@tanstack/react-router";
 import { RequireAuth } from "@/components/RequireAuth";
 import { AppLayout } from "@/components/AppLayout";
 import { useEmpresa, Empresa, EmpresaRole } from "@/lib/empresa-context";
+import { useAuth } from "@/lib/auth-context";
 import { useEffect, useState, useCallback } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { useServerFn } from "@tanstack/react-start";
@@ -11,6 +12,8 @@ import {
   mestreToggleBloqueio,
   mestreAtualizarEmpresa,
   mestreCriarEmpresa,
+  mestreCriarAdminMestre,
+  mestreRemoverAdminMestre,
 } from "@/server/mestre.functions";
 import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -240,6 +243,8 @@ function Page() {
         </Table>
       </Card>
 
+      <AdminMestresPanel />
+
       {selecionada && (
         <EmpresaDetalheDialog
           empresa={selecionada}
@@ -248,6 +253,104 @@ function Page() {
         />
       )}
     </div>
+  );
+}
+
+type AdminMestre = { user_id: string; profile?: { nome: string | null; email: string | null } | null };
+
+function AdminMestresPanel() {
+  const { user } = useAuth();
+  const [mestres, setMestres] = useState<AdminMestre[]>([]);
+  const [open, setOpen] = useState(false);
+  const [form, setForm] = useState({ nome: "", email: "", password: "" });
+  const [busy, setBusy] = useState(false);
+  const criarFn = useServerFn(mestreCriarAdminMestre);
+  const remFn = useServerFn(mestreRemoverAdminMestre);
+
+  const load = useCallback(async () => {
+    const { data } = await supabase.from("admin_mestres").select("user_id");
+    const ids = (data || []).map((m) => m.user_id);
+    const profs = ids.length
+      ? (await supabase.from("profiles").select("id,nome,email").in("id", ids)).data || []
+      : [];
+    setMestres(ids.map((id) => ({ user_id: id, profile: profs.find((p) => p.id === id) || null })));
+  }, []);
+
+  useEffect(() => { load(); }, [load]);
+
+  const criar = async () => {
+    if (!form.nome || !form.email) return toast.error("Nome e e-mail são obrigatórios");
+    if (!form.password || form.password.length < 6) return toast.error("Senha mínima de 6 caracteres");
+    setBusy(true);
+    try {
+      await criarFn({ data: form });
+      toast.success("Admin Mestre cadastrado");
+      setForm({ nome: "", email: "", password: "" });
+      setOpen(false);
+      load();
+    } catch (e) { toast.error((e as Error).message); } finally { setBusy(false); }
+  };
+
+  const remover = async (m: AdminMestre) => {
+    if (!confirm(`Remover ${m.profile?.email} do papel de Admin Mestre?`)) return;
+    try {
+      await remFn({ data: { user_id: m.user_id } });
+      toast.success("Removido"); load();
+    } catch (e) { toast.error((e as Error).message); }
+  };
+
+  return (
+    <Card className="p-0 overflow-hidden">
+      <div className="p-4 border-b flex items-center justify-between">
+        <div>
+          <h2 className="font-semibold flex items-center gap-2"><Crown className="h-4 w-4 text-amber-500" /> Admins Mestres</h2>
+          <p className="text-xs text-muted-foreground">Quem tem acesso total ao sistema (todas as empresas).</p>
+        </div>
+        <Dialog open={open} onOpenChange={setOpen}>
+          <DialogTrigger asChild><Button size="sm"><Plus className="h-4 w-4 mr-2" />Novo Admin Mestre</Button></DialogTrigger>
+          <DialogContent>
+            <DialogHeader><DialogTitle>Cadastrar Admin Mestre</DialogTitle></DialogHeader>
+            <div className="space-y-3">
+              <div><Label>Nome *</Label><Input value={form.nome} onChange={(e) => setForm({ ...form, nome: e.target.value })} /></div>
+              <div><Label>E-mail *</Label><Input type="email" value={form.email} onChange={(e) => setForm({ ...form, email: e.target.value })} /></div>
+              <div>
+                <Label>Senha *</Label>
+                <div className="flex gap-2">
+                  <Input type="text" value={form.password} onChange={(e) => setForm({ ...form, password: e.target.value })} placeholder="mínimo 6 caracteres" />
+                  <Button type="button" variant="outline" onClick={() => setForm({ ...form, password: gerarSenha(12) })}>
+                    <RefreshCw className="h-4 w-4 mr-1" /> Gerar
+                  </Button>
+                  <Button type="button" variant="outline" disabled={!form.password} onClick={() => { navigator.clipboard.writeText(form.password); toast.success("Senha copiada"); }}>
+                    <Copy className="h-4 w-4" />
+                  </Button>
+                </div>
+                <p className="text-xs text-muted-foreground mt-1">Se o e-mail já existir, a senha será atualizada.</p>
+              </div>
+            </div>
+            <DialogFooter><Button onClick={criar} disabled={busy}><UserPlus2 className="h-4 w-4 mr-2" />Cadastrar</Button></DialogFooter>
+          </DialogContent>
+        </Dialog>
+      </div>
+      <Table>
+        <TableHeader><TableRow><TableHead>Nome</TableHead><TableHead>E-mail</TableHead><TableHead></TableHead></TableRow></TableHeader>
+        <TableBody>
+          {mestres.length === 0 ? (
+            <TableRow><TableCell colSpan={3} className="text-center text-muted-foreground py-6">Nenhum admin mestre</TableCell></TableRow>
+          ) : mestres.map((m) => (
+            <TableRow key={m.user_id}>
+              <TableCell>{m.profile?.nome || "—"}</TableCell>
+              <TableCell className="text-xs">{m.profile?.email}</TableCell>
+              <TableCell className="text-right">
+                {m.user_id !== user?.id && (
+                  <Button size="sm" variant="ghost" onClick={() => remover(m)}>×</Button>
+                )}
+                {m.user_id === user?.id && <Badge variant="outline" className="text-[10px]">Você</Badge>}
+              </TableCell>
+            </TableRow>
+          ))}
+        </TableBody>
+      </Table>
+    </Card>
   );
 }
 

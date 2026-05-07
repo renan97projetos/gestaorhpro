@@ -312,6 +312,57 @@ export type Database = {
           },
         ]
       }
+      base_conhecimento: {
+        Row: {
+          anexo_url: string | null
+          ativo: boolean
+          categoria: string
+          conteudo: string | null
+          created_at: string
+          created_by: string | null
+          created_by_nome: string | null
+          descricao: string | null
+          empresa_id: string | null
+          id: string
+          tipo: string
+          titulo: string
+          updated_at: string
+          video_url: string | null
+        }
+        Insert: {
+          anexo_url?: string | null
+          ativo?: boolean
+          categoria?: string
+          conteudo?: string | null
+          created_at?: string
+          created_by?: string | null
+          created_by_nome?: string | null
+          descricao?: string | null
+          empresa_id?: string | null
+          id?: string
+          tipo?: string
+          titulo: string
+          updated_at?: string
+          video_url?: string | null
+        }
+        Update: {
+          anexo_url?: string | null
+          ativo?: boolean
+          categoria?: string
+          conteudo?: string | null
+          created_at?: string
+          created_by?: string | null
+          created_by_nome?: string | null
+          descricao?: string | null
+          empresa_id?: string | null
+          id?: string
+          tipo?: string
+          titulo?: string
+          updated_at?: string
+          video_url?: string | null
+        }
+        Relationships: []
+      }
       chamadas: {
         Row: {
           colaborador_id: string

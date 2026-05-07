@@ -3,7 +3,7 @@ import { useAuth } from "@/lib/auth-context";
 import { useEmpresa } from "@/lib/empresa-context";
 import { Button } from "@/components/ui/button";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { LayoutDashboard, Users, History, LogOut, Menu, X, LayoutGrid, UserCog, ClipboardList, UserCheck, Lightbulb, CalendarClock, Sparkles, AlertTriangle, Cake, ArrowRightLeft, MapPin, MessageSquareHeart, NotebookPen, Activity, Building2, Crown, Settings, ExternalLink, Handshake, FolderArchive, Megaphone, LifeBuoy } from "lucide-react";
+import { LayoutDashboard, Users, History, LogOut, Menu, X, LayoutGrid, UserCog, ClipboardList, UserCheck, Lightbulb, CalendarClock, Sparkles, AlertTriangle, Cake, ArrowRightLeft, MapPin, MessageSquareHeart, NotebookPen, Activity, Building2, Crown, Settings, ExternalLink, Handshake, FolderArchive, Megaphone, LifeBuoy, BookOpen } from "lucide-react";
 import { useEffect, useState } from "react";
 import { cn } from "@/lib/utils";
 import { ThemeToggle } from "@/components/ThemeToggle";
@@ -17,6 +17,7 @@ const baseNav = [
   { to: "/inicio", label: "Menu", icon: LayoutGrid },
   { to: "/avisos", label: "Avisos", icon: Megaphone },
   { to: "/chamados", label: "Chamados", icon: LifeBuoy },
+  { to: "/base-conhecimento", label: "Base de Conhecimento", icon: BookOpen },
   { to: "/dashboard", label: "Dashboard", icon: LayoutDashboard },
   { to: "/cadastro", label: "Colaboradores", icon: Users },
   { to: "/chamada", label: "Chamada", icon: UserCheck },
