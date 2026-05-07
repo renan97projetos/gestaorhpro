@@ -36,7 +36,7 @@ type Cand = {
   salario: number | null;
   data_inicio: string | null;
   created_at: string;
-};
+  doc_token?: string | null;
 
 type Vaga = {
   id: string;
