@@ -5,7 +5,6 @@ import { Card } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Button } from "@/components/ui/button";
-import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
 import { Eye, EyeOff, Loader2 } from "lucide-react";
 import { toast } from "sonner";
 import { ThemeToggle } from "@/components/ThemeToggle";
@@ -15,9 +14,8 @@ export const Route = createFileRoute("/")({
 });
 
 function AuthPage() {
-  const { user, loading, signIn, signUp, resetPassword } = useAuth();
+  const { user, loading, signIn, resetPassword } = useAuth();
   const navigate = useNavigate();
-  const [tab, setTab] = useState<"login" | "cadastro">("login");
 
   useEffect(() => {
     if (!loading && user) navigate({ to: "/inicio" });
@@ -45,18 +43,12 @@ function AuthPage() {
           </p>
         </div>
 
-        <Tabs value={tab} onValueChange={(v) => setTab(v as "login" | "cadastro")}>
-          <TabsList className="grid grid-cols-2 w-full">
-            <TabsTrigger value="login">Login</TabsTrigger>
-            <TabsTrigger value="cadastro">Cadastro</TabsTrigger>
-          </TabsList>
-          <TabsContent value="login" className="mt-6">
-            <LoginForm onSubmit={signIn} onForgot={resetPassword} />
-          </TabsContent>
-          <TabsContent value="cadastro" className="mt-6">
-            <SignupForm onSubmit={signUp} onSuccess={() => setTab("login")} />
-          </TabsContent>
-        </Tabs>
+        <div className="mt-6">
+          <LoginForm onSubmit={signIn} onForgot={resetPassword} />
+          <p className="mt-6 text-center text-xs text-muted-foreground">
+            O cadastro de novos usuários é feito apenas pela Central Master.
+          </p>
+        </div>
       </Card>
     </div>
   );
