@@ -5,7 +5,7 @@ import { useEmpresa } from "@/lib/empresa-context";
 import { Card } from "@/components/ui/card";
 import { AppLayout } from "@/components/AppLayout";
 import {
-  Home, Users, UserPlus, FileText, ShieldCheck, ClipboardList, UserCheck, Lightbulb, CalendarClock, Sparkles, AlertTriangle, Cake, ArrowRightLeft, MapPin, MessageSquareHeart, NotebookPen, History, Activity, Settings, UserCog, Crown, Handshake, FolderArchive, Megaphone,
+  Home, Users, UserPlus, FileText, ShieldCheck, ClipboardList, UserCheck, Lightbulb, CalendarClock, Sparkles, AlertTriangle, Cake, ArrowRightLeft, MapPin, MessageSquareHeart, NotebookPen, History, Activity, Settings, UserCog, Crown, Handshake, FolderArchive, Megaphone, LifeBuoy,
 } from "lucide-react";
 
 export const Route = createFileRoute("/inicio")({
