@@ -241,6 +241,77 @@ export type Database = {
         }
         Relationships: []
       }
+      avisos: {
+        Row: {
+          ativo: boolean
+          conteudo: string | null
+          created_at: string
+          created_by: string | null
+          created_by_nome: string | null
+          criticidade: string
+          empresa_id: string | null
+          id: string
+          resumo: string
+          titulo: string
+          updated_at: string
+        }
+        Insert: {
+          ativo?: boolean
+          conteudo?: string | null
+          created_at?: string
+          created_by?: string | null
+          created_by_nome?: string | null
+          criticidade?: string
+          empresa_id?: string | null
+          id?: string
+          resumo: string
+          titulo: string
+          updated_at?: string
+        }
+        Update: {
+          ativo?: boolean
+          conteudo?: string | null
+          created_at?: string
+          created_by?: string | null
+          created_by_nome?: string | null
+          criticidade?: string
+          empresa_id?: string | null
+          id?: string
+          resumo?: string
+          titulo?: string
+          updated_at?: string
+        }
+        Relationships: []
+      }
+      avisos_leituras: {
+        Row: {
+          aviso_id: string
+          id: string
+          lido_em: string
+          user_id: string
+        }
+        Insert: {
+          aviso_id: string
+          id?: string
+          lido_em?: string
+          user_id: string
+        }
+        Update: {
+          aviso_id?: string
+          id?: string
+          lido_em?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "avisos_leituras_aviso_id_fkey"
+            columns: ["aviso_id"]
+            isOneToOne: false
+            referencedRelation: "avisos"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       chamadas: {
         Row: {
           colaborador_id: string
