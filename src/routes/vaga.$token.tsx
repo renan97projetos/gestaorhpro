@@ -34,11 +34,11 @@ function PaginaCandidatura() {
   useEffect(() => {
     (async () => {
       const { data } = await supabase
-        .from("admissoes_movimentacao")
-        .select("id,cargo,setor,turno,observacao,status")
+        .from("vagas_publicas" as never)
+        .select("id,cargo,setor,turno")
         .eq("link_token", token)
         .maybeSingle();
-      setVaga(data as Vaga | null);
+      setVaga(data ? ({ ...(data as object), status: "aberta", observacao: null } as Vaga) : null);
       setLoading(false);
     })();
   }, [token]);
