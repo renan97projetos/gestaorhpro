@@ -526,6 +526,7 @@ export type Database = {
           created_by: string | null
           created_by_nome: string | null
           descricao: string | null
+          empresa_id: string
           id: string
           status: string
           titulo: string
@@ -536,6 +537,7 @@ export type Database = {
           created_by?: string | null
           created_by_nome?: string | null
           descricao?: string | null
+          empresa_id: string
           id?: string
           status?: string
           titulo: string
@@ -546,6 +548,7 @@ export type Database = {
           created_by?: string | null
           created_by_nome?: string | null
           descricao?: string | null
+          empresa_id?: string
           id?: string
           status?: string
           titulo?: string
@@ -1152,6 +1155,13 @@ export type Database = {
             referencedRelation: "admissoes_movimentacao"
             referencedColumns: ["id"]
           },
+          {
+            foreignKeyName: "vaga_candidatos_vaga_id_fkey"
+            columns: ["vaga_id"]
+            isOneToOne: false
+            referencedRelation: "vagas_publicas"
+            referencedColumns: ["id"]
+          },
         ]
       }
     }
@@ -1185,6 +1195,57 @@ export type Database = {
           sobre?: string | null
         }
         Relationships: []
+      }
+      vagas_publicas: {
+        Row: {
+          cargo: string | null
+          created_at: string | null
+          data_abertura: string | null
+          descricao: string | null
+          empresa_id: string | null
+          id: string | null
+          link_token: string | null
+          setor: string | null
+          turno: string | null
+        }
+        Insert: {
+          cargo?: string | null
+          created_at?: string | null
+          data_abertura?: string | null
+          descricao?: string | null
+          empresa_id?: string | null
+          id?: string | null
+          link_token?: string | null
+          setor?: string | null
+          turno?: string | null
+        }
+        Update: {
+          cargo?: string | null
+          created_at?: string | null
+          data_abertura?: string | null
+          descricao?: string | null
+          empresa_id?: string | null
+          id?: string | null
+          link_token?: string | null
+          setor?: string | null
+          turno?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "admissoes_movimentacao_empresa_id_fkey"
+            columns: ["empresa_id"]
+            isOneToOne: false
+            referencedRelation: "empresas"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "admissoes_movimentacao_empresa_id_fkey"
+            columns: ["empresa_id"]
+            isOneToOne: false
+            referencedRelation: "empresas_publicas"
+            referencedColumns: ["id"]
+          },
+        ]
       }
     }
     Functions: {
