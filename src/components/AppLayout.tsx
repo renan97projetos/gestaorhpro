@@ -3,8 +3,10 @@ import { useAuth } from "@/lib/auth-context";
 import { useEmpresa } from "@/lib/empresa-context";
 import { Button } from "@/components/ui/button";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { LayoutDashboard, Users, History, LogOut, Menu, X, LayoutGrid, UserCog, ClipboardList, UserCheck, Lightbulb, CalendarClock, Sparkles, AlertTriangle, Cake, ArrowRightLeft, MapPin, MessageSquareHeart, NotebookPen, Activity, Building2, Crown, Settings, ExternalLink, Handshake, FolderArchive, Megaphone, LifeBuoy, BookOpen, Users2 } from "lucide-react";
-import { useEffect, useState } from "react";
+import { LayoutDashboard, Users, History, LogOut, Menu, X, LayoutGrid, UserCog, ClipboardList, UserCheck, Lightbulb, CalendarClock, Sparkles, AlertTriangle, Cake, ArrowRightLeft, MapPin, MessageSquareHeart, NotebookPen, Activity, Building2, Crown, Settings, ExternalLink, Handshake, FolderArchive, Megaphone, LifeBuoy, BookOpen, Users2, Upload } from "lucide-react";
+import { useEffect, useRef, useState } from "react";
+import { supabase } from "@/integrations/supabase/client";
+import { toast } from "sonner";
 import { cn } from "@/lib/utils";
 import { ThemeToggle } from "@/components/ThemeToggle";
 import { OnboardingTour } from "@/components/OnboardingTour";
@@ -40,9 +42,36 @@ const baseNav = [
 
 export function AppLayout({ children }: { children: React.ReactNode }) {
   const { user, signOut, isAdmin } = useAuth();
-  const { empresas, empresaAtual, setEmpresaId, isAdminMestre, isAdminEmpresa, isGestorEmpresa } = useEmpresa();
+  const { empresas, empresaAtual, setEmpresaId, isAdminMestre, isAdminEmpresa, isGestorEmpresa, refresh } = useEmpresa();
   const desabilitados = (empresaAtual?.modulos_desabilitados || []) as string[];
   const baseFiltrada = isAdminMestre ? baseNav : baseNav.filter((n) => !desabilitados.includes(n.to));
+  const logoInputRef = useRef<HTMLInputElement>(null);
+  const [uploadingLogo, setUploadingLogo] = useState(false);
+
+  const handleLogoUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file || !empresaAtual) return;
+    if (!isGestorEmpresa) {
+      toast.error("Apenas gestores podem alterar a logo");
+      return;
+    }
+    setUploadingLogo(true);
+    try {
+      const path = `${empresaAtual.id}/logo_url-${Date.now()}-${file.name}`;
+      const { error: upErr } = await supabase.storage.from("empresa-assets").upload(path, file, { upsert: true });
+      if (upErr) throw upErr;
+      const { data } = supabase.storage.from("empresa-assets").getPublicUrl(path);
+      const { error: updErr } = await supabase.from("empresas").update({ logo_url: data.publicUrl } as never).eq("id", empresaAtual.id);
+      if (updErr) throw updErr;
+      toast.success("Logo atualizada");
+      await refresh();
+    } catch (err) {
+      toast.error((err as Error).message);
+    } finally {
+      setUploadingLogo(false);
+      if (logoInputRef.current) logoInputRef.current.value = "";
+    }
+  };
   const nav = [
     ...baseFiltrada,
     ...(isGestorEmpresa ? [
@@ -200,13 +229,41 @@ export function AppLayout({ children }: { children: React.ReactNode }) {
         <aside className="hidden md:flex w-64 flex-col border-r border-sidebar-border bg-sidebar text-sidebar-foreground">
           <div className="px-4 py-3 border-b border-sidebar-border space-y-2">
             <div className="flex items-center gap-2">
-              {empresaAtual?.logo_url ? (
-                <img src={empresaAtual.logo_url} alt={empresaAtual.nome} className="h-9 w-9 rounded-lg object-cover bg-sidebar-primary" />
-              ) : (
-                <div className="h-9 w-9 rounded-lg bg-sidebar-primary flex items-center justify-center text-sidebar-primary-foreground font-bold text-xs">
-                  {(empresaAtual?.nome || "—").slice(0, 2).toUpperCase()}
-                </div>
-              )}
+              <button
+                type="button"
+                onClick={() => isGestorEmpresa && logoInputRef.current?.click()}
+                disabled={!isGestorEmpresa || uploadingLogo}
+                title={isGestorEmpresa ? "Clique para enviar a logo (PNG)" : "Logo da empresa"}
+                className={cn(
+                  "relative h-9 w-9 rounded-lg overflow-hidden shrink-0 group",
+                  isGestorEmpresa && "cursor-pointer"
+                )}
+              >
+                {empresaAtual?.logo_url ? (
+                  <img src={empresaAtual.logo_url} alt={empresaAtual.nome} className="h-9 w-9 rounded-lg object-cover bg-sidebar-primary" />
+                ) : (
+                  <div className="h-9 w-9 rounded-lg bg-sidebar-primary flex items-center justify-center text-sidebar-primary-foreground font-bold text-xs">
+                    {(empresaAtual?.nome || "—").slice(0, 2).toUpperCase()}
+                  </div>
+                )}
+                {isGestorEmpresa && (
+                  <div className="absolute inset-0 bg-black/50 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center rounded-lg">
+                    <Upload className="h-4 w-4 text-white" />
+                  </div>
+                )}
+                {uploadingLogo && (
+                  <div className="absolute inset-0 bg-black/60 flex items-center justify-center rounded-lg">
+                    <span className="text-[9px] text-white">...</span>
+                  </div>
+                )}
+              </button>
+              <input
+                ref={logoInputRef}
+                type="file"
+                accept="image/png,image/jpeg,image/webp"
+                className="hidden"
+                onChange={handleLogoUpload}
+              />
               <div className="min-w-0 flex-1">
                 <p className="text-sm font-semibold leading-none text-sidebar-foreground truncate">{empresaAtual?.nome || "Selecione"}</p>
                 <p className="text-xs text-sidebar-foreground/60 mt-0.5">GestãoRHPRO</p>
