@@ -66,9 +66,14 @@ type Stats = { colaboradores: number; vagas: number; candidatos: number; membros
 function Page() {
   const { isAdminMestre, empresas, refresh } = useEmpresa();
   const [openNew, setOpenNew] = useState(false);
-  const [form, setForm] = useState({ nome: "", slug: "" });
+  const [form, setForm] = useState({
+    nome: "", slug: "", cnpj: "", responsavel: "", telefone: "", email_contato: "", endereco: "",
+    plano: "free", mrr: 0, forma_pagamento: "", data_inicio_contrato: "", dia_vencimento: 5,
+    limite_usuarios: 5, limite_vagas: 10,
+  });
   const [stats, setStats] = useState<Record<string, Stats>>({});
   const [selecionada, setSelecionada] = useState<Empresa | null>(null);
+  const criarEmpresaFn = useServerFn(mestreCriarEmpresa);
 
   const loadStats = useCallback(async () => {
     if (!empresas.length) return;
@@ -99,12 +104,19 @@ function Page() {
   const handleCreate = async () => {
     if (!form.nome) return toast.error("Nome obrigatório");
     const slug = form.slug || slugify(form.nome);
-    const { error } = await supabase.from("empresas").insert({ nome: form.nome, slug } as never);
-    if (error) return toast.error(error.message);
-    toast.success("Empresa criada! Link: /e/" + slug);
-    setOpenNew(false);
-    setForm({ nome: "", slug: "" });
-    refresh();
+    try {
+      await criarEmpresaFn({ data: {
+        ...form, slug,
+        data_inicio_contrato: form.data_inicio_contrato || null,
+        dia_vencimento: form.dia_vencimento || null,
+      } });
+      toast.success("Empresa criada! Link: /e/" + slug);
+      setOpenNew(false);
+      setForm({ nome: "", slug: "", cnpj: "", responsavel: "", telefone: "", email_contato: "", endereco: "",
+        plano: "free", mrr: 0, forma_pagamento: "", data_inicio_contrato: "", dia_vencimento: 5,
+        limite_usuarios: 5, limite_vagas: 10 });
+      refresh();
+    } catch (e) { toast.error((e as Error).message); }
   };
 
   // KPIs globais
@@ -127,18 +139,50 @@ function Page() {
         </div>
         <Dialog open={openNew} onOpenChange={setOpenNew}>
           <DialogTrigger asChild><Button><Plus className="h-4 w-4 mr-2" />Nova empresa</Button></DialogTrigger>
-          <DialogContent>
-            <DialogHeader><DialogTitle>Criar empresa cliente</DialogTitle></DialogHeader>
-            <div className="space-y-3">
-              <div><Label>Nome *</Label>
+          <DialogContent className="max-w-2xl max-h-[90vh] overflow-y-auto">
+            <DialogHeader><DialogTitle>Cadastrar nova empresa cliente</DialogTitle></DialogHeader>
+            <div className="grid md:grid-cols-2 gap-3">
+              <div className="md:col-span-2"><Label>Nome *</Label>
                 <Input value={form.nome} onChange={(e) => setForm((f) => ({ ...f, nome: e.target.value, slug: f.slug || slugify(e.target.value) }))} />
               </div>
-              <div><Label>Slug</Label>
+              <div><Label>Slug (URL pública)</Label>
                 <Input value={form.slug} onChange={(e) => setForm((f) => ({ ...f, slug: slugify(e.target.value) }))} placeholder="minha-empresa" />
-                <p className="text-xs text-muted-foreground mt-1">Página pública: <code>/e/{form.slug || "..."}</code></p>
+                <p className="text-xs text-muted-foreground mt-1"><code>/e/{form.slug || "..."}</code></p>
               </div>
+              <div><Label>CNPJ</Label><Input value={form.cnpj} onChange={(e) => setForm({ ...form, cnpj: e.target.value })} /></div>
+              <div><Label>Responsável (nome)</Label><Input value={form.responsavel} onChange={(e) => setForm({ ...form, responsavel: e.target.value })} /></div>
+              <div><Label>Telefone</Label><Input value={form.telefone} onChange={(e) => setForm({ ...form, telefone: e.target.value })} /></div>
+              <div><Label>E-mail de contato</Label><Input type="email" value={form.email_contato} onChange={(e) => setForm({ ...form, email_contato: e.target.value })} /></div>
+              <div className="md:col-span-2"><Label>Endereço</Label><Input value={form.endereco} onChange={(e) => setForm({ ...form, endereco: e.target.value })} /></div>
+              <div><Label>Plano</Label>
+                <Select value={form.plano} onValueChange={(v) => setForm({ ...form, plano: v })}>
+                  <SelectTrigger><SelectValue /></SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="free">Free</SelectItem>
+                    <SelectItem value="starter">Starter</SelectItem>
+                    <SelectItem value="pro">Pro</SelectItem>
+                    <SelectItem value="enterprise">Enterprise</SelectItem>
+                  </SelectContent>
+                </Select>
+              </div>
+              <div><Label>Mensalidade R$ (MRR)</Label><Input type="number" step="0.01" value={form.mrr} onChange={(e) => setForm({ ...form, mrr: Number(e.target.value) })} /></div>
+              <div><Label>Forma de pagamento</Label>
+                <Select value={form.forma_pagamento || "—"} onValueChange={(v) => setForm({ ...form, forma_pagamento: v === "—" ? "" : v })}>
+                  <SelectTrigger><SelectValue placeholder="Selecione" /></SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="pix">PIX</SelectItem>
+                    <SelectItem value="boleto">Boleto</SelectItem>
+                    <SelectItem value="cartao">Cartão de crédito</SelectItem>
+                    <SelectItem value="transferencia">Transferência</SelectItem>
+                  </SelectContent>
+                </Select>
+              </div>
+              <div><Label>Dia do vencimento</Label><Input type="number" min={1} max={31} value={form.dia_vencimento} onChange={(e) => setForm({ ...form, dia_vencimento: Number(e.target.value) })} /></div>
+              <div><Label>Início do contrato</Label><Input type="date" value={form.data_inicio_contrato} onChange={(e) => setForm({ ...form, data_inicio_contrato: e.target.value })} /></div>
+              <div><Label>Limite de usuários</Label><Input type="number" value={form.limite_usuarios} onChange={(e) => setForm({ ...form, limite_usuarios: Number(e.target.value) })} /></div>
+              <div><Label>Limite de vagas</Label><Input type="number" value={form.limite_vagas} onChange={(e) => setForm({ ...form, limite_vagas: Number(e.target.value) })} /></div>
             </div>
-            <DialogFooter><Button onClick={handleCreate}>Criar</Button></DialogFooter>
+            <DialogFooter><Button onClick={handleCreate}>Criar empresa</Button></DialogFooter>
           </DialogContent>
         </Dialog>
       </div>
