@@ -41,14 +41,17 @@ function calcIdade(nasc: Date, ref: Date) {
 }
 
 function AniversariantesPage() {
+  const { empresaAtual } = useEmpresa();
   const [colabs, setColabs] = useState<Colab[]>([]);
   const [loading, setLoading] = useState(true);
   const [tab, setTab] = useState("mes");
 
   const carregar = async () => {
+    if (!empresaAtual) { setColabs([]); setLoading(false); return; }
     const { data } = await supabase
       .from("colaboradores")
       .select("id, matricula, colaborador, cargo, setor, data_nascimento, status")
+      .eq("empresa_id", empresaAtual.id)
       .in("status", ["Ativo", "Afastado", "Ferias"])
       .not("data_nascimento", "is", null);
     setColabs((data as Colab[]) ?? []);
@@ -56,13 +59,15 @@ function AniversariantesPage() {
   };
 
   useEffect(() => {
+    setLoading(true);
     carregar();
     const ch = supabase
       .channel("aniv-colab")
       .on("postgres_changes", { event: "*", schema: "public", table: "colaboradores" }, () => carregar())
       .subscribe();
     return () => { supabase.removeChannel(ch); };
-  }, []);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [empresaAtual?.id]);
 
   const hoje = new Date();
   const mesAtual = hoje.getMonth();
