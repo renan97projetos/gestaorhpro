@@ -96,6 +96,7 @@ export const mestreAtualizarEmpresa = createServerFn({ method: "POST" })
   .middleware([requireSupabaseAuth])
   .inputValidator((input: {
     empresa_id: string;
+    nome?: string;
     plano?: string;
     responsavel?: string | null;
     mrr?: number;
@@ -103,6 +104,13 @@ export const mestreAtualizarEmpresa = createServerFn({ method: "POST" })
     limite_vagas?: number;
     ativo?: boolean;
     modulos_desabilitados?: string[];
+    cnpj?: string | null;
+    telefone?: string | null;
+    email_contato?: string | null;
+    endereco?: string | null;
+    forma_pagamento?: string | null;
+    data_inicio_contrato?: string | null;
+    dia_vencimento?: number | null;
   }) => input)
   .handler(async ({ data, context }) => {
     const sb = admin();
@@ -111,4 +119,33 @@ export const mestreAtualizarEmpresa = createServerFn({ method: "POST" })
     const { error } = await sb.from("empresas").update(patch as never).eq("id", empresa_id);
     if (error) throw new Error(error.message);
     return { ok: true };
+  });
+
+export const mestreCriarEmpresa = createServerFn({ method: "POST" })
+  .middleware([requireSupabaseAuth])
+  .inputValidator((input: {
+    nome: string;
+    slug: string;
+    cnpj?: string | null;
+    responsavel?: string | null;
+    telefone?: string | null;
+    email_contato?: string | null;
+    endereco?: string | null;
+    plano?: string;
+    mrr?: number;
+    forma_pagamento?: string | null;
+    data_inicio_contrato?: string | null;
+    dia_vencimento?: number | null;
+    limite_usuarios?: number;
+    limite_vagas?: number;
+  }) => {
+    if (!input?.nome || !input?.slug) throw new Error("Nome e slug obrigatórios");
+    return input;
+  })
+  .handler(async ({ data, context }) => {
+    const sb = admin();
+    await assertMestre(sb, context.userId);
+    const { error, data: created } = await sb.from("empresas").insert(data as never).select("id,slug").single();
+    if (error) throw new Error(error.message);
+    return created;
   });
