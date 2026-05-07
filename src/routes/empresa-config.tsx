@@ -45,8 +45,18 @@ function Page() {
     const { error } = await supabase.storage.from("empresa-assets").upload(path, file, { upsert: true });
     if (error) return toast.error(error.message);
     const { data } = supabase.storage.from("empresa-assets").getPublicUrl(path);
+    // Persistir imediatamente para evitar perda se o usuário não clicar em Salvar
+    const { data: updated, error: updErr } = await supabase
+      .from("empresas")
+      .update({ [field]: data.publicUrl } as never)
+      .eq("id", empresaAtual.id)
+      .select("id")
+      .maybeSingle();
+    if (updErr) return toast.error(updErr.message);
+    if (!updated) return toast.error("Sem permissão para atualizar esta empresa.");
     setForm((f) => ({ ...f, [field]: data.publicUrl }));
-    toast.success("Imagem enviada");
+    toast.success("Imagem salva");
+    refresh();
   };
 
   const save = async () => {
