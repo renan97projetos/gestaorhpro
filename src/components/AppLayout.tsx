@@ -78,16 +78,33 @@ export function AppLayout({ children }: { children: React.ReactNode }) {
     <div className="min-h-screen bg-background flex">
       {/* Sidebar desktop — dark */}
       <aside className="hidden md:flex w-64 flex-col border-r border-sidebar-border bg-sidebar text-sidebar-foreground">
-        <div className="h-16 flex items-center px-6 border-b border-sidebar-border">
-          <div className="flex items-center gap-3">
-            <div className="h-9 w-9 rounded-lg bg-sidebar-primary flex items-center justify-center text-sidebar-primary-foreground font-bold">
-              GR
-            </div>
-            <div>
-              <p className="text-sm font-semibold leading-none text-sidebar-foreground">Grupo Real</p>
-              <p className="text-xs text-sidebar-foreground/60 mt-0.5">Gestão de Colaboradores</p>
+        <div className="px-4 py-3 border-b border-sidebar-border space-y-2">
+          <div className="flex items-center gap-2">
+            {empresaAtual?.logo_url ? (
+              <img src={empresaAtual.logo_url} alt={empresaAtual.nome} className="h-9 w-9 rounded-lg object-cover bg-sidebar-primary" />
+            ) : (
+              <div className="h-9 w-9 rounded-lg bg-sidebar-primary flex items-center justify-center text-sidebar-primary-foreground font-bold text-xs">
+                {(empresaAtual?.nome || "—").slice(0, 2).toUpperCase()}
+              </div>
+            )}
+            <div className="min-w-0 flex-1">
+              <p className="text-sm font-semibold leading-none text-sidebar-foreground truncate">{empresaAtual?.nome || "Selecione"}</p>
+              <p className="text-xs text-sidebar-foreground/60 mt-0.5">Gestão SaaS</p>
             </div>
           </div>
+          {empresas.length > 1 && (
+            <Select value={empresaAtual?.id || ""} onValueChange={setEmpresaId}>
+              <SelectTrigger className="h-8 text-xs bg-sidebar-accent text-sidebar-foreground border-sidebar-border"><SelectValue /></SelectTrigger>
+              <SelectContent>
+                {empresas.map((e) => <SelectItem key={e.id} value={e.id}><Building2 className="h-3 w-3 inline mr-1" />{e.nome}</SelectItem>)}
+              </SelectContent>
+            </Select>
+          )}
+          {empresaAtual && (
+            <a href={`/e/${empresaAtual.slug}`} target="_blank" rel="noopener" className="flex items-center gap-1 text-[11px] text-sidebar-foreground/60 hover:text-sidebar-foreground">
+              <ExternalLink className="h-3 w-3" /> Página pública: /e/{empresaAtual.slug}
+            </a>
+          )}
         </div>
         <nav className="flex-1 px-3 py-4 space-y-1">
           {nav.map((n) => {
