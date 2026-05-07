@@ -257,12 +257,16 @@ function EmpresaDetalheDialog({ empresa, onClose, onChanged }: { empresa: Empres
   const salvarInfo = async () => {
     setBusy(true);
     try {
-      await updFn({ data: { empresa_id: empresa.id, ...info } });
+      await updFn({ data: { empresa_id: empresa.id, ...info, modulos_desabilitados: modulos } });
       toast.success("Informações salvas");
       onChanged();
     } catch (e) {
       toast.error((e as Error).message);
     } finally { setBusy(false); }
+  };
+
+  const toggleModulo = (to: string, enabled: boolean) => {
+    setModulos((prev) => enabled ? prev.filter((p) => p !== to) : Array.from(new Set([...prev, to])));
   };
 
   const toggleBloqueio = async () => {
