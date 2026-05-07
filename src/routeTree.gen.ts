@@ -26,6 +26,7 @@ import { Route as ExperienciaRouteImport } from './routes/experiencia'
 import { Route as EmpresaMembrosRouteImport } from './routes/empresa-membros'
 import { Route as EmpresaConfigRouteImport } from './routes/empresa-config'
 import { Route as DashboardRouteImport } from './routes/dashboard'
+import { Route as ChamadaTerceirosRouteImport } from './routes/chamada-terceiros'
 import { Route as ChamadaRouteImport } from './routes/chamada'
 import { Route as CadastroRouteImport } from './routes/cadastro'
 import { Route as AuditoriaRouteImport } from './routes/auditoria'
@@ -122,6 +123,11 @@ const DashboardRoute = DashboardRouteImport.update({
   path: '/dashboard',
   getParentRoute: () => rootRouteImport,
 } as any)
+const ChamadaTerceirosRoute = ChamadaTerceirosRouteImport.update({
+  id: '/chamada-terceiros',
+  path: '/chamada-terceiros',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const ChamadaRoute = ChamadaRouteImport.update({
   id: '/chamada',
   path: '/chamada',
@@ -180,6 +186,7 @@ export interface FileRoutesByFullPath {
   '/auditoria': typeof AuditoriaRoute
   '/cadastro': typeof CadastroRoute
   '/chamada': typeof ChamadaRoute
+  '/chamada-terceiros': typeof ChamadaTerceirosRoute
   '/dashboard': typeof DashboardRoute
   '/empresa-config': typeof EmpresaConfigRoute
   '/empresa-membros': typeof EmpresaMembrosRoute
@@ -209,6 +216,7 @@ export interface FileRoutesByTo {
   '/auditoria': typeof AuditoriaRoute
   '/cadastro': typeof CadastroRoute
   '/chamada': typeof ChamadaRoute
+  '/chamada-terceiros': typeof ChamadaTerceirosRoute
   '/dashboard': typeof DashboardRoute
   '/empresa-config': typeof EmpresaConfigRoute
   '/empresa-membros': typeof EmpresaMembrosRoute
@@ -239,6 +247,7 @@ export interface FileRoutesById {
   '/auditoria': typeof AuditoriaRoute
   '/cadastro': typeof CadastroRoute
   '/chamada': typeof ChamadaRoute
+  '/chamada-terceiros': typeof ChamadaTerceirosRoute
   '/dashboard': typeof DashboardRoute
   '/empresa-config': typeof EmpresaConfigRoute
   '/empresa-membros': typeof EmpresaMembrosRoute
@@ -270,6 +279,7 @@ export interface FileRouteTypes {
     | '/auditoria'
     | '/cadastro'
     | '/chamada'
+    | '/chamada-terceiros'
     | '/dashboard'
     | '/empresa-config'
     | '/empresa-membros'
@@ -299,6 +309,7 @@ export interface FileRouteTypes {
     | '/auditoria'
     | '/cadastro'
     | '/chamada'
+    | '/chamada-terceiros'
     | '/dashboard'
     | '/empresa-config'
     | '/empresa-membros'
@@ -328,6 +339,7 @@ export interface FileRouteTypes {
     | '/auditoria'
     | '/cadastro'
     | '/chamada'
+    | '/chamada-terceiros'
     | '/dashboard'
     | '/empresa-config'
     | '/empresa-membros'
@@ -358,6 +370,7 @@ export interface RootRouteChildren {
   AuditoriaRoute: typeof AuditoriaRoute
   CadastroRoute: typeof CadastroRoute
   ChamadaRoute: typeof ChamadaRoute
+  ChamadaTerceirosRoute: typeof ChamadaTerceirosRoute
   DashboardRoute: typeof DashboardRoute
   EmpresaConfigRoute: typeof EmpresaConfigRoute
   EmpresaMembrosRoute: typeof EmpresaMembrosRoute
@@ -501,6 +514,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof DashboardRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/chamada-terceiros': {
+      id: '/chamada-terceiros'
+      path: '/chamada-terceiros'
+      fullPath: '/chamada-terceiros'
+      preLoaderRoute: typeof ChamadaTerceirosRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/chamada': {
       id: '/chamada'
       path: '/chamada'
@@ -591,6 +611,7 @@ const rootRouteChildren: RootRouteChildren = {
   AuditoriaRoute: AuditoriaRoute,
   CadastroRoute: CadastroRoute,
   ChamadaRoute: ChamadaRoute,
+  ChamadaTerceirosRoute: ChamadaTerceirosRoute,
   DashboardRoute: DashboardRoute,
   EmpresaConfigRoute: EmpresaConfigRoute,
   EmpresaMembrosRoute: EmpresaMembrosRoute,
@@ -615,12 +636,3 @@ const rootRouteChildren: RootRouteChildren = {
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
   ._addFileTypes<FileRouteTypes>()
-
-import type { getRouter } from './router.tsx'
-import type { createStart } from '@tanstack/react-start'
-declare module '@tanstack/react-start' {
-  interface Register {
-    ssr: true
-    router: Awaited<ReturnType<typeof getRouter>>
-  }
-}
