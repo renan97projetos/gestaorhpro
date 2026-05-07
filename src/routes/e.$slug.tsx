@@ -4,13 +4,13 @@ import { supabase } from "@/integrations/supabase/client";
 import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
-import { Building2, MapPin, Phone, Mail, Briefcase } from "lucide-react";
+import { Building2, Briefcase } from "lucide-react";
 
 export const Route = createFileRoute("/e/$slug")({
   component: Page,
 });
 
-type Empresa = { id: string; nome: string; slug: string; logo_url: string | null; capa_url: string | null; sobre: string | null; endereco: string | null; telefone: string | null; email_contato: string | null; cnpj: string | null };
+type Empresa = { id: string; nome: string; slug: string; logo_url: string | null; capa_url: string | null; sobre: string | null; cor_primaria: string | null };
 type Vaga = { id: string; cargo: string | null; setor: string | null; descricao: string | null; link_token: string | null };
 
 function Page() {
@@ -21,13 +21,14 @@ function Page() {
 
   useEffect(() => {
     (async () => {
-      const { data: emp } = await supabase.from("empresas").select("*").eq("slug", slug).maybeSingle();
+      const { data: emp } = await supabase.from("empresas_publicas" as never).select("*").eq("slug", slug).maybeSingle();
       if (emp) {
-        setEmpresa(emp as Empresa);
+        const e = emp as Empresa;
+        setEmpresa(e);
         const { data: vs } = await supabase
           .from("admissoes_movimentacao")
           .select("id,cargo,setor,descricao,link_token")
-          .eq("empresa_id", emp.id)
+          .eq("empresa_id", e.id)
           .eq("status", "aberta")
           .eq("publicada", true);
         setVagas((vs as Vaga[]) || []);
@@ -70,11 +71,6 @@ function Page() {
         <Card className="p-5">
           <h2 className="font-semibold mb-3 flex items-center gap-2"><Building2 className="h-4 w-4" /> Sobre</h2>
           <p className="text-sm text-muted-foreground whitespace-pre-line">{empresa.sobre || "—"}</p>
-          <div className="grid md:grid-cols-3 gap-3 mt-4 text-sm">
-            {empresa.endereco && <div className="flex items-center gap-2"><MapPin className="h-4 w-4 text-muted-foreground" />{empresa.endereco}</div>}
-            {empresa.telefone && <div className="flex items-center gap-2"><Phone className="h-4 w-4 text-muted-foreground" />{empresa.telefone}</div>}
-            {empresa.email_contato && <div className="flex items-center gap-2"><Mail className="h-4 w-4 text-muted-foreground" />{empresa.email_contato}</div>}
-          </div>
         </Card>
 
         <div>
