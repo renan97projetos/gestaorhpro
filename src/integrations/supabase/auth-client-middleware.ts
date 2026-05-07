@@ -1,14 +1,15 @@
 import { createMiddleware } from "@tanstack/react-start";
 import { supabase } from "./client";
 
-// Attaches the current Supabase access token as Authorization: Bearer <token>
-// to every server function call that uses this middleware on the client side.
+// Sends the current Supabase access token both as Authorization header and via
+// sendContext, so the server can validate it even if header forwarding fails.
 export const attachSupabaseAuth = createMiddleware({ type: "function" }).client(
   async ({ next }) => {
     const { data } = await supabase.auth.getSession();
-    const token = data.session?.access_token;
+    const token = data.session?.access_token ?? null;
     return next({
       headers: token ? { Authorization: `Bearer ${token}` } : {},
+      sendContext: { accessToken: token },
     });
   }
 );
