@@ -222,6 +222,13 @@ function Page() {
     load();
   };
 
+  const togglePublicada = async (r: Mov) => {
+    const { error } = await supabase.from("admissoes_movimentacao").update({ publicada: !r.publicada } as never).eq("id", r.id);
+    if (error) return toast.error(error.message);
+    toast.success(r.publicada ? "Vaga despublicada" : "Vaga publicada na landing");
+    load();
+  };
+
   return (
     <div className="p-4 md:p-8 space-y-6">
       <div className="flex items-center justify-between flex-wrap gap-3">
