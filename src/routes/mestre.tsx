@@ -15,6 +15,7 @@ import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
+import { Switch } from "@/components/ui/switch";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger, DialogFooter } from "@/components/ui/dialog";
@@ -23,8 +24,33 @@ import { Badge } from "@/components/ui/badge";
 import { toast } from "sonner";
 import {
   Crown, Plus, ExternalLink, Building2, Users as UsersIcon, Briefcase,
-  UserPlus2, Lock, Unlock, KeyRound, DollarSign, HardDrive, Sparkles, MessageCircle, Save,
+  UserPlus2, Lock, Unlock, KeyRound, DollarSign, HardDrive, Sparkles, MessageCircle, Save, RefreshCw, Copy, LayoutGrid,
 } from "lucide-react";
+
+const MODULOS_DISPONIVEIS: { to: string; label: string }[] = [
+  { to: "/dashboard", label: "Dashboard" },
+  { to: "/cadastro", label: "Colaboradores" },
+  { to: "/chamada", label: "Chamada" },
+  { to: "/analise-faltas", label: "Análise de Faltas" },
+  { to: "/experiencia", label: "Experiência (90 dias)" },
+  { to: "/solicitacao-movimentacao", label: "Movimentações" },
+  { to: "/movimentacoes-admissoes", label: "Gestão de Vagas" },
+  { to: "/historico-admissoes", label: "Histórico Admissões" },
+  { to: "/mapa-alocacao", label: "Mapa de Alocação" },
+  { to: "/feedbacks", label: "Feedbacks" },
+  { to: "/notas", label: "Bloco de Notas" },
+  { to: "/pesquisas", label: "Pesquisas" },
+  { to: "/ideias", label: "Ideias" },
+  { to: "/geracoes", label: "Gerações" },
+  { to: "/aniversariantes", label: "Aniversariantes" },
+];
+
+function gerarSenha(len = 12) {
+  const chars = "ABCDEFGHJKLMNPQRSTUVWXYZabcdefghjkmnpqrstuvwxyz23456789!@#$";
+  let s = "";
+  for (let i = 0; i < len; i++) s += chars[Math.floor(Math.random() * chars.length)];
+  return s;
+}
 
 export const Route = createFileRoute("/mestre")({
   component: () => (<RequireAuth><AppLayout><Page /></AppLayout></RequireAuth>),
@@ -201,6 +227,7 @@ function EmpresaDetalheDialog({ empresa, onClose, onChanged }: { empresa: Empres
     limite_vagas: empresa.limite_vagas || 10,
     ativo: empresa.ativo,
   });
+  const [modulos, setModulos] = useState<string[]>(empresa.modulos_desabilitados || []);
   const [membros, setMembros] = useState<Membro[]>([]);
   const [novo, setNovo] = useState({ nome: "", email: "", password: "", role: "visualizador" as EmpresaRole });
   const [busy, setBusy] = useState(false);
@@ -230,12 +257,16 @@ function EmpresaDetalheDialog({ empresa, onClose, onChanged }: { empresa: Empres
   const salvarInfo = async () => {
     setBusy(true);
     try {
-      await updFn({ data: { empresa_id: empresa.id, ...info } });
+      await updFn({ data: { empresa_id: empresa.id, ...info, modulos_desabilitados: modulos } });
       toast.success("Informações salvas");
       onChanged();
     } catch (e) {
       toast.error((e as Error).message);
     } finally { setBusy(false); }
+  };
+
+  const toggleModulo = (to: string, enabled: boolean) => {
+    setModulos((prev) => enabled ? prev.filter((p) => p !== to) : Array.from(new Set([...prev, to])));
   };
 
   const toggleBloqueio = async () => {
@@ -260,11 +291,18 @@ function EmpresaDetalheDialog({ empresa, onClose, onChanged }: { empresa: Empres
   };
 
   const resetar = async (m: Membro) => {
-    const pwd = prompt(`Nova senha para ${m.profiles?.email || m.user_id}:`);
+    const escolha = confirm(`Gerar senha aleatória para ${m.profiles?.email}?\n\nOK = gerar automática | Cancelar = digitar manualmente`);
+    let pwd: string | null;
+    if (escolha) {
+      pwd = gerarSenha(12);
+    } else {
+      pwd = prompt(`Nova senha para ${m.profiles?.email}: (mín. 6)`);
+    }
     if (!pwd || pwd.length < 6) return;
     try {
       await resetFn({ data: { user_id: m.user_id, password: pwd } });
-      toast.success("Senha redefinida");
+      await navigator.clipboard.writeText(pwd).catch(() => {});
+      toast.success(`Senha redefinida e copiada: ${pwd}`);
     } catch (e) { toast.error((e as Error).message); }
   };
 
@@ -295,9 +333,28 @@ function EmpresaDetalheDialog({ empresa, onClose, onChanged }: { empresa: Empres
         <Tabs defaultValue="info">
           <TabsList>
             <TabsTrigger value="info">Informações</TabsTrigger>
+            <TabsTrigger value="modulos">Módulos</TabsTrigger>
             <TabsTrigger value="usuarios">Usuários ({membros.length})</TabsTrigger>
             <TabsTrigger value="cadastrar">Cadastrar usuário</TabsTrigger>
           </TabsList>
+
+          <TabsContent value="modulos" className="mt-4 space-y-3">
+            <p className="text-sm text-muted-foreground flex items-center gap-2"><LayoutGrid className="h-4 w-4" /> Habilite ou desabilite as abas que aparecem no menu desta empresa. O Admin Mestre sempre vê tudo.</p>
+            <div className="grid md:grid-cols-2 gap-2">
+              {MODULOS_DISPONIVEIS.map((m) => {
+                const enabled = !modulos.includes(m.to);
+                return (
+                  <div key={m.to} className="flex items-center justify-between border rounded-md px-3 py-2">
+                    <div className="text-sm">{m.label} <span className="text-xs text-muted-foreground">({m.to})</span></div>
+                    <Switch checked={enabled} onCheckedChange={(v) => toggleModulo(m.to, v)} />
+                  </div>
+                );
+              })}
+            </div>
+            <div className="flex justify-end pt-2">
+              <Button onClick={salvarInfo} disabled={busy}><Save className="h-4 w-4 mr-2" />Salvar módulos</Button>
+            </div>
+          </TabsContent>
 
           <TabsContent value="info" className="space-y-4 mt-4">
             <div className="grid grid-cols-2 gap-3 text-sm">
@@ -375,14 +432,26 @@ function EmpresaDetalheDialog({ empresa, onClose, onChanged }: { empresa: Empres
             <div className="grid md:grid-cols-2 gap-3">
               <div><Label>Nome *</Label><Input value={novo.nome} onChange={(e) => setNovo({ ...novo, nome: e.target.value })} /></div>
               <div><Label>E-mail *</Label><Input type="email" value={novo.email} onChange={(e) => setNovo({ ...novo, email: e.target.value })} /></div>
-              <div><Label>Senha *</Label><Input type="text" value={novo.password} onChange={(e) => setNovo({ ...novo, password: e.target.value })} placeholder="mínimo 6 caracteres" /></div>
-              <div><Label>Papel</Label>
+              <div className="md:col-span-2">
+                <Label>Senha *</Label>
+                <div className="flex gap-2">
+                  <Input type="text" value={novo.password} onChange={(e) => setNovo({ ...novo, password: e.target.value })} placeholder="mínimo 6 caracteres" />
+                  <Button type="button" variant="outline" onClick={() => setNovo({ ...novo, password: gerarSenha(12) })}>
+                    <RefreshCw className="h-4 w-4 mr-1" /> Gerar
+                  </Button>
+                  <Button type="button" variant="outline" disabled={!novo.password} onClick={() => { navigator.clipboard.writeText(novo.password); toast.success("Senha copiada"); }}>
+                    <Copy className="h-4 w-4" />
+                  </Button>
+                </div>
+                <p className="text-xs text-muted-foreground mt-1">Anote ou copie a senha — ela não será mostrada novamente.</p>
+              </div>
+              <div className="md:col-span-2"><Label>Papel na empresa *</Label>
                 <Select value={novo.role} onValueChange={(v) => setNovo({ ...novo, role: v as EmpresaRole })}>
-                  <SelectTrigger><SelectValue /></SelectTrigger>
+                  <SelectTrigger><SelectValue placeholder="Selecione admin, gestor ou visualizador" /></SelectTrigger>
                   <SelectContent>
-                    <SelectItem value="admin">Admin (gerencia tudo)</SelectItem>
-                    <SelectItem value="gestor">Gestor (edita)</SelectItem>
-                    <SelectItem value="visualizador">Visualizador</SelectItem>
+                    <SelectItem value="admin">Admin — gerencia empresa, módulos e usuários</SelectItem>
+                    <SelectItem value="gestor">Gestor — edita dados (não gerencia usuários)</SelectItem>
+                    <SelectItem value="visualizador">Visualizador — apenas leitura</SelectItem>
                   </SelectContent>
                 </Select>
               </div>

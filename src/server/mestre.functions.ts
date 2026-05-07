@@ -102,6 +102,7 @@ export const mestreAtualizarEmpresa = createServerFn({ method: "POST" })
     limite_usuarios?: number;
     limite_vagas?: number;
     ativo?: boolean;
+    modulos_desabilitados?: string[];
   }) => input)
   .handler(async ({ data, context }) => {
     const sb = admin();

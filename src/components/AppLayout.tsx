@@ -34,8 +34,10 @@ const baseNav = [
 export function AppLayout({ children }: { children: React.ReactNode }) {
   const { user, signOut, isAdmin } = useAuth();
   const { empresas, empresaAtual, setEmpresaId, isAdminMestre, isAdminEmpresa, isGestorEmpresa } = useEmpresa();
+  const desabilitados = (empresaAtual?.modulos_desabilitados || []) as string[];
+  const baseFiltrada = isAdminMestre ? baseNav : baseNav.filter((n) => !desabilitados.includes(n.to));
   const nav = [
-    ...baseNav,
+    ...baseFiltrada,
     ...(isGestorEmpresa ? [
       { to: "/empresa-config", label: "Configurações da Empresa", icon: Settings },
     ] : []),

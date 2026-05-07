@@ -453,6 +453,7 @@ export type Database = {
           limite_usuarios: number
           limite_vagas: number
           logo_url: string | null
+          modulos_desabilitados: string[]
           mrr: number
           nome: string
           plano: string
@@ -476,6 +477,7 @@ export type Database = {
           limite_usuarios?: number
           limite_vagas?: number
           logo_url?: string | null
+          modulos_desabilitados?: string[]
           mrr?: number
           nome: string
           plano?: string
@@ -499,6 +501,7 @@ export type Database = {
           limite_usuarios?: number
           limite_vagas?: number
           logo_url?: string | null
+          modulos_desabilitados?: string[]
           mrr?: number
           nome?: string
           plano?: string

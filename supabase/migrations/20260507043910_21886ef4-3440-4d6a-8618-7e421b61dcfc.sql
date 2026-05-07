@@ -1,0 +1,1 @@
+ALTER TABLE public.empresas ADD COLUMN IF NOT EXISTS modulos_desabilitados text[] NOT NULL DEFAULT '{}';
