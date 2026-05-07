@@ -1,10 +1,11 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { RequireAuth } from "@/components/RequireAuth";
 import { useAuth } from "@/lib/auth-context";
+import { useEmpresa } from "@/lib/empresa-context";
 import { Card } from "@/components/ui/card";
 import { AppLayout } from "@/components/AppLayout";
 import {
-  Home, Users, UserPlus, FileText, ShieldCheck, ClipboardList, UserCheck, Lightbulb, CalendarClock, Sparkles, AlertTriangle, Cake, ArrowRightLeft, MapPin, MessageSquareHeart, NotebookPen, History, Activity,
+  Home, Users, UserPlus, FileText, ShieldCheck, ClipboardList, UserCheck, Lightbulb, CalendarClock, Sparkles, AlertTriangle, Cake, ArrowRightLeft, MapPin, MessageSquareHeart, NotebookPen, History, Activity, Settings, UserCog, Crown,
 } from "lucide-react";
 
 export const Route = createFileRoute("/inicio")({
@@ -36,13 +37,21 @@ const baseItems = [
 
 function InicioPage() {
   const { isAdmin } = useAuth();
-  const items = isAdmin
-    ? [
-        ...baseItems,
-        { to: "/auditoria", label: "Histórico de Uso", sub: "Ações de cada usuário", icon: Activity, tone: "from-zinc-500 to-zinc-700" },
-        { to: "/usuarios", label: "Usuários", sub: "Permissões e acessos", icon: ShieldCheck, tone: "from-rose-500 to-rose-600" },
-      ]
-    : baseItems;
+  const { isAdminEmpresa, isAdminMestre } = useEmpresa();
+  const items = [
+    ...baseItems,
+    ...(isAdminEmpresa ? [
+      { to: "/empresa-config", label: "Configurações da Empresa", sub: "Logo, capa e dados públicos", icon: Settings, tone: "from-sky-500 to-sky-600" },
+      { to: "/empresa-membros", label: "Usuários da Empresa", sub: "Permissões dos membros", icon: UserCog, tone: "from-purple-500 to-purple-600" },
+    ] : []),
+    ...(isAdmin ? [
+      { to: "/auditoria", label: "Histórico de Uso", sub: "Ações de cada usuário", icon: Activity, tone: "from-zinc-500 to-zinc-700" },
+      { to: "/usuarios", label: "Usuários (legado)", sub: "Permissões e acessos", icon: ShieldCheck, tone: "from-rose-500 to-rose-600" },
+    ] : []),
+    ...(isAdminMestre ? [
+      { to: "/mestre", label: "Central Master", sub: "Painel SaaS de todas as empresas", icon: Crown, tone: "from-amber-500 to-orange-600" },
+    ] : []),
+  ];
 
   return (
     <AppLayout>
