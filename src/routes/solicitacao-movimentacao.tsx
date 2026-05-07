@@ -301,6 +301,7 @@ function NewSolDialog({ open, onClose, onCreated }: { open: boolean; onClose: ()
     setSaving(true);
     const { error } = await supabase.from("solicitacoes").insert({
       colaborador_id: colab.id,
+      empresa_id: colab.empresa_id,
       matricula: colab.matricula,
       colaborador_nome: colab.colaborador,
       tipo: tipo as "transferencia_setor",
