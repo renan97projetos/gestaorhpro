@@ -17,6 +17,7 @@ import { toast } from "sonner";
 import { Plus, ArrowRightLeft, TrendingUp, Trash2, CheckCircle2, Clock, Timer, Users, Link2, Copy } from "lucide-react";
 import { CandidatosDialog } from "@/components/CandidatosDialog";
 import { logAudit } from "@/lib/audit";
+import { useEmpresa } from "@/lib/empresa-context";
 
 async function logAdmissaoEvento(
   movimentacao_id: string | null,
