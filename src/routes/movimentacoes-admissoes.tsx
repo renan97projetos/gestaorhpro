@@ -64,6 +64,7 @@ type Mov = {
   link_token: string | null;
   salario: number | null;
   cargo_oferecido: string | null;
+  publicada: boolean;
   created_at: string;
 };
 
