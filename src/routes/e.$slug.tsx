@@ -21,13 +21,14 @@ function Page() {
 
   useEffect(() => {
     (async () => {
-      const { data: emp } = await supabase.from("empresas").select("*").eq("slug", slug).maybeSingle();
+      const { data: emp } = await supabase.from("empresas_publicas" as never).select("*").eq("slug", slug).maybeSingle();
       if (emp) {
-        setEmpresa(emp as Empresa);
+        const e = emp as Empresa;
+        setEmpresa(e);
         const { data: vs } = await supabase
           .from("admissoes_movimentacao")
           .select("id,cargo,setor,descricao,link_token")
-          .eq("empresa_id", emp.id)
+          .eq("empresa_id", e.id)
           .eq("status", "aberta")
           .eq("publicada", true);
         setVagas((vs as Vaga[]) || []);
