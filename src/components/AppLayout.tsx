@@ -3,17 +3,19 @@ import { useAuth } from "@/lib/auth-context";
 import { useEmpresa } from "@/lib/empresa-context";
 import { Button } from "@/components/ui/button";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { LayoutDashboard, Users, History, LogOut, Menu, X, LayoutGrid, UserCog, ClipboardList, UserCheck, Lightbulb, CalendarClock, Sparkles, AlertTriangle, Cake, ArrowRightLeft, MapPin, MessageSquareHeart, NotebookPen, Activity, Building2, Crown, Settings, ExternalLink, Handshake, FolderArchive } from "lucide-react";
+import { LayoutDashboard, Users, History, LogOut, Menu, X, LayoutGrid, UserCog, ClipboardList, UserCheck, Lightbulb, CalendarClock, Sparkles, AlertTriangle, Cake, ArrowRightLeft, MapPin, MessageSquareHeart, NotebookPen, Activity, Building2, Crown, Settings, ExternalLink, Handshake, FolderArchive, Megaphone } from "lucide-react";
 import { useEffect, useState } from "react";
 import { cn } from "@/lib/utils";
 import { ThemeToggle } from "@/components/ThemeToggle";
 import { OnboardingTour } from "@/components/OnboardingTour";
 import { AniversarioPopup } from "@/components/AniversarioPopup";
+import { AvisoPopup } from "@/components/AvisoPopup";
 import { OnlineUsersWidget } from "@/components/OnlineUsersWidget";
 import { useIsMobile } from "@/hooks/use-mobile";
 
 const baseNav = [
   { to: "/inicio", label: "Menu", icon: LayoutGrid },
+  { to: "/avisos", label: "Avisos", icon: Megaphone },
   { to: "/dashboard", label: "Dashboard", icon: LayoutDashboard },
   { to: "/cadastro", label: "Colaboradores", icon: Users },
   { to: "/chamada", label: "Chamada", icon: UserCheck },
@@ -208,6 +210,7 @@ export function AppLayout({ children }: { children: React.ReactNode }) {
       </div>
       <OnboardingTour />
       <AniversarioPopup />
+      <AvisoPopup />
     </div>
   );
 }
