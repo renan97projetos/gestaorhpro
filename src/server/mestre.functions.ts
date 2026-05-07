@@ -144,6 +144,60 @@ export const mestreAtualizarEmpresa = createServerFn({ method: "POST" })
     return { ok: true };
   });
 
+export const mestreCriarAdminMestre = createServerFn({ method: "POST" })
+  .middleware([supabaseAuth])
+  .inputValidator((input: { email: string; password: string; nome: string }) => {
+    if (!input?.email || !input?.nome) throw new Error("Nome e e-mail são obrigatórios");
+    if (!input.password || input.password.length < 6) throw new Error("Senha mínima de 6 caracteres");
+    return input;
+  })
+  .handler(async ({ data, context }) => {
+    const sb = admin();
+    await assertMestre(sb, context.userId);
+
+    let userId: string | null = null;
+    const created = await sb.auth.admin.createUser({
+      email: data.email,
+      password: data.password,
+      email_confirm: true,
+      user_metadata: { nome: data.nome },
+    });
+    if (created.error) {
+      const list = await sb.auth.admin.listUsers({ page: 1, perPage: 200 });
+      const existing = list.data.users.find((u) => u.email?.toLowerCase() === data.email.toLowerCase());
+      if (!existing) throw new Error(created.error.message);
+      userId = existing.id;
+      // Atualiza senha do usuário existente
+      await sb.auth.admin.updateUserById(userId, { password: data.password });
+    } else {
+      userId = created.data.user!.id;
+    }
+
+    await sb.from("profiles").upsert({ id: userId!, nome: data.nome, email: data.email } as never);
+
+    const { error: insErr } = await sb
+      .from("admin_mestres")
+      .upsert({ user_id: userId! } as never, { onConflict: "user_id" });
+    if (insErr) throw new Error(insErr.message);
+
+    return { ok: true, user_id: userId };
+  });
+
+export const mestreRemoverAdminMestre = createServerFn({ method: "POST" })
+  .middleware([supabaseAuth])
+  .inputValidator((input: { user_id: string }) => {
+    if (!input?.user_id) throw new Error("user_id obrigatório");
+    return input;
+  })
+  .handler(async ({ data, context }) => {
+    const sb = admin();
+    await assertMestre(sb, context.userId);
+    if (data.user_id === context.userId) throw new Error("Você não pode remover a si mesmo");
+    const { error } = await sb.from("admin_mestres").delete().eq("user_id", data.user_id);
+    if (error) throw new Error(error.message);
+    return { ok: true };
+  });
+
 export const mestreCriarEmpresa = createServerFn({ method: "POST" })
   .middleware([supabaseAuth])
   .inputValidator((input: {
