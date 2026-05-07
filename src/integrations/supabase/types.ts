@@ -442,6 +442,7 @@ export type Database = {
       empresas: {
         Row: {
           ativo: boolean
+          bloqueada: boolean
           capa_url: string | null
           cnpj: string | null
           cor_primaria: string | null
@@ -449,15 +450,22 @@ export type Database = {
           email_contato: string | null
           endereco: string | null
           id: string
+          limite_usuarios: number
+          limite_vagas: number
           logo_url: string | null
+          mrr: number
           nome: string
+          plano: string
+          responsavel: string | null
           slug: string
           sobre: string | null
           telefone: string | null
+          ultimo_acesso: string | null
           updated_at: string
         }
         Insert: {
           ativo?: boolean
+          bloqueada?: boolean
           capa_url?: string | null
           cnpj?: string | null
           cor_primaria?: string | null
@@ -465,15 +473,22 @@ export type Database = {
           email_contato?: string | null
           endereco?: string | null
           id?: string
+          limite_usuarios?: number
+          limite_vagas?: number
           logo_url?: string | null
+          mrr?: number
           nome: string
+          plano?: string
+          responsavel?: string | null
           slug: string
           sobre?: string | null
           telefone?: string | null
+          ultimo_acesso?: string | null
           updated_at?: string
         }
         Update: {
           ativo?: boolean
+          bloqueada?: boolean
           capa_url?: string | null
           cnpj?: string | null
           cor_primaria?: string | null
@@ -481,11 +496,17 @@ export type Database = {
           email_contato?: string | null
           endereco?: string | null
           id?: string
+          limite_usuarios?: number
+          limite_vagas?: number
           logo_url?: string | null
+          mrr?: number
           nome?: string
+          plano?: string
+          responsavel?: string | null
           slug?: string
           sobre?: string | null
           telefone?: string | null
+          ultimo_acesso?: string | null
           updated_at?: string
         }
         Relationships: []
@@ -1287,6 +1308,7 @@ export type Database = {
         Args: { _empresa: string; _uid: string }
         Returns: boolean
       }
+      touch_empresa_acesso: { Args: { _empresa: string }; Returns: undefined }
     }
     Enums: {
       app_role: "admin" | "gestor" | "usuario"

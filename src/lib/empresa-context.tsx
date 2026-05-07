@@ -17,6 +17,13 @@ export type Empresa = {
   email_contato: string | null;
   cor_primaria: string | null;
   ativo: boolean;
+  bloqueada?: boolean;
+  plano?: string;
+  responsavel?: string | null;
+  mrr?: number;
+  limite_usuarios?: number;
+  limite_vagas?: number;
+  ultimo_acesso?: string | null;
 };
 
 type EmpresaCtx = {
@@ -73,7 +80,7 @@ export function EmpresaProvider({ children }: { children: ReactNode }) {
         setLoading(false);
         return;
       }
-      empresasResp = await supabase.from("empresas").select("*").in("id", ids).order("nome");
+      empresasResp = await supabase.from("empresas").select("*").in("id", ids).eq("bloqueada", false).order("nome");
     }
     const lista = (empresasResp.data as Empresa[]) || [];
     setEmpresas(lista);

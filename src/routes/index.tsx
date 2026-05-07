@@ -5,7 +5,6 @@ import { Card } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Button } from "@/components/ui/button";
-import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
 import { Eye, EyeOff, Loader2 } from "lucide-react";
 import { toast } from "sonner";
 import { ThemeToggle } from "@/components/ThemeToggle";
@@ -15,9 +14,8 @@ export const Route = createFileRoute("/")({
 });
 
 function AuthPage() {
-  const { user, loading, signIn, signUp, resetPassword } = useAuth();
+  const { user, loading, signIn, resetPassword } = useAuth();
   const navigate = useNavigate();
-  const [tab, setTab] = useState<"login" | "cadastro">("login");
 
   useEffect(() => {
     if (!loading && user) navigate({ to: "/inicio" });
@@ -45,18 +43,12 @@ function AuthPage() {
           </p>
         </div>
 
-        <Tabs value={tab} onValueChange={(v) => setTab(v as "login" | "cadastro")}>
-          <TabsList className="grid grid-cols-2 w-full">
-            <TabsTrigger value="login">Login</TabsTrigger>
-            <TabsTrigger value="cadastro">Cadastro</TabsTrigger>
-          </TabsList>
-          <TabsContent value="login" className="mt-6">
-            <LoginForm onSubmit={signIn} onForgot={resetPassword} />
-          </TabsContent>
-          <TabsContent value="cadastro" className="mt-6">
-            <SignupForm onSubmit={signUp} onSuccess={() => setTab("login")} />
-          </TabsContent>
-        </Tabs>
+        <div className="mt-6">
+          <LoginForm onSubmit={signIn} onForgot={resetPassword} />
+          <p className="mt-6 text-center text-xs text-muted-foreground">
+            O cadastro de novos usuários é feito apenas pela Central Master.
+          </p>
+        </div>
       </Card>
     </div>
   );
@@ -135,50 +127,3 @@ function LoginForm({
   );
 }
 
-function SignupForm({
-  onSubmit,
-  onSuccess,
-}: {
-  onSubmit: (email: string, password: string, nome: string) => Promise<{ error: string | null }>;
-  onSuccess: () => void;
-}) {
-  const [nome, setNome] = useState("");
-  const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
-  const [loading, setLoading] = useState(false);
-
-  const submit = async (e: React.FormEvent) => {
-    e.preventDefault();
-    if (password.length < 6) return toast.error("Senha precisa ter pelo menos 6 caracteres");
-    setLoading(true);
-    const { error } = await onSubmit(email, password, nome);
-    setLoading(false);
-    if (error) toast.error("Erro no cadastro", { description: error });
-    else {
-      toast.success("Cadastro realizado!", {
-        description: "Enviamos um email de confirmação. Verifique sua caixa de entrada antes de fazer login.",
-      });
-      onSuccess();
-    }
-  };
-
-  return (
-    <form onSubmit={submit} className="space-y-4">
-      <div className="space-y-2">
-        <Label>Nome</Label>
-        <Input value={nome} onChange={(e) => setNome(e.target.value)} required />
-      </div>
-      <div className="space-y-2">
-        <Label>Email</Label>
-        <Input type="email" value={email} onChange={(e) => setEmail(e.target.value)} required />
-      </div>
-      <div className="space-y-2">
-        <Label>Senha</Label>
-        <Input type="password" value={password} onChange={(e) => setPassword(e.target.value)} required minLength={6} />
-      </div>
-      <Button type="submit" className="w-full bg-[image:var(--gradient-primary)] hover:opacity-90" disabled={loading}>
-        {loading ? <Loader2 className="h-4 w-4 animate-spin" /> : "Criar conta"}
-      </Button>
-    </form>
-  );
-}
