@@ -1,6 +1,7 @@
 import { createServerFn } from "@tanstack/react-start";
 import { createClient } from "@supabase/supabase-js";
 import { requireSupabaseAuth } from "@/integrations/supabase/auth-middleware";
+import { attachSupabaseAuth } from "@/integrations/supabase/auth-client-middleware";
 import type { Database } from "@/integrations/supabase/types";
 
 function admin() {
@@ -26,7 +27,7 @@ type CriarInput = {
 };
 
 export const mestreCriarUsuario = createServerFn({ method: "POST" })
-  .middleware([requireSupabaseAuth])
+  .middleware([attachSupabaseAuth, requireSupabaseAuth])
   .inputValidator((input: CriarInput) => {
     if (!input?.email || !input?.empresa_id || !input?.nome) throw new Error("Dados incompletos");
     const modo = input.modo ?? (input.password ? "senha" : "convite");
@@ -90,7 +91,7 @@ export const mestreCriarUsuario = createServerFn({ method: "POST" })
   });
 
 export const mestreResetSenha = createServerFn({ method: "POST" })
-  .middleware([requireSupabaseAuth])
+  .middleware([attachSupabaseAuth, requireSupabaseAuth])
   .inputValidator((input: { user_id: string; password: string }) => {
     if (!input.user_id || !input.password || input.password.length < 6) throw new Error("Dados inválidos");
     return input;
@@ -104,7 +105,7 @@ export const mestreResetSenha = createServerFn({ method: "POST" })
   });
 
 export const mestreToggleBloqueio = createServerFn({ method: "POST" })
-  .middleware([requireSupabaseAuth])
+  .middleware([attachSupabaseAuth, requireSupabaseAuth])
   .inputValidator((input: { empresa_id: string; bloqueada: boolean }) => input)
   .handler(async ({ data, context }) => {
     const sb = admin();
@@ -115,7 +116,7 @@ export const mestreToggleBloqueio = createServerFn({ method: "POST" })
   });
 
 export const mestreAtualizarEmpresa = createServerFn({ method: "POST" })
-  .middleware([requireSupabaseAuth])
+  .middleware([attachSupabaseAuth, requireSupabaseAuth])
   .inputValidator((input: {
     empresa_id: string;
     nome?: string;
@@ -144,7 +145,7 @@ export const mestreAtualizarEmpresa = createServerFn({ method: "POST" })
   });
 
 export const mestreCriarEmpresa = createServerFn({ method: "POST" })
-  .middleware([requireSupabaseAuth])
+  .middleware([attachSupabaseAuth, requireSupabaseAuth])
   .inputValidator((input: {
     nome: string;
     slug: string;
