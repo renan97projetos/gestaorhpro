@@ -326,9 +326,28 @@ function EmpresaDetalheDialog({ empresa, onClose, onChanged }: { empresa: Empres
         <Tabs defaultValue="info">
           <TabsList>
             <TabsTrigger value="info">Informações</TabsTrigger>
+            <TabsTrigger value="modulos">Módulos</TabsTrigger>
             <TabsTrigger value="usuarios">Usuários ({membros.length})</TabsTrigger>
             <TabsTrigger value="cadastrar">Cadastrar usuário</TabsTrigger>
           </TabsList>
+
+          <TabsContent value="modulos" className="mt-4 space-y-3">
+            <p className="text-sm text-muted-foreground flex items-center gap-2"><LayoutGrid className="h-4 w-4" /> Habilite ou desabilite as abas que aparecem no menu desta empresa. O Admin Mestre sempre vê tudo.</p>
+            <div className="grid md:grid-cols-2 gap-2">
+              {MODULOS_DISPONIVEIS.map((m) => {
+                const enabled = !modulos.includes(m.to);
+                return (
+                  <div key={m.to} className="flex items-center justify-between border rounded-md px-3 py-2">
+                    <div className="text-sm">{m.label} <span className="text-xs text-muted-foreground">({m.to})</span></div>
+                    <Switch checked={enabled} onCheckedChange={(v) => toggleModulo(m.to, v)} />
+                  </div>
+                );
+              })}
+            </div>
+            <div className="flex justify-end pt-2">
+              <Button onClick={salvarInfo} disabled={busy}><Save className="h-4 w-4 mr-2" />Salvar módulos</Button>
+            </div>
+          </TabsContent>
 
           <TabsContent value="info" className="space-y-4 mt-4">
             <div className="grid grid-cols-2 gap-3 text-sm">
