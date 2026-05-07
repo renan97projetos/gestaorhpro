@@ -4,7 +4,7 @@ import { supabase } from "@/integrations/supabase/client";
 import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
-import { Building2, MapPin, Phone, Mail, Briefcase } from "lucide-react";
+import { Building2, Briefcase } from "lucide-react";
 
 export const Route = createFileRoute("/e/$slug")({
   component: Page,
