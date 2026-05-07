@@ -272,7 +272,7 @@ function SolCard({
 
 function NewSolDialog({ open, onClose, onCreated }: { open: boolean; onClose: () => void; onCreated: () => void }) {
   const { user } = useAuth();
-  const [colabs, setColabs] = useState<{ id: string; matricula: string; colaborador: string }[]>([]);
+  const [colabs, setColabs] = useState<{ id: string; matricula: string; colaborador: string; empresa_id: string }[]>([]);
   const [colabId, setColabId] = useState("");
   const [tipo, setTipo] = useState("transferencia_setor");
   const [descricao, setDescricao] = useState("");
@@ -283,8 +283,8 @@ function NewSolDialog({ open, onClose, onCreated }: { open: boolean; onClose: ()
 
   useEffect(() => {
     if (open) {
-      supabase.from("colaboradores").select("id,matricula,colaborador").order("colaborador")
-        .then(({ data }) => setColabs(data ?? []));
+      supabase.from("colaboradores").select("id,matricula,colaborador,empresa_id").order("colaborador")
+        .then(({ data }) => setColabs((data ?? []) as never));
     }
   }, [open]);
 
@@ -301,6 +301,7 @@ function NewSolDialog({ open, onClose, onCreated }: { open: boolean; onClose: ()
     setSaving(true);
     const { error } = await supabase.from("solicitacoes").insert({
       colaborador_id: colab.id,
+      empresa_id: colab.empresa_id,
       matricula: colab.matricula,
       colaborador_nome: colab.colaborador,
       tipo: tipo as "transferencia_setor",

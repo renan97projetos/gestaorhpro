@@ -680,6 +680,7 @@ export type Database = {
           created_at: string
           descricao: string
           email: string
+          empresa_id: string
           id: string
           nome: string
           status: Database["public"]["Enums"]["ideia_status"]
@@ -692,6 +693,7 @@ export type Database = {
           created_at?: string
           descricao: string
           email: string
+          empresa_id: string
           id?: string
           nome: string
           status?: Database["public"]["Enums"]["ideia_status"]
@@ -704,6 +706,7 @@ export type Database = {
           created_at?: string
           descricao?: string
           email?: string
+          empresa_id?: string
           id?: string
           nome?: string
           status?: Database["public"]["Enums"]["ideia_status"]
@@ -843,6 +846,7 @@ export type Database = {
           created_at: string
           created_by: string | null
           descricao: string | null
+          empresa_id: string
           id: string
           introducao: string | null
           status: Database["public"]["Enums"]["pesquisa_status"]
@@ -855,6 +859,7 @@ export type Database = {
           created_at?: string
           created_by?: string | null
           descricao?: string | null
+          empresa_id: string
           id?: string
           introducao?: string | null
           status?: Database["public"]["Enums"]["pesquisa_status"]
@@ -867,6 +872,7 @@ export type Database = {
           created_at?: string
           created_by?: string | null
           descricao?: string | null
+          empresa_id?: string
           id?: string
           introducao?: string | null
           status?: Database["public"]["Enums"]["pesquisa_status"]
@@ -995,6 +1001,7 @@ export type Database = {
           created_at: string
           decided_at: string | null
           descricao: string
+          empresa_id: string
           id: string
           matricula: string
           motivo: string | null
@@ -1014,6 +1021,7 @@ export type Database = {
           created_at?: string
           decided_at?: string | null
           descricao: string
+          empresa_id: string
           id?: string
           matricula: string
           motivo?: string | null
@@ -1033,6 +1041,7 @@ export type Database = {
           created_at?: string
           decided_at?: string | null
           descricao?: string
+          empresa_id?: string
           id?: string
           matricula?: string
           motivo?: string | null

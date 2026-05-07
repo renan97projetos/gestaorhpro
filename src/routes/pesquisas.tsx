@@ -4,6 +4,7 @@ import { RequireAuth } from "@/components/RequireAuth";
 import { AppLayout } from "@/components/AppLayout";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/lib/auth-context";
+import { useEmpresa } from "@/lib/empresa-context";
 import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -57,6 +58,7 @@ type Resposta = {
 function PesquisasPage() {
   const { isAdmin } = useAuth();
   const { isGestor } = useAuth();
+  const { empresaAtual } = useEmpresa();
   const { guard, dialog: bloqueioDialog } = useReadOnlyGuard(
     isGestor,
     "Criar, editar ou excluir pesquisas",
@@ -105,6 +107,7 @@ function PesquisasPage() {
 
   const handleCreate = async () => {
     if (!titulo.trim()) return toast.error("Informe o título");
+    if (!empresaAtual) return toast.error("Selecione uma empresa");
     const { data, error } = await supabase
       .from("pesquisas")
       .insert({
@@ -112,6 +115,7 @@ function PesquisasPage() {
         descricao: descricao.trim() || null,
         introducao: introducao.trim() || null,
         tipo: "enps",
+        empresa_id: empresaAtual.id,
       })
       .select()
       .single();

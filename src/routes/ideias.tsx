@@ -4,6 +4,7 @@ import { AppLayout } from "@/components/AppLayout";
 import { useEffect, useMemo, useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/lib/auth-context";
+import { useEmpresa } from "@/lib/empresa-context";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
@@ -84,6 +85,7 @@ const ideiaSchema = z.object({
 
 function IdeiasPage() {
   const { user, isGestor } = useAuth();
+  const { empresaAtual } = useEmpresa();
   const [ideias, setIdeias] = useState<Ideia[]>([]);
   const [loading, setLoading] = useState(true);
   const [openForm, setOpenForm] = useState(false);
@@ -134,8 +136,14 @@ function IdeiasPage() {
       return;
     }
     setSubmitting(true);
+    if (!empresaAtual) {
+      toast.error("Selecione uma empresa");
+      setSubmitting(false);
+      return;
+    }
     const { error } = await supabase.from("ideias").insert({
       user_id: user.id,
+      empresa_id: empresaAtual.id,
       ...parsed.data,
     });
     setSubmitting(false);
