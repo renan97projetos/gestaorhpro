@@ -29,7 +29,7 @@ function Page() {
           .from("vagas_publicas" as never)
           .select("id,cargo,setor,descricao,link_token")
           .eq("empresa_id", e.id);
-        setVs: void 0;
+        
         setVagas((vs as Vaga[]) || []);
       }
       setLoading(false);
