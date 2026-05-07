@@ -781,6 +781,107 @@ export type Database = {
         }
         Relationships: []
       }
+      etica_denuncias: {
+        Row: {
+          anonimo: boolean
+          categoria: string
+          concluida_em: string | null
+          conclusao: string | null
+          created_at: string
+          denunciante_email: string | null
+          denunciante_nome: string | null
+          denunciante_user_id: string | null
+          descricao: string
+          empresa_id: string
+          id: string
+          prioridade: string
+          responsavel_id: string | null
+          responsavel_nome: string | null
+          status: string
+          titulo: string
+          updated_at: string
+        }
+        Insert: {
+          anonimo?: boolean
+          categoria?: string
+          concluida_em?: string | null
+          conclusao?: string | null
+          created_at?: string
+          denunciante_email?: string | null
+          denunciante_nome?: string | null
+          denunciante_user_id?: string | null
+          descricao: string
+          empresa_id: string
+          id?: string
+          prioridade?: string
+          responsavel_id?: string | null
+          responsavel_nome?: string | null
+          status?: string
+          titulo: string
+          updated_at?: string
+        }
+        Update: {
+          anonimo?: boolean
+          categoria?: string
+          concluida_em?: string | null
+          conclusao?: string | null
+          created_at?: string
+          denunciante_email?: string | null
+          denunciante_nome?: string | null
+          denunciante_user_id?: string | null
+          descricao?: string
+          empresa_id?: string
+          id?: string
+          prioridade?: string
+          responsavel_id?: string | null
+          responsavel_nome?: string | null
+          status?: string
+          titulo?: string
+          updated_at?: string
+        }
+        Relationships: []
+      }
+      etica_tratativas: {
+        Row: {
+          created_at: string
+          denuncia_id: string
+          id: string
+          interno: boolean
+          mensagem: string
+          status_novo: string | null
+          user_id: string
+          user_nome: string | null
+        }
+        Insert: {
+          created_at?: string
+          denuncia_id: string
+          id?: string
+          interno?: boolean
+          mensagem: string
+          status_novo?: string | null
+          user_id: string
+          user_nome?: string | null
+        }
+        Update: {
+          created_at?: string
+          denuncia_id?: string
+          id?: string
+          interno?: boolean
+          mensagem?: string
+          status_novo?: string | null
+          user_id?: string
+          user_nome?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "etica_tratativas_denuncia_id_fkey"
+            columns: ["denuncia_id"]
+            isOneToOne: false
+            referencedRelation: "etica_denuncias"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       experiencia_notas: {
         Row: {
           colaborador_id: string
