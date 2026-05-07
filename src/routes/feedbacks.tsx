@@ -43,6 +43,7 @@ const PADRAO = [
 
 function Page() {
   const { user, isAdmin, isGestor } = useAuth();
+  const { empresaAtual } = useEmpresa();
   const canEdit = isAdmin || isGestor;
   const [camps, setCamps] = useState<Camp[]>([]);
   const [open, setOpen] = useState(false);
