@@ -310,7 +310,7 @@ function EmpresaDetalheDialog({ empresa, onClose, onChanged }: { empresa: Empres
   const salvarInfo = async () => {
     setBusy(true);
     try {
-      await updFn({ data: { empresa_id: empresa.id, ...info, modulos_desabilitados: modulos } });
+      await updFn({ data: { empresa_id: empresa.id, ...info, data_inicio_contrato: info.data_inicio_contrato || null, dia_vencimento: info.dia_vencimento || null, modulos_desabilitados: modulos } });
       toast.success("Informações salvas");
       onChanged();
     } catch (e) {
