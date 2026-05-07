@@ -265,12 +265,20 @@ type Membro = { id: string; user_id: string; role: EmpresaRole; profiles?: { nom
 
 function EmpresaDetalheDialog({ empresa, onClose, onChanged }: { empresa: Empresa; onClose: () => void; onChanged: () => void }) {
   const [info, setInfo] = useState({
+    nome: empresa.nome,
     plano: empresa.plano || "free",
     responsavel: empresa.responsavel || "",
     mrr: empresa.mrr || 0,
     limite_usuarios: empresa.limite_usuarios || 5,
     limite_vagas: empresa.limite_vagas || 10,
     ativo: empresa.ativo,
+    cnpj: empresa.cnpj || "",
+    telefone: empresa.telefone || "",
+    email_contato: empresa.email_contato || "",
+    endereco: empresa.endereco || "",
+    forma_pagamento: empresa.forma_pagamento || "",
+    data_inicio_contrato: empresa.data_inicio_contrato || "",
+    dia_vencimento: empresa.dia_vencimento || 5,
   });
   const [modulos, setModulos] = useState<string[]>(empresa.modulos_desabilitados || []);
   const [membros, setMembros] = useState<Membro[]>([]);
