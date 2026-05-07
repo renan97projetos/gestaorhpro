@@ -182,9 +182,9 @@ function CadastroPage() {
   };
 
   const handleCreate = async (newC: Partial<ColabFull>) => {
-    if (!user) return;
+    if (!user || !empresaAtual) return;
     const { data, error } = await supabase.from("colaboradores")
-      .insert({ ...newC, created_by: user.id } as never).select().single();
+      .insert({ ...newC, created_by: user.id, empresa_id: empresaAtual.id } as never).select().single();
     if (error) { toast.error(error.message); return; }
     await supabase.from("movimentacoes").insert({
       colaborador_id: data.id, matricula: data.matricula, colaborador_nome: data.colaborador,
