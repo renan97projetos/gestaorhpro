@@ -26,11 +26,10 @@ function Page() {
         const e = emp as Empresa;
         setEmpresa(e);
         const { data: vs } = await supabase
-          .from("admissoes_movimentacao")
+          .from("vagas_publicas" as never)
           .select("id,cargo,setor,descricao,link_token")
-          .eq("empresa_id", e.id)
-          .eq("status", "aberta")
-          .eq("publicada", true);
+          .eq("empresa_id", e.id);
+        setVs: void 0;
         setVagas((vs as Vaga[]) || []);
       }
       setLoading(false);
