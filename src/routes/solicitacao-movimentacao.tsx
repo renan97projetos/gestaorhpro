@@ -283,8 +283,8 @@ function NewSolDialog({ open, onClose, onCreated }: { open: boolean; onClose: ()
 
   useEffect(() => {
     if (open) {
-      supabase.from("colaboradores").select("id,matricula,colaborador").order("colaborador")
-        .then(({ data }) => setColabs(data ?? []));
+      supabase.from("colaboradores").select("id,matricula,colaborador,empresa_id").order("colaborador")
+        .then(({ data }) => setColabs((data ?? []) as never));
     }
   }, [open]);
 
