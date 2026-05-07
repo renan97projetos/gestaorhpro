@@ -1,0 +1,15 @@
+export const DOC_TIPOS = [
+  { key: "rg", label: "RG (frente e verso)" },
+  { key: "cpf", label: "CPF" },
+  { key: "ctps", label: "Carteira de Trabalho (CTPS)" },
+  { key: "comprovante_residencia", label: "Comprovante de Residência" },
+  { key: "titulo_eleitor", label: "Título de Eleitor" },
+  { key: "pis", label: "PIS / NIS" },
+  { key: "reservista", label: "Certificado de Reservista" },
+  { key: "escolaridade", label: "Comprovante de Escolaridade" },
+  { key: "foto", label: "Foto 3x4" },
+  { key: "certidao_nascimento", label: "Certidão de Nascimento/Casamento" },
+  { key: "certidao_filhos", label: "Certidão de Nascimento dos Filhos" },
+  { key: "aso", label: "Atestado de Saúde Ocupacional (ASO)" },
+  { key: "conta_bancaria", label: "Dados Bancários" },
+];
