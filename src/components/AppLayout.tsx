@@ -93,7 +93,7 @@ export function AppLayout({ children }: { children: React.ReactNode }) {
             )}
             <div className="min-w-0 flex-1">
               <p className="text-sm font-semibold leading-none text-sidebar-foreground truncate">{empresaAtual?.nome || "Selecione"}</p>
-              <p className="text-xs text-sidebar-foreground/60 mt-0.5">Gestão SaaS</p>
+              <p className="text-xs text-sidebar-foreground/60 mt-0.5">GestãoRHPRO</p>
             </div>
           </div>
           {empresas.length > 1 && (
