@@ -85,6 +85,7 @@ const ideiaSchema = z.object({
 
 function IdeiasPage() {
   const { user, isGestor } = useAuth();
+  const { empresaAtual } = useEmpresa();
   const [ideias, setIdeias] = useState<Ideia[]>([]);
   const [loading, setLoading] = useState(true);
   const [openForm, setOpenForm] = useState(false);
