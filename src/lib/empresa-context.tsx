@@ -41,7 +41,7 @@ type EmpresaCtx = {
   isGestorEmpresa: boolean; // admin/gestor da empresa atual (ou mestre)
   canEdit: boolean;
   canManage: boolean;
-  refresh: () => Promise<void>;
+  refresh: (forceId?: string | null) => Promise<void>;
 };
 
 const Ctx = createContext<EmpresaCtx | null>(null);
@@ -57,7 +57,7 @@ export function EmpresaProvider({ children }: { children: ReactNode }) {
   );
   const [role, setRole] = useState<EmpresaRole | null>(null);
 
-  const refresh = useCallback(async () => {
+  const refresh = useCallback(async (forceId?: string | null) => {
     if (!user) {
       setEmpresas([]);
       setIsAdminMestre(false);
@@ -90,7 +90,8 @@ export function EmpresaProvider({ children }: { children: ReactNode }) {
     setEmpresas(lista);
 
     // empresa atual válida?
-    let atualId = empresaAtualId;
+    const currentId = forceId !== undefined ? forceId : empresaAtualId;
+    let atualId = currentId;
     if (!atualId || !lista.find((e) => e.id === atualId)) {
       atualId = lista[0]?.id ?? null;
       if (atualId) localStorage.setItem(LS_KEY, atualId);
@@ -112,8 +113,7 @@ export function EmpresaProvider({ children }: { children: ReactNode }) {
   const setEmpresaId = useCallback((id: string) => {
     localStorage.setItem(LS_KEY, id);
     setEmpresaAtualId(id);
-    // role muda — refetch leve
-    refresh();
+    refresh(id);
   }, [refresh]);
 
   const empresaAtual = empresas.find((e) => e.id === empresaAtualId) || null;
