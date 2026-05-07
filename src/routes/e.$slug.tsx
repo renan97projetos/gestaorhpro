@@ -58,6 +58,11 @@ function Page() {
               {empresa.sobre && <p className="text-sm md:text-base opacity-90 mt-1 max-w-2xl">{empresa.sobre}</p>}
             </div>
           </div>
+          <div className="ml-auto">
+            <Link to="/e/$slug/login" params={{ slug }}>
+              <Button size="sm" variant="secondary">Acessar painel</Button>
+            </Link>
+          </div>
         </div>
       </div>
 
