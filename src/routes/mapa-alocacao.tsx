@@ -3,6 +3,7 @@ import { RequireAuth } from "@/components/RequireAuth";
 import { AppLayout } from "@/components/AppLayout";
 import { useEffect, useMemo, useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
+import { useEmpresa } from "@/lib/empresa-context";
 import { Card } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Badge } from "@/components/ui/badge";
