@@ -17,7 +17,7 @@ export const Route = createFileRoute("/empresa-config")({
 });
 
 function Page() {
-  const { empresaAtual, isAdminEmpresa, refresh } = useEmpresa();
+  const { empresaAtual, isGestorEmpresa, refresh } = useEmpresa();
   const [form, setForm] = useState<Record<string, string>>({});
   const [saving, setSaving] = useState(false);
 
