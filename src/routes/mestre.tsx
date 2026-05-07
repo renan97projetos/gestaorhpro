@@ -282,7 +282,7 @@ function EmpresaDetalheDialog({ empresa, onClose, onChanged }: { empresa: Empres
   });
   const [modulos, setModulos] = useState<string[]>(empresa.modulos_desabilitados || []);
   const [membros, setMembros] = useState<Membro[]>([]);
-  const [novo, setNovo] = useState({ nome: "", email: "", password: "", role: "visualizador" as EmpresaRole });
+  const [novo, setNovo] = useState({ nome: "", email: "", password: "", role: "visualizador" as EmpresaRole, modo: "convite" as "convite" | "senha" });
   const [busy, setBusy] = useState(false);
 
   const criarFn = useServerFn(mestreCriarUsuario);
@@ -333,12 +333,21 @@ function EmpresaDetalheDialog({ empresa, onClose, onChanged }: { empresa: Empres
   };
 
   const cadastrar = async () => {
-    if (!novo.email || !novo.password || !novo.nome) return toast.error("Preencha todos os campos");
+    if (!novo.email || !novo.nome) return toast.error("Preencha nome e e-mail");
+    if (novo.modo === "senha" && (!novo.password || novo.password.length < 6)) return toast.error("Senha mínima de 6 caracteres");
     setBusy(true);
     try {
-      await criarFn({ data: { empresa_id: empresa.id, ...novo } });
-      toast.success("Usuário cadastrado e vinculado à empresa");
-      setNovo({ nome: "", email: "", password: "", role: "visualizador" });
+      await criarFn({ data: {
+        empresa_id: empresa.id,
+        nome: novo.nome,
+        email: novo.email,
+        role: novo.role,
+        modo: novo.modo,
+        password: novo.modo === "senha" ? novo.password : null,
+        redirect_to: typeof window !== "undefined" ? `${window.location.origin}/` : null,
+      } });
+      toast.success(novo.modo === "convite" ? "Convite enviado por e-mail" : "Usuário cadastrado e vinculado");
+      setNovo({ nome: "", email: "", password: "", role: "visualizador", modo: "convite" });
       loadMembros();
     } catch (e) { toast.error((e as Error).message); } finally { setBusy(false); }
   };
@@ -498,23 +507,35 @@ function EmpresaDetalheDialog({ empresa, onClose, onChanged }: { empresa: Empres
           </TabsContent>
 
           <TabsContent value="cadastrar" className="mt-4 space-y-3">
-            <p className="text-sm text-muted-foreground">Crie um acesso para a empresa <strong>{empresa.nome}</strong>. O e-mail é confirmado automaticamente.</p>
+            <p className="text-sm text-muted-foreground">Crie um acesso para a empresa <strong>{empresa.nome}</strong>.</p>
             <div className="grid md:grid-cols-2 gap-3">
               <div><Label>Nome *</Label><Input value={novo.nome} onChange={(e) => setNovo({ ...novo, nome: e.target.value })} /></div>
               <div><Label>E-mail *</Label><Input type="email" value={novo.email} onChange={(e) => setNovo({ ...novo, email: e.target.value })} /></div>
               <div className="md:col-span-2">
-                <Label>Senha *</Label>
-                <div className="flex gap-2">
-                  <Input type="text" value={novo.password} onChange={(e) => setNovo({ ...novo, password: e.target.value })} placeholder="mínimo 6 caracteres" />
-                  <Button type="button" variant="outline" onClick={() => setNovo({ ...novo, password: gerarSenha(12) })}>
-                    <RefreshCw className="h-4 w-4 mr-1" /> Gerar
-                  </Button>
-                  <Button type="button" variant="outline" disabled={!novo.password} onClick={() => { navigator.clipboard.writeText(novo.password); toast.success("Senha copiada"); }}>
-                    <Copy className="h-4 w-4" />
-                  </Button>
-                </div>
-                <p className="text-xs text-muted-foreground mt-1">Anote ou copie a senha — ela não será mostrada novamente.</p>
+                <Label>Como criar o acesso *</Label>
+                <Select value={novo.modo} onValueChange={(v) => setNovo({ ...novo, modo: v as "convite" | "senha" })}>
+                  <SelectTrigger><SelectValue /></SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="convite">Enviar convite por e-mail (usuário define a senha)</SelectItem>
+                    <SelectItem value="senha">Definir senha agora (acesso imediato)</SelectItem>
+                  </SelectContent>
+                </Select>
               </div>
+              {novo.modo === "senha" && (
+                <div className="md:col-span-2">
+                  <Label>Senha *</Label>
+                  <div className="flex gap-2">
+                    <Input type="text" value={novo.password} onChange={(e) => setNovo({ ...novo, password: e.target.value })} placeholder="mínimo 6 caracteres" />
+                    <Button type="button" variant="outline" onClick={() => setNovo({ ...novo, password: gerarSenha(12) })}>
+                      <RefreshCw className="h-4 w-4 mr-1" /> Gerar
+                    </Button>
+                    <Button type="button" variant="outline" disabled={!novo.password} onClick={() => { navigator.clipboard.writeText(novo.password); toast.success("Senha copiada"); }}>
+                      <Copy className="h-4 w-4" />
+                    </Button>
+                  </div>
+                  <p className="text-xs text-muted-foreground mt-1">Anote ou copie a senha — ela não será mostrada novamente.</p>
+                </div>
+              )}
               <div className="md:col-span-2"><Label>Papel na empresa *</Label>
                 <Select value={novo.role} onValueChange={(v) => setNovo({ ...novo, role: v as EmpresaRole })}>
                   <SelectTrigger><SelectValue placeholder="Selecione admin, gestor ou visualizador" /></SelectTrigger>
@@ -526,7 +547,10 @@ function EmpresaDetalheDialog({ empresa, onClose, onChanged }: { empresa: Empres
                 </Select>
               </div>
             </div>
-            <Button onClick={cadastrar} disabled={busy} className="w-full"><UserPlus2 className="h-4 w-4 mr-2" />Cadastrar acesso</Button>
+            <Button onClick={cadastrar} disabled={busy} className="w-full">
+              <UserPlus2 className="h-4 w-4 mr-2" />
+              {novo.modo === "convite" ? "Enviar convite" : "Cadastrar acesso"}
+            </Button>
           </TabsContent>
         </Tabs>
       </DialogContent>
