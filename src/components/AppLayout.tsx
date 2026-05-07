@@ -61,8 +61,14 @@ export function AppLayout({ children }: { children: React.ReactNode }) {
       const { error: upErr } = await supabase.storage.from("empresa-assets").upload(path, file, { upsert: true });
       if (upErr) throw upErr;
       const { data } = supabase.storage.from("empresa-assets").getPublicUrl(path);
-      const { error: updErr } = await supabase.from("empresas").update({ logo_url: data.publicUrl } as never).eq("id", empresaAtual.id);
+      const { data: updated, error: updErr } = await supabase
+        .from("empresas")
+        .update({ logo_url: data.publicUrl } as never)
+        .eq("id", empresaAtual.id)
+        .select("id")
+        .maybeSingle();
       if (updErr) throw updErr;
+      if (!updated) throw new Error("Sem permissão para atualizar esta empresa.");
       toast.success("Logo atualizada");
       await refresh();
     } catch (err) {
