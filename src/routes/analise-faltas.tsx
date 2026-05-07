@@ -73,6 +73,7 @@ type Colab = {
 };
 
 function AnaliseFaltasPage() {
+  const { empresaAtual } = useEmpresa();
   const [chamadas, setChamadas] = useState<Chamada[]>([]);
   const [colabs, setColabs] = useState<Colab[]>([]);
   const [loading, setLoading] = useState(true);
@@ -80,20 +81,23 @@ function AnaliseFaltasPage() {
 
   useEffect(() => {
     let mounted = true;
+    setLoading(true);
     (async () => {
-      const [{ data: ch }, { data: co }] = await Promise.all([
-        supabase.from("chamadas").select("id,data,status,colaborador_id").eq("status", "Falta"),
-        supabase.from("colaboradores").select("id,matricula,colaborador,cargo,setor,lideranca,status"),
-      ]);
+      if (!empresaAtual) { if (mounted) { setChamadas([]); setColabs([]); setLoading(false); } return; }
+      const { data: co } = await supabase.from("colaboradores")
+        .select("id,matricula,colaborador,cargo,setor,lideranca,status")
+        .eq("empresa_id", empresaAtual.id);
+      const ids = (co as Colab[] || []).map((c) => c.id);
+      const { data: ch } = ids.length
+        ? await supabase.from("chamadas").select("id,data,status,colaborador_id").eq("status", "Falta").in("colaborador_id", ids)
+        : { data: [] };
       if (!mounted) return;
       setChamadas((ch as Chamada[]) ?? []);
       setColabs((co as Colab[]) ?? []);
       setLoading(false);
     })();
-    return () => {
-      mounted = false;
-    };
-  }, []);
+    return () => { mounted = false; };
+  }, [empresaAtual?.id]);
 
   const colabMap = useMemo(() => {
     const m = new Map<string, Colab>();
