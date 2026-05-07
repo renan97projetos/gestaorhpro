@@ -351,6 +351,7 @@ function AdminMestresPanel() {
       </Table>
     </Card>
   );
+}
 
 function Kpi({ icon: Icon, title, value, tone, hint }: { icon: React.ComponentType<{ className?: string }>; title: string; value: string | number; tone?: string; hint?: string }) {
   return (
