@@ -23,6 +23,7 @@ export const Route = createFileRoute("/mapa-alocacao")({
 type SetorMeta = { setor: string; ideal: number };
 
 function Page() {
+  const { empresaAtual } = useEmpresa();
   const [data, setData] = useState<ColabFull[]>([]);
   const [loading, setLoading] = useState(true);
   const [ideais, setIdeais] = useState<Record<string, number>>(() => {
@@ -30,12 +31,17 @@ function Page() {
   });
 
   useEffect(() => {
+    setLoading(true);
     (async () => {
-      const { data } = await supabase.from("colaboradores").select("id, colaborador, setor, sexo, cargo, status").neq("status", "Demitido");
+      if (!empresaAtual) { setData([]); setLoading(false); return; }
+      const { data } = await supabase.from("colaboradores")
+        .select("id, colaborador, setor, sexo, cargo, status")
+        .eq("empresa_id", empresaAtual.id)
+        .neq("status", "Demitido");
       setData((data as ColabFull[]) || []);
       setLoading(false);
     })();
-  }, []);
+  }, [empresaAtual?.id]);
 
   const setores = useMemo(() => {
     const map = new Map<string, ColabFull[]>();
