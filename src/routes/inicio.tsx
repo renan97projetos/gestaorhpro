@@ -37,9 +37,11 @@ const baseItems = [
 
 function InicioPage() {
   const { isAdmin } = useAuth();
-  const { isAdminEmpresa, isAdminMestre } = useEmpresa();
+  const { isAdminEmpresa, isAdminMestre, empresaAtual } = useEmpresa();
+  const desabilitados = (empresaAtual?.modulos_desabilitados || []) as string[];
+  const baseFiltrada = isAdminMestre ? baseItems : baseItems.filter((b) => !desabilitados.includes(b.to));
   const items = [
-    ...baseItems,
+    ...baseFiltrada,
     ...(isAdminEmpresa ? [
       { to: "/empresa-config", label: "Configurações da Empresa", sub: "Logo, capa e dados públicos", icon: Settings, tone: "from-sky-500 to-sky-600" },
       { to: "/empresa-membros", label: "Usuários da Empresa", sub: "Permissões dos membros", icon: UserCog, tone: "from-purple-500 to-purple-600" },
