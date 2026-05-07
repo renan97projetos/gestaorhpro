@@ -3,6 +3,7 @@ import { RequireAuth } from "@/components/RequireAuth";
 import { AppLayout } from "@/components/AppLayout";
 import { useEffect, useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
+import { useEmpresa } from "@/lib/empresa-context";
 import { useAuth } from "@/lib/auth-context";
 import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -42,6 +43,7 @@ const PADRAO = [
 
 function Page() {
   const { user, isAdmin, isGestor } = useAuth();
+  const { empresaAtual } = useEmpresa();
   const canEdit = isAdmin || isGestor;
   const [camps, setCamps] = useState<Camp[]>([]);
   const [open, setOpen] = useState(false);
@@ -57,6 +59,7 @@ function Page() {
 
   const novaCampanha = async () => {
     if (!user) return;
+    if (!empresaAtual) return toast.error("Selecione uma empresa");
     if (!form.titulo.trim()) return toast.error("Informe o título");
     const valid = form.perguntas.map((p) => p.trim()).filter(Boolean);
     if (valid.length === 0) return toast.error("Adicione ao menos uma pergunta");
@@ -65,6 +68,7 @@ function Page() {
       .insert({
         titulo: form.titulo,
         descricao: form.descricao || null,
+        empresa_id: empresaAtual.id,
         created_by: user.id,
         created_by_nome: (user.user_metadata?.nome as string) || user.email,
       } as never)
