@@ -227,6 +227,7 @@ function EmpresaDetalheDialog({ empresa, onClose, onChanged }: { empresa: Empres
     limite_vagas: empresa.limite_vagas || 10,
     ativo: empresa.ativo,
   });
+  const [modulos, setModulos] = useState<string[]>(empresa.modulos_desabilitados || []);
   const [membros, setMembros] = useState<Membro[]>([]);
   const [novo, setNovo] = useState({ nome: "", email: "", password: "", role: "visualizador" as EmpresaRole });
   const [busy, setBusy] = useState(false);
