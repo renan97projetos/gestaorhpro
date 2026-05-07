@@ -333,12 +333,21 @@ function EmpresaDetalheDialog({ empresa, onClose, onChanged }: { empresa: Empres
   };
 
   const cadastrar = async () => {
-    if (!novo.email || !novo.password || !novo.nome) return toast.error("Preencha todos os campos");
+    if (!novo.email || !novo.nome) return toast.error("Preencha nome e e-mail");
+    if (novo.modo === "senha" && (!novo.password || novo.password.length < 6)) return toast.error("Senha mínima de 6 caracteres");
     setBusy(true);
     try {
-      await criarFn({ data: { empresa_id: empresa.id, ...novo } });
-      toast.success("Usuário cadastrado e vinculado à empresa");
-      setNovo({ nome: "", email: "", password: "", role: "visualizador" });
+      await criarFn({ data: {
+        empresa_id: empresa.id,
+        nome: novo.nome,
+        email: novo.email,
+        role: novo.role,
+        modo: novo.modo,
+        password: novo.modo === "senha" ? novo.password : null,
+        redirect_to: typeof window !== "undefined" ? `${window.location.origin}/` : null,
+      } });
+      toast.success(novo.modo === "convite" ? "Convite enviado por e-mail" : "Usuário cadastrado e vinculado");
+      setNovo({ nome: "", email: "", password: "", role: "visualizador", modo: "convite" });
       loadMembros();
     } catch (e) { toast.error((e as Error).message); } finally { setBusy(false); }
   };
