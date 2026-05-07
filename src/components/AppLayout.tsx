@@ -210,6 +210,7 @@ export function AppLayout({ children }: { children: React.ReactNode }) {
       </div>
       <OnboardingTour />
       <AniversarioPopup />
+      <AvisoPopup />
     </div>
   );
 }
