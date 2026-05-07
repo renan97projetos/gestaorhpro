@@ -272,7 +272,7 @@ function SolCard({
 
 function NewSolDialog({ open, onClose, onCreated }: { open: boolean; onClose: () => void; onCreated: () => void }) {
   const { user } = useAuth();
-  const [colabs, setColabs] = useState<{ id: string; matricula: string; colaborador: string }[]>([]);
+  const [colabs, setColabs] = useState<{ id: string; matricula: string; colaborador: string; empresa_id: string }[]>([]);
   const [colabId, setColabId] = useState("");
   const [tipo, setTipo] = useState("transferencia_setor");
   const [descricao, setDescricao] = useState("");
