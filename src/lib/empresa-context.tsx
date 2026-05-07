@@ -41,7 +41,7 @@ type EmpresaCtx = {
   isGestorEmpresa: boolean; // admin/gestor da empresa atual (ou mestre)
   canEdit: boolean;
   canManage: boolean;
-  refresh: () => Promise<void>;
+  refresh: (forceId?: string | null) => Promise<void>;
 };
 
 const Ctx = createContext<EmpresaCtx | null>(null);
