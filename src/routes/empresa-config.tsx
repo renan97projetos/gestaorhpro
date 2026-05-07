@@ -17,7 +17,7 @@ export const Route = createFileRoute("/empresa-config")({
 });
 
 function Page() {
-  const { empresaAtual, isAdminEmpresa, refresh } = useEmpresa();
+  const { empresaAtual, isGestorEmpresa, refresh } = useEmpresa();
   const [form, setForm] = useState<Record<string, string>>({});
   const [saving, setSaving] = useState(false);
 
@@ -38,7 +38,7 @@ function Page() {
   }, [empresaAtual]);
 
   if (!empresaAtual) return <div className="p-8"><Card className="p-6">Selecione uma empresa.</Card></div>;
-  if (!isAdminEmpresa) return <div className="p-8"><Card className="p-6">Apenas administradores da empresa podem editar.</Card></div>;
+  if (!isGestorEmpresa) return <div className="p-8"><Card className="p-6">Apenas administradores ou gestores da empresa podem editar.</Card></div>;
 
   const upload = async (field: "logo_url" | "capa_url", file: File) => {
     const path = `${empresaAtual.id}/${field}-${Date.now()}-${file.name}`;
