@@ -18,39 +18,61 @@ async function assertMestre(supabase: ReturnType<typeof admin>, userId: string) 
 type CriarInput = {
   empresa_id: string;
   email: string;
-  password: string;
+  password?: string | null;
   nome: string;
   role: "admin" | "gestor" | "visualizador";
+  modo?: "convite" | "senha";
+  redirect_to?: string | null;
 };
 
 export const mestreCriarUsuario = createServerFn({ method: "POST" })
   .middleware([requireSupabaseAuth])
   .inputValidator((input: CriarInput) => {
-    if (!input?.email || !input?.password || !input?.empresa_id) throw new Error("Dados incompletos");
-    if (input.password.length < 6) throw new Error("Senha mínima de 6 caracteres");
+    if (!input?.email || !input?.empresa_id || !input?.nome) throw new Error("Dados incompletos");
+    const modo = input.modo ?? (input.password ? "senha" : "convite");
+    if (modo === "senha" && (!input.password || input.password.length < 6)) {
+      throw new Error("Senha mínima de 6 caracteres");
+    }
     if (!["admin", "gestor", "visualizador"].includes(input.role)) throw new Error("Papel inválido");
-    return input;
+    return { ...input, modo };
   })
   .handler(async ({ data, context }) => {
     const sb = admin();
     await assertMestre(sb, context.userId);
 
-    // Cria usuário (auto-confirmado)
     let userId: string | null = null;
-    const created = await sb.auth.admin.createUser({
-      email: data.email,
-      password: data.password,
-      email_confirm: true,
-      user_metadata: { nome: data.nome },
-    });
-    if (created.error) {
-      // se já existir, tenta achar
-      const list = await sb.auth.admin.listUsers({ page: 1, perPage: 200 });
-      const existing = list.data.users.find((u) => u.email?.toLowerCase() === data.email.toLowerCase());
-      if (!existing) throw new Error(created.error.message);
-      userId = existing.id;
+    const redirectTo = data.redirect_to || undefined;
+
+    if (data.modo === "convite") {
+      // Envia convite por e-mail (usuário define própria senha ao validar)
+      const inv = await sb.auth.admin.inviteUserByEmail(data.email, {
+        data: { nome: data.nome },
+        redirectTo,
+      });
+      if (inv.error) {
+        const list = await sb.auth.admin.listUsers({ page: 1, perPage: 200 });
+        const existing = list.data.users.find((u) => u.email?.toLowerCase() === data.email.toLowerCase());
+        if (!existing) throw new Error(inv.error.message);
+        userId = existing.id;
+      } else {
+        userId = inv.data.user!.id;
+      }
     } else {
-      userId = created.data.user!.id;
+      // Cria com senha (auto-confirmado)
+      const created = await sb.auth.admin.createUser({
+        email: data.email,
+        password: data.password!,
+        email_confirm: true,
+        user_metadata: { nome: data.nome },
+      });
+      if (created.error) {
+        const list = await sb.auth.admin.listUsers({ page: 1, perPage: 200 });
+        const existing = list.data.users.find((u) => u.email?.toLowerCase() === data.email.toLowerCase());
+        if (!existing) throw new Error(created.error.message);
+        userId = existing.id;
+      } else {
+        userId = created.data.user!.id;
+      }
     }
 
     // garante profile
