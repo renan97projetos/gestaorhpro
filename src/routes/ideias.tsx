@@ -136,8 +136,14 @@ function IdeiasPage() {
       return;
     }
     setSubmitting(true);
+    if (!empresaAtual) {
+      toast.error("Selecione uma empresa");
+      setSubmitting(false);
+      return;
+    }
     const { error } = await supabase.from("ideias").insert({
       user_id: user.id,
+      empresa_id: empresaAtual.id,
       ...parsed.data,
     });
     setSubmitting(false);
