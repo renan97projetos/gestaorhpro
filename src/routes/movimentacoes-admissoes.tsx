@@ -148,10 +148,12 @@ function Page() {
   }, [rows, filtro]);
 
   const handleSave = async () => {
+    if (!empresaAtual) return toast.error("Selecione uma empresa");
     if (form.tipo === "substituicao" && !form.substituido_id) return toast.error("Informe quem foi substituído");
     const sub = colabs.find((c) => c.id === form.substituido_id);
     const { data: u } = await supabase.auth.getUser();
     const payload = {
+      empresa_id: empresaAtual.id,
       tipo: form.tipo,
       substituido_id: form.tipo === "substituicao" ? sub?.id ?? null : null,
       substituido_nome: form.tipo === "substituicao" ? sub?.colaborador ?? null : null,
