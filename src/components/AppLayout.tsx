@@ -1,7 +1,9 @@
 import { Link, useLocation, useNavigate, useRouter } from "@tanstack/react-router";
 import { useAuth } from "@/lib/auth-context";
+import { useEmpresa } from "@/lib/empresa-context";
 import { Button } from "@/components/ui/button";
-import { LayoutDashboard, Users, History, LogOut, Menu, X, LayoutGrid, UserCog, ClipboardList, UserCheck, Lightbulb, CalendarClock, Sparkles, AlertTriangle, Cake, ArrowRightLeft, MapPin, MessageSquareHeart, NotebookPen, Activity } from "lucide-react";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { LayoutDashboard, Users, History, LogOut, Menu, X, LayoutGrid, UserCog, ClipboardList, UserCheck, Lightbulb, CalendarClock, Sparkles, AlertTriangle, Cake, ArrowRightLeft, MapPin, MessageSquareHeart, NotebookPen, Activity, Building2, Crown, Settings, ExternalLink } from "lucide-react";
 import { useEffect, useState } from "react";
 import { cn } from "@/lib/utils";
 import { ThemeToggle } from "@/components/ThemeToggle";
@@ -31,9 +33,21 @@ const baseNav = [
 
 export function AppLayout({ children }: { children: React.ReactNode }) {
   const { user, signOut, isAdmin } = useAuth();
-  const nav = isAdmin
-    ? [...baseNav, { to: "/auditoria", label: "Histórico de Uso", icon: Activity }, { to: "/usuarios", label: "Usuários", icon: UserCog }]
-    : baseNav;
+  const { empresas, empresaAtual, setEmpresaId, isAdminMestre, isAdminEmpresa } = useEmpresa();
+  const nav = [
+    ...baseNav,
+    ...(isAdminEmpresa ? [
+      { to: "/empresa-config", label: "Configurações da Empresa", icon: Settings },
+      { to: "/empresa-membros", label: "Usuários da Empresa", icon: UserCog },
+    ] : []),
+    ...(isAdmin ? [
+      { to: "/auditoria", label: "Histórico de Uso", icon: Activity },
+      { to: "/usuarios", label: "Usuários (legado)", icon: UserCog },
+    ] : []),
+    ...(isAdminMestre ? [
+      { to: "/mestre", label: "Painel Mestre (SaaS)", icon: Crown },
+    ] : []),
+  ];
   const navigate = useNavigate();
   const location = useLocation();
   const router = useRouter();
