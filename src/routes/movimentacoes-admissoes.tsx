@@ -73,6 +73,7 @@ const TURNOS = ["Manhã", "Tarde", "Noite", "Comercial", "12x36", "Integral"];
 
 function Page() {
   const { isAdmin, isGestor } = useAuth() as { isAdmin: boolean; isGestor?: boolean };
+  const { empresaAtual } = useEmpresa();
   const canEdit = isAdmin || !!isGestor;
   const [rows, setRows] = useState<Mov[]>([]);
   const [colabs, setColabs] = useState<ColabLite[]>([]);
