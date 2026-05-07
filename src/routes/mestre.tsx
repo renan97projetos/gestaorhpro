@@ -15,6 +15,7 @@ import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
+import { Switch } from "@/components/ui/switch";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger, DialogFooter } from "@/components/ui/dialog";
@@ -23,8 +24,33 @@ import { Badge } from "@/components/ui/badge";
 import { toast } from "sonner";
 import {
   Crown, Plus, ExternalLink, Building2, Users as UsersIcon, Briefcase,
-  UserPlus2, Lock, Unlock, KeyRound, DollarSign, HardDrive, Sparkles, MessageCircle, Save,
+  UserPlus2, Lock, Unlock, KeyRound, DollarSign, HardDrive, Sparkles, MessageCircle, Save, RefreshCw, Copy, LayoutGrid,
 } from "lucide-react";
+
+const MODULOS_DISPONIVEIS: { to: string; label: string }[] = [
+  { to: "/dashboard", label: "Dashboard" },
+  { to: "/cadastro", label: "Colaboradores" },
+  { to: "/chamada", label: "Chamada" },
+  { to: "/analise-faltas", label: "Análise de Faltas" },
+  { to: "/experiencia", label: "Experiência (90 dias)" },
+  { to: "/solicitacao-movimentacao", label: "Movimentações" },
+  { to: "/movimentacoes-admissoes", label: "Gestão de Vagas" },
+  { to: "/historico-admissoes", label: "Histórico Admissões" },
+  { to: "/mapa-alocacao", label: "Mapa de Alocação" },
+  { to: "/feedbacks", label: "Feedbacks" },
+  { to: "/notas", label: "Bloco de Notas" },
+  { to: "/pesquisas", label: "Pesquisas" },
+  { to: "/ideias", label: "Ideias" },
+  { to: "/geracoes", label: "Gerações" },
+  { to: "/aniversariantes", label: "Aniversariantes" },
+];
+
+function gerarSenha(len = 12) {
+  const chars = "ABCDEFGHJKLMNPQRSTUVWXYZabcdefghjkmnpqrstuvwxyz23456789!@#$";
+  let s = "";
+  for (let i = 0; i < len; i++) s += chars[Math.floor(Math.random() * chars.length)];
+  return s;
+}
 
 export const Route = createFileRoute("/mestre")({
   component: () => (<RequireAuth><AppLayout><Page /></AppLayout></RequireAuth>),
