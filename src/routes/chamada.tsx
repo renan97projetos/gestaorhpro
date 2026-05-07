@@ -94,11 +94,12 @@ function formatBrShortDay(d: string) {
 
 function ChamadaPage() {
   const { user } = useAuth();
+  const { empresaAtual } = useEmpresa();
   const [tab, setTab] = useState("diaria");
   const [data, setData] = useState(todayStr());
   const [colabs, setColabs] = useState<Colab[]>([]);
-  const [chamadas, setChamadas] = useState<Chamada[]>([]); // chamadas do dia selecionado
-  const [allChamadas, setAllChamadas] = useState<Chamada[]>([]); // últimos 30 dias para pendências/banco
+  const [chamadas, setChamadas] = useState<Chamada[]>([]);
+  const [allChamadas, setAllChamadas] = useState<Chamada[]>([]);
   const [domingos, setDomingos] = useState<string[]>([]);
   const [loading, setLoading] = useState(false);
   const [filtroLider, setFiltroLider] = useState<string>("__all");
@@ -111,9 +112,16 @@ function ChamadaPage() {
 
   async function load() {
     setLoading(true);
-    const [c, ch, de] = await Promise.all([
-      supabase.from("colaboradores").select("id,matricula,colaborador,setor,subsetor,lideranca,turno,sexo,sabado_trabalho,status").in("status", ["Ativo", "Afastado"]).order("colaborador"),
-      supabase.from("chamadas").select("id,colaborador_id,data,status,registrado_por_nome,updated_at").eq("data", data),
+    if (!empresaAtual) { setColabs([]); setChamadas([]); setLoading(false); return; }
+    const c = await supabase.from("colaboradores")
+      .select("id,matricula,colaborador,setor,subsetor,lideranca,turno,sexo,sabado_trabalho,status")
+      .eq("empresa_id", empresaAtual.id)
+      .in("status", ["Ativo", "Afastado"]).order("colaborador");
+    const ids = (c.data as any[] | null || []).map((x) => x.id);
+    const [ch, de] = await Promise.all([
+      ids.length
+        ? supabase.from("chamadas").select("id,colaborador_id,data,status,registrado_por_nome,updated_at").eq("data", data).in("colaborador_id", ids)
+        : Promise.resolve({ data: [], error: null } as any),
       supabase.from("domingos_especiais").select("data"),
     ]);
     if (!c.error && c.data) setColabs(c.data as any);
@@ -123,14 +131,18 @@ function ChamadaPage() {
   }
 
   async function loadHist() {
-    // últimos 30 dias para pendências e dashboards mensais
+    if (!empresaAtual) { setAllChamadas([]); return; }
     const start = new Date();
     start.setDate(start.getDate() - 30);
     const startStr = start.toISOString().slice(0, 10);
+    const { data: colabIds } = await supabase.from("colaboradores").select("id").eq("empresa_id", empresaAtual.id);
+    const ids = (colabIds || []).map((x: any) => x.id);
+    if (!ids.length) { setAllChamadas([]); return; }
     const { data, error } = await supabase
       .from("chamadas")
       .select("id,colaborador_id,data,status,registrado_por_nome,updated_at")
-      .gte("data", startStr);
+      .gte("data", startStr)
+      .in("colaborador_id", ids);
     if (!error && data) setAllChamadas(data as any);
   }
 
@@ -138,7 +150,7 @@ function ChamadaPage() {
     load();
     loadHist();
     // eslint-disable-next-line
-  }, [data]);
+  }, [data, empresaAtual?.id]);
 
   // Filtra colaboradores ativos. Se for domingo, só mostra se for "Domingo Especial" cadastrado.
   const isDomingo = useMemo(() => {
