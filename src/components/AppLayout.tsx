@@ -9,11 +9,13 @@ import { cn } from "@/lib/utils";
 import { ThemeToggle } from "@/components/ThemeToggle";
 import { OnboardingTour } from "@/components/OnboardingTour";
 import { AniversarioPopup } from "@/components/AniversarioPopup";
+import { AvisoPopup } from "@/components/AvisoPopup";
 import { OnlineUsersWidget } from "@/components/OnlineUsersWidget";
 import { useIsMobile } from "@/hooks/use-mobile";
 
 const baseNav = [
   { to: "/inicio", label: "Menu", icon: LayoutGrid },
+  { to: "/avisos", label: "Avisos", icon: Megaphone },
   { to: "/dashboard", label: "Dashboard", icon: LayoutDashboard },
   { to: "/cadastro", label: "Colaboradores", icon: Users },
   { to: "/chamada", label: "Chamada", icon: UserCheck },
