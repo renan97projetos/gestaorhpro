@@ -13,12 +13,13 @@ import { Badge } from "@/components/ui/badge";
 import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from "@/components/ui/dialog";
-import { Plus, Search, Pencil, Trash2, Loader2, Filter, Users, UserX, Download, RotateCcw, UserMinus } from "lucide-react";
+import { Plus, Search, Pencil, Trash2, Loader2, Filter, Users, UserX, Download, RotateCcw, UserMinus, Upload } from "lucide-react";
 import { toast } from "sonner";
 import { ColabFull, tempoDeEmpresa, tempoExperiencia } from "@/lib/dashboard-helpers";
 import { DemissaoDialog, DemissaoData } from "@/components/DemissaoDialog";
 import { Clock } from "lucide-react";
 import { useReadOnlyGuard, ReadOnlyBanner } from "@/components/BloqueioAcesso";
+import { ImportarColaboradoresDialog } from "@/components/ImportarColaboradoresDialog";
 
 export const Route = createFileRoute("/cadastro")({
   component: () => (
