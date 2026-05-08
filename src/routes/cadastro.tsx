@@ -64,6 +64,7 @@ function CadastroPage() {
   const [tab, setTab] = useState("ativos");
   const [editing, setEditing] = useState<ColabFull | null>(null);
   const [creating, setCreating] = useState(false);
+  const [importOpen, setImportOpen] = useState(false);
   const [demitindo, setDemitindo] = useState<ColabFull | null>(null);
 
   // Filtros aba ATIVOS
