@@ -634,6 +634,125 @@ export type Database = {
           },
         ]
       }
+      crm_interacoes: {
+        Row: {
+          canal: string
+          com_quem: string | null
+          created_at: string
+          data_contato: string
+          id: string
+          lead_id: string
+          proximo_passo: string | null
+          resumo: string
+          user_id: string
+          user_nome: string | null
+        }
+        Insert: {
+          canal?: string
+          com_quem?: string | null
+          created_at?: string
+          data_contato?: string
+          id?: string
+          lead_id: string
+          proximo_passo?: string | null
+          resumo: string
+          user_id: string
+          user_nome?: string | null
+        }
+        Update: {
+          canal?: string
+          com_quem?: string | null
+          created_at?: string
+          data_contato?: string
+          id?: string
+          lead_id?: string
+          proximo_passo?: string | null
+          resumo?: string
+          user_id?: string
+          user_nome?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "crm_interacoes_lead_id_fkey"
+            columns: ["lead_id"]
+            isOneToOne: false
+            referencedRelation: "crm_leads"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      crm_leads: {
+        Row: {
+          cnpj: string | null
+          created_at: string
+          created_by: string | null
+          email: string | null
+          empresa_nome: string
+          id: string
+          observacoes: string | null
+          origem: string | null
+          owner_id: string | null
+          owner_nome: string | null
+          porte: string | null
+          proximo_contato: string | null
+          responsavel_cargo: string | null
+          responsavel_nome: string | null
+          segmento: string | null
+          site: string | null
+          status: string
+          telefone: string | null
+          ultimo_contato: string | null
+          updated_at: string
+          valor_estimado: number | null
+        }
+        Insert: {
+          cnpj?: string | null
+          created_at?: string
+          created_by?: string | null
+          email?: string | null
+          empresa_nome: string
+          id?: string
+          observacoes?: string | null
+          origem?: string | null
+          owner_id?: string | null
+          owner_nome?: string | null
+          porte?: string | null
+          proximo_contato?: string | null
+          responsavel_cargo?: string | null
+          responsavel_nome?: string | null
+          segmento?: string | null
+          site?: string | null
+          status?: string
+          telefone?: string | null
+          ultimo_contato?: string | null
+          updated_at?: string
+          valor_estimado?: number | null
+        }
+        Update: {
+          cnpj?: string | null
+          created_at?: string
+          created_by?: string | null
+          email?: string | null
+          empresa_nome?: string
+          id?: string
+          observacoes?: string | null
+          origem?: string | null
+          owner_id?: string | null
+          owner_nome?: string | null
+          porte?: string | null
+          proximo_contato?: string | null
+          responsavel_cargo?: string | null
+          responsavel_nome?: string | null
+          segmento?: string | null
+          site?: string | null
+          status?: string
+          telefone?: string | null
+          ultimo_contato?: string | null
+          updated_at?: string
+          valor_estimado?: number | null
+        }
+        Relationships: []
+      }
       domingos_especiais: {
         Row: {
           created_at: string
