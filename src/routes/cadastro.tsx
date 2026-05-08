@@ -13,12 +13,13 @@ import { Badge } from "@/components/ui/badge";
 import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from "@/components/ui/dialog";
-import { Plus, Search, Pencil, Trash2, Loader2, Filter, Users, UserX, Download, RotateCcw, UserMinus } from "lucide-react";
+import { Plus, Search, Pencil, Trash2, Loader2, Filter, Users, UserX, Download, RotateCcw, UserMinus, Upload } from "lucide-react";
 import { toast } from "sonner";
 import { ColabFull, tempoDeEmpresa, tempoExperiencia } from "@/lib/dashboard-helpers";
 import { DemissaoDialog, DemissaoData } from "@/components/DemissaoDialog";
 import { Clock } from "lucide-react";
 import { useReadOnlyGuard, ReadOnlyBanner } from "@/components/BloqueioAcesso";
+import { ImportarColaboradoresDialog } from "@/components/ImportarColaboradoresDialog";
 
 export const Route = createFileRoute("/cadastro")({
   component: () => (
@@ -63,6 +64,7 @@ function CadastroPage() {
   const [tab, setTab] = useState("ativos");
   const [editing, setEditing] = useState<ColabFull | null>(null);
   const [creating, setCreating] = useState(false);
+  const [importOpen, setImportOpen] = useState(false);
   const [demitindo, setDemitindo] = useState<ColabFull | null>(null);
 
   // Filtros aba ATIVOS
@@ -250,15 +252,33 @@ function CadastroPage() {
             <p className="text-muted-foreground text-sm">Gerencie e visualize todos os colaboradores</p>
           </div>
         </div>
-        <Button
-          onClick={() => {
-            if (guard("Cadastrar um novo colaborador")) setCreating(true);
-          }}
-          className="bg-[image:var(--gradient-primary)]"
-        >
-          <Plus className="h-4 w-4 mr-2" /> Novo colaborador
-        </Button>
+        <div className="flex flex-wrap gap-2">
+          <Button
+            variant="outline"
+            onClick={() => {
+              if (guard("Importar colaboradores via Excel")) setImportOpen(true);
+            }}
+          >
+            <Upload className="h-4 w-4 mr-2" /> Importar Excel
+          </Button>
+          <Button
+            onClick={() => {
+              if (guard("Cadastrar um novo colaborador")) setCreating(true);
+            }}
+            className="bg-[image:var(--gradient-primary)]"
+          >
+            <Plus className="h-4 w-4 mr-2" /> Novo colaborador
+          </Button>
+        </div>
       </div>
+
+      <ImportarColaboradoresDialog
+        open={importOpen}
+        onOpenChange={setImportOpen}
+        empresaId={empresaAtual?.id}
+        userId={user?.id}
+        onImported={load}
+      />
 
       {!isGestor && <ReadOnlyBanner />}
 
