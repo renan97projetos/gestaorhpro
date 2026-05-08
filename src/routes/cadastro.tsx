@@ -252,15 +252,33 @@ function CadastroPage() {
             <p className="text-muted-foreground text-sm">Gerencie e visualize todos os colaboradores</p>
           </div>
         </div>
-        <Button
-          onClick={() => {
-            if (guard("Cadastrar um novo colaborador")) setCreating(true);
-          }}
-          className="bg-[image:var(--gradient-primary)]"
-        >
-          <Plus className="h-4 w-4 mr-2" /> Novo colaborador
-        </Button>
+        <div className="flex flex-wrap gap-2">
+          <Button
+            variant="outline"
+            onClick={() => {
+              if (guard("Importar colaboradores via Excel")) setImportOpen(true);
+            }}
+          >
+            <Upload className="h-4 w-4 mr-2" /> Importar Excel
+          </Button>
+          <Button
+            onClick={() => {
+              if (guard("Cadastrar um novo colaborador")) setCreating(true);
+            }}
+            className="bg-[image:var(--gradient-primary)]"
+          >
+            <Plus className="h-4 w-4 mr-2" /> Novo colaborador
+          </Button>
+        </div>
       </div>
+
+      <ImportarColaboradoresDialog
+        open={importOpen}
+        onOpenChange={setImportOpen}
+        empresaId={empresaAtual?.id}
+        userId={user?.id}
+        onImported={load}
+      />
 
       {!isGestor && <ReadOnlyBanner />}
 
