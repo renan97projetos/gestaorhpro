@@ -28,6 +28,7 @@ import { Route as EmpresaMembrosRouteImport } from './routes/empresa-membros'
 import { Route as EmpresaConfigRouteImport } from './routes/empresa-config'
 import { Route as DocumentosAdmissaoRouteImport } from './routes/documentos-admissao'
 import { Route as DashboardRouteImport } from './routes/dashboard'
+import { Route as CrmRouteImport } from './routes/crm'
 import { Route as ChamadosRouteImport } from './routes/chamados'
 import { Route as ChamadaTerceirosRouteImport } from './routes/chamada-terceiros'
 import { Route as ChamadaRouteImport } from './routes/chamada'
@@ -141,6 +142,11 @@ const DashboardRoute = DashboardRouteImport.update({
   path: '/dashboard',
   getParentRoute: () => rootRouteImport,
 } as any)
+const CrmRoute = CrmRouteImport.update({
+  id: '/crm',
+  path: '/crm',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const ChamadosRoute = ChamadosRouteImport.update({
   id: '/chamados',
   path: '/chamados',
@@ -240,6 +246,7 @@ export interface FileRoutesByFullPath {
   '/chamada': typeof ChamadaRoute
   '/chamada-terceiros': typeof ChamadaTerceirosRoute
   '/chamados': typeof ChamadosRoute
+  '/crm': typeof CrmRoute
   '/dashboard': typeof DashboardRoute
   '/documentos-admissao': typeof DocumentosAdmissaoRoute
   '/empresa-config': typeof EmpresaConfigRoute
@@ -278,6 +285,7 @@ export interface FileRoutesByTo {
   '/chamada': typeof ChamadaRoute
   '/chamada-terceiros': typeof ChamadaTerceirosRoute
   '/chamados': typeof ChamadosRoute
+  '/crm': typeof CrmRoute
   '/dashboard': typeof DashboardRoute
   '/documentos-admissao': typeof DocumentosAdmissaoRoute
   '/empresa-config': typeof EmpresaConfigRoute
@@ -317,6 +325,7 @@ export interface FileRoutesById {
   '/chamada': typeof ChamadaRoute
   '/chamada-terceiros': typeof ChamadaTerceirosRoute
   '/chamados': typeof ChamadosRoute
+  '/crm': typeof CrmRoute
   '/dashboard': typeof DashboardRoute
   '/documentos-admissao': typeof DocumentosAdmissaoRoute
   '/empresa-config': typeof EmpresaConfigRoute
@@ -357,6 +366,7 @@ export interface FileRouteTypes {
     | '/chamada'
     | '/chamada-terceiros'
     | '/chamados'
+    | '/crm'
     | '/dashboard'
     | '/documentos-admissao'
     | '/empresa-config'
@@ -395,6 +405,7 @@ export interface FileRouteTypes {
     | '/chamada'
     | '/chamada-terceiros'
     | '/chamados'
+    | '/crm'
     | '/dashboard'
     | '/documentos-admissao'
     | '/empresa-config'
@@ -433,6 +444,7 @@ export interface FileRouteTypes {
     | '/chamada'
     | '/chamada-terceiros'
     | '/chamados'
+    | '/crm'
     | '/dashboard'
     | '/documentos-admissao'
     | '/empresa-config'
@@ -472,6 +484,7 @@ export interface RootRouteChildren {
   ChamadaRoute: typeof ChamadaRoute
   ChamadaTerceirosRoute: typeof ChamadaTerceirosRoute
   ChamadosRoute: typeof ChamadosRoute
+  CrmRoute: typeof CrmRoute
   DashboardRoute: typeof DashboardRoute
   DocumentosAdmissaoRoute: typeof DocumentosAdmissaoRoute
   EmpresaConfigRoute: typeof EmpresaConfigRoute
@@ -632,6 +645,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof DashboardRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/crm': {
+      id: '/crm'
+      path: '/crm'
+      fullPath: '/crm'
+      preLoaderRoute: typeof CrmRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/chamados': {
       id: '/chamados'
       path: '/chamados'
@@ -777,6 +797,7 @@ const rootRouteChildren: RootRouteChildren = {
   ChamadaRoute: ChamadaRoute,
   ChamadaTerceirosRoute: ChamadaTerceirosRoute,
   ChamadosRoute: ChamadosRoute,
+  CrmRoute: CrmRoute,
   DashboardRoute: DashboardRoute,
   DocumentosAdmissaoRoute: DocumentosAdmissaoRoute,
   EmpresaConfigRoute: EmpresaConfigRoute,
