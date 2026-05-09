@@ -143,6 +143,17 @@ export function AppLayout({ children }: { children: React.ReactNode }) {
   const router = useRouter();
   const isMobile = useIsMobile();
   const [open, setOpen] = useState(false);
+  const [collapsedGroups, setCollapsedGroups] = useState<Record<string, boolean>>(() => {
+    if (typeof window === "undefined") return {};
+    try { return JSON.parse(localStorage.getItem("nav:collapsedGroups") || "{}"); } catch { return {}; }
+  });
+  const toggleGroup = (label: string) => {
+    setCollapsedGroups((prev) => {
+      const next = { ...prev, [label]: !prev[label] };
+      try { localStorage.setItem("nav:collapsedGroups", JSON.stringify(next)); } catch { /* ignore */ }
+      return next;
+    });
+  };
 
   // Pré-aquece em background os chunks de TODAS as rotas do menu na 1ª montagem.
   // Assim, qualquer clique posterior é instantâneo (chunk + dados já em cache).
