@@ -201,17 +201,27 @@ function DocsCandDialog({ cand, docs, canEdit, onClose, onChanged }: { cand: Can
   const docByTipo = new Map<string, Doc>();
   docs.forEach((d) => { if (!docByTipo.has(d.tipo)) docByTipo.set(d.tipo, d); });
 
+  const getSigned = useServerFn(getDocSignedUrl);
+
+  const openDoc = async (id: string) => {
+    try {
+      const { url } = await getSigned({ data: { docId: id } });
+      window.open(url, "_blank");
+    } catch (e) {
+      toast.error(e instanceof Error ? e.message : "Falha ao abrir");
+    }
+  };
+
   const upload = async (tipo: string, file: File) => {
     setUploading(tipo);
     const ext = file.name.split(".").pop();
     const path = `${cand.id}/${tipo}-${Date.now()}.${ext}`;
     const { error: upErr } = await supabase.storage.from("documentos-admissao").upload(path, file);
     if (upErr) { setUploading(null); return toast.error(upErr.message); }
-    const { data: pub } = supabase.storage.from("documentos-admissao").getPublicUrl(path);
     // garante etapa admissao para passar policy
     await supabase.from("vaga_candidatos").update({ etapa: "admissao" } as never).eq("id", cand.id);
     const { error } = await supabase.from("admissao_documentos").insert({
-      candidato_id: cand.id, tipo, nome_arquivo: file.name, url: pub.publicUrl, storage_path: path,
+      candidato_id: cand.id, tipo, nome_arquivo: file.name, url: "", storage_path: path,
     } as never);
     setUploading(null);
     if (error) return toast.error(error.message);
