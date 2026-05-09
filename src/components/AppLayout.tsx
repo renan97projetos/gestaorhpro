@@ -615,6 +615,26 @@ export function AppLayout({ children }: { children: React.ReactNode }) {
         currentUrl={empresaAtual?.logo_url}
         onSave={handleLogoSave}
       />
+      <CommandDialog open={searchOpen} onOpenChange={setSearchOpen}>
+        <CommandInput placeholder="Buscar pessoas, módulos, avisos..." />
+        <CommandList>
+          <CommandEmpty>Nenhum resultado encontrado.</CommandEmpty>
+          {navGroupsFinal.map((g) => (
+            <CommandGroup key={g.label} heading={g.label}>
+              {g.items.map((n) => (
+                <CommandItem
+                  key={n.to}
+                  value={`${g.label} ${n.label}`}
+                  onSelect={() => { setSearchOpen(false); navigate({ to: n.to }); }}
+                >
+                  <n.icon className="h-4 w-4 mr-2" />
+                  {n.label}
+                </CommandItem>
+              ))}
+            </CommandGroup>
+          ))}
+        </CommandList>
+      </CommandDialog>
     </div>
     </FloatingNotesProvider>
   );
