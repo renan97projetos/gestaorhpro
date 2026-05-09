@@ -41,6 +41,7 @@ const CORES = ["#FEF3C7", "#DBEAFE", "#FCE7F3", "#D1FAE5", "#E9D5FF", "#FED7AA"]
 
 function Page() {
   const { user } = useAuth();
+  const { isFloating, toggleFloating, scope, setScope } = useFloatingNotes();
   const [rows, setRows] = useState<Nota[]>([]);
   const [open, setOpen] = useState(false);
   const [edit, setEdit] = useState<Nota | null>(null);
