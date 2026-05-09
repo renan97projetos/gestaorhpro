@@ -60,6 +60,7 @@ const navGroups: NavGroup[] = [
       { to: "/feedbacks", label: "Feedbacks", icon: MessageSquareHeart },
       { to: "/pesquisas", label: "Pesquisas", icon: ClipboardList },
       { to: "/ideias", label: "Ideias", icon: Lightbulb },
+      { to: "/entrevistas-desligamento", label: "Entrevista de Desligamento", icon: DoorOpen },
       { to: "/geracoes", label: "Gerações", icon: Sparkles },
       { to: "/notas", label: "Bloco de Notas", icon: NotebookPen },
     ],
