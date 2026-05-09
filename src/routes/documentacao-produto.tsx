@@ -634,7 +634,7 @@ function Page() {
         </Card>
 
         {/* Lista de módulos */}
-        <ScrollArea className="md:max-h-[calc(100vh-220px)]">
+        <div>
           <div className="space-y-3 pr-2">
             {filtrados.length === 0 && (
               <Card className="p-6 text-center text-sm text-muted-foreground">
@@ -699,7 +699,7 @@ function Page() {
               );
             })}
           </div>
-        </ScrollArea>
+        </div>
       </div>
 
       <Card className="p-4 bg-muted/30">
