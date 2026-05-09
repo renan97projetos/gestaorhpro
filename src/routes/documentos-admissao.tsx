@@ -264,9 +264,9 @@ function DocsCandDialog({ cand, docs, canEdit, onClose, onChanged }: { cand: Can
                     <div className="min-w-0">
                       <p className="text-sm font-medium truncate">{t.label}</p>
                       {d && (
-                        <a href={d.url} target="_blank" rel="noreferrer" className="text-xs text-primary hover:underline truncate block">
+                        <button onClick={() => openDoc(d.id)} className="text-xs text-primary hover:underline truncate block text-left">
                           {d.nome_arquivo || "arquivo"} • {new Date(d.uploaded_at).toLocaleDateString("pt-BR")}
-                        </a>
+                        </button>
                       )}
                     </div>
                   </div>
