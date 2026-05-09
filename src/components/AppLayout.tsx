@@ -359,26 +359,33 @@ export function AppLayout({ children }: { children: React.ReactNode }) {
               })}
             </div>
           </div>
-          <nav className="flex-1 px-3 py-4 space-y-1 overflow-y-auto">
-            {nav.map((n) => {
-              const active = location.pathname.startsWith(n.to);
-              return (
-                <Link
-                  key={n.to}
-                  to={n.to}
-                  preload="intent"
-                  className={cn(
-                    "flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium transition-colors",
-                    active
-                      ? "bg-sidebar-primary text-sidebar-primary-foreground shadow-[var(--shadow-elegant)]"
-                      : "text-sidebar-foreground/70 hover:bg-sidebar-accent hover:text-sidebar-accent-foreground"
-                  )}
-                >
-                  <n.icon className="h-4 w-4" />
-                  {n.label}
-                </Link>
-              );
-            })}
+          <nav className="flex-1 px-3 py-4 space-y-4 overflow-y-auto">
+            {navGroupsFinal.map((g) => (
+              <div key={g.label} className="space-y-1">
+                <p className="text-[10px] uppercase tracking-wide text-sidebar-foreground/50 font-medium px-3 mb-1">
+                  {g.label}
+                </p>
+                {g.items.map((n) => {
+                  const active = location.pathname.startsWith(n.to);
+                  return (
+                    <Link
+                      key={n.to}
+                      to={n.to}
+                      preload="intent"
+                      className={cn(
+                        "flex items-center gap-3 px-3 py-2 rounded-lg text-sm font-medium transition-colors",
+                        active
+                          ? "bg-sidebar-primary text-sidebar-primary-foreground shadow-[var(--shadow-elegant)]"
+                          : "text-sidebar-foreground/70 hover:bg-sidebar-accent hover:text-sidebar-accent-foreground"
+                      )}
+                    >
+                      <n.icon className="h-4 w-4" />
+                      {n.label}
+                    </Link>
+                  );
+                })}
+              </div>
+            ))}
           </nav>
           <div className="p-3 border-t border-sidebar-border">
             <div className="px-3 py-2 mb-2 flex items-center justify-between gap-2">
