@@ -53,6 +53,8 @@ export function CandidatosDialog({ vaga, canEdit, onClose }: { vaga: Vaga; canEd
   const [adding, setAdding] = useState(false);
   const [admDialog, setAdmDialog] = useState<Cand | null>(null);
   const [selecionado, setSelecionado] = useState<Cand | null>(null);
+  const [view, setView] = useState<"kanban" | "tabela">("kanban");
+  const [dragOver, setDragOver] = useState<string | null>(null);
   const [novo, setNovo] = useState({ nome: "", email: "", telefone: "", cidade: "", endereco: "", observacao: "", curriculo_url: "" });
   const [admForm, setAdmForm] = useState({ data_inicio: new Date().toISOString().slice(0, 10), cargo_oferecido: "", salario: "" });
 
