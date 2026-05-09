@@ -10,8 +10,11 @@ import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from "@/components/ui/dialog";
 import { toast } from "sonner";
-import { Plus, Pin, Trash2, Pencil, NotebookPen } from "lucide-react";
+import { Plus, Pin, Trash2, Pencil, NotebookPen, StickyNote } from "lucide-react";
 import { logAudit } from "@/lib/audit";
+import { useFloatingNotes } from "@/components/FloatingNotes";
+import { Switch } from "@/components/ui/switch";
+import { Label } from "@/components/ui/label";
 
 export const Route = createFileRoute("/notas")({
   component: () => (
@@ -38,6 +41,7 @@ const CORES = ["#FEF3C7", "#DBEAFE", "#FCE7F3", "#D1FAE5", "#E9D5FF", "#FED7AA"]
 
 function Page() {
   const { user } = useAuth();
+  const { isFloating, toggleFloating, scope, setScope } = useFloatingNotes();
   const [rows, setRows] = useState<Nota[]>([]);
   const [open, setOpen] = useState(false);
   const [edit, setEdit] = useState<Nota | null>(null);
@@ -115,7 +119,15 @@ function Page() {
             <p className="text-sm text-muted-foreground">Suas anotações privadas — só você consegue ver.</p>
           </div>
         </div>
-        <Button onClick={openNew}><Plus className="h-4 w-4 mr-2" />Nova nota</Button>
+        <div className="flex items-center gap-3 flex-wrap">
+          <div className="flex items-center gap-2 px-3 py-1.5 rounded-md bg-muted/50 border">
+            <Switch id="scope-notes" checked={scope === "global"} onCheckedChange={(v) => setScope(v ? "global" : "modulo")} />
+            <Label htmlFor="scope-notes" className="text-xs cursor-pointer">
+              {scope === "global" ? "Notas flutuantes em todas as telas" : "Apenas dentro deste módulo"}
+            </Label>
+          </div>
+          <Button onClick={openNew}><Plus className="h-4 w-4 mr-2" />Nova nota</Button>
+        </div>
       </div>
 
       {rows.length === 0 ? (
@@ -134,6 +146,15 @@ function Page() {
               <div className="flex items-center justify-between text-xs text-slate-700 pt-2 border-t border-black/10">
                 <span>{new Date(n.updated_at).toLocaleString("pt-BR")}</span>
                 <div className="flex gap-1">
+                  <Button
+                    variant="ghost"
+                    size="icon"
+                    className={`h-7 w-7 hover:bg-black/10 ${isFloating(n.id) ? "text-amber-700" : "text-slate-700"}`}
+                    onClick={() => toggleFloating(n)}
+                    title={isFloating(n.id) ? "Remover da tela" : "Fixar na tela (flutuante)"}
+                  >
+                    <StickyNote className={`h-3.5 w-3.5 ${isFloating(n.id) ? "fill-amber-400" : ""}`} />
+                  </Button>
                   <Button variant="ghost" size="icon" className="h-7 w-7 text-slate-700 hover:bg-black/10" onClick={() => openEdit(n)}><Pencil className="h-3.5 w-3.5" /></Button>
                   <Button variant="ghost" size="icon" className="h-7 w-7 text-red-600 hover:bg-black/10" onClick={() => remover(n)}><Trash2 className="h-3.5 w-3.5" /></Button>
                 </div>

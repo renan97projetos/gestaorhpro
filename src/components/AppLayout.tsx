@@ -15,6 +15,7 @@ import { AniversarioPopup } from "@/components/AniversarioPopup";
 import { AvisoPopup } from "@/components/AvisoPopup";
 import { OnlineUsersWidget } from "@/components/OnlineUsersWidget";
 import { LogoEditorDialog } from "@/components/LogoEditorDialog";
+import { FloatingNotesProvider } from "@/components/FloatingNotes";
 import { useIsMobile } from "@/hooks/use-mobile";
 
 type NavItem = { to: string; label: string; icon: React.ComponentType<{ className?: string }> };
@@ -190,6 +191,7 @@ export function AppLayout({ children }: { children: React.ReactNode }) {
   };
 
   return (
+    <FloatingNotesProvider>
     <div className="min-h-screen bg-background flex">
       {/* Sidebar desktop */}
       {isAdminMestre ? (
@@ -546,5 +548,6 @@ export function AppLayout({ children }: { children: React.ReactNode }) {
         onSave={handleLogoSave}
       />
     </div>
+    </FloatingNotesProvider>
   );
 }
