@@ -319,10 +319,11 @@ export function AppLayout({ children }: { children: React.ReactNode }) {
         <aside
           className={cn(
             "hidden md:flex flex-col border-r border-sidebar-border bg-sidebar text-sidebar-foreground transition-[width] duration-200 ease-out group/sidebar relative z-30",
-            compactSidebar ? "w-[52px] hover:w-60" : "w-64"
+            compactSidebar ? "w-[60px] hover:w-72" : "w-72"
           )}
         >
-          <div className={cn("border-b border-sidebar-border", compactSidebar ? "px-2 py-3" : "px-4 py-3 space-y-2") }>
+          {/* Topo: Logo + nome */}
+          <div className={cn("border-b border-sidebar-border", compactSidebar ? "px-2 py-3" : "px-4 py-4")}>
             <div className="flex items-center gap-2">
               <button
                 type="button"
@@ -330,31 +331,26 @@ export function AppLayout({ children }: { children: React.ReactNode }) {
                 disabled={!isGestorEmpresa || uploadingLogo}
                 title={isGestorEmpresa ? "Clique para editar a logo" : "Logo da empresa"}
                 className={cn(
-                  "relative h-9 w-9 rounded-lg overflow-hidden shrink-0 group bg-sidebar-accent flex items-center justify-center",
+                  "relative h-10 w-10 rounded-xl overflow-hidden shrink-0 group bg-sidebar-accent flex items-center justify-center",
                   isGestorEmpresa && "cursor-pointer"
                 )}
               >
                 {empresaAtual?.logo_url ? (
-                  <img src={empresaAtual.logo_url} alt={empresaAtual.nome} className="h-9 w-9 rounded-lg object-contain" />
+                  <img src={empresaAtual.logo_url} alt={empresaAtual.nome} className="h-10 w-10 object-contain" />
                 ) : (
                   <span className="text-sidebar-foreground/80 font-bold text-xs">
                     {(empresaAtual?.nome || "—").slice(0, 2).toUpperCase()}
                   </span>
                 )}
                 {isGestorEmpresa && (
-                  <div className="absolute inset-0 bg-black/50 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center rounded-lg">
+                  <div className="absolute inset-0 bg-black/50 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center">
                     <Upload className="h-4 w-4 text-white" />
-                  </div>
-                )}
-                {uploadingLogo && (
-                  <div className="absolute inset-0 bg-black/60 flex items-center justify-center rounded-lg">
-                    <span className="text-[9px] text-white">...</span>
                   </div>
                 )}
               </button>
               <div className={cn("min-w-0 flex-1 whitespace-nowrap overflow-hidden", compactSidebar && "opacity-0 group-hover/sidebar:opacity-100 transition-opacity")}>
-                <p className="text-sm font-semibold leading-none text-sidebar-foreground truncate">{empresaAtual?.nome || "Selecione"}</p>
-                <p className="text-xs text-sidebar-foreground/60 mt-0.5">GestãoRHPRO</p>
+                <p className="text-base font-bold leading-tight text-sidebar-primary truncate">{empresaAtual?.nome?.split(" ")[0] || "Empresa"}</p>
+                <p className="text-[11px] text-sidebar-foreground/60 truncate">{empresaAtual?.nome || "GestãoRHPRO"}</p>
               </div>
               <button
                 type="button"
@@ -368,64 +364,79 @@ export function AppLayout({ children }: { children: React.ReactNode }) {
                 {compactSidebar ? <PanelLeftOpen className="h-4 w-4" /> : <PanelLeftClose className="h-4 w-4" />}
               </button>
             </div>
-            {!compactSidebar && empresas.length > 1 && (
-              <Select value={empresaAtual?.id || ""} onValueChange={setEmpresaId}>
-                <SelectTrigger className="h-8 text-xs bg-sidebar-accent text-sidebar-foreground border-sidebar-border"><SelectValue /></SelectTrigger>
-                <SelectContent>
-                  {empresas.map((e) => <SelectItem key={e.id} value={e.id}><Building2 className="h-3 w-3 inline mr-1" />{e.nome}</SelectItem>)}
-                </SelectContent>
-              </Select>
-            )}
-            {!compactSidebar && empresaAtual && (
-              <a href={`/e/${empresaAtual.slug}`} target="_blank" rel="noopener" className="flex items-center gap-1 text-[11px] text-sidebar-foreground/60 hover:text-sidebar-foreground">
-                <ExternalLink className="h-3 w-3" /> Página pública: /e/{empresaAtual.slug}
-              </a>
-            )}
           </div>
+
+          {/* Card "Empresa selecionada" */}
           {!compactSidebar && (
-            <div className="px-3 pt-3 pb-2 border-b border-sidebar-border">
-              <p className="text-[10px] uppercase tracking-wide text-sidebar-foreground/50 font-medium px-1 mb-2">
-                Atalhos
-              </p>
-              <div className="grid grid-cols-5 gap-1">
-                {nav.map((n) => {
-                  const active = location.pathname.startsWith(n.to);
-                  return (
-                    <Link
-                      key={`atalho-${n.to}`}
-                      to={n.to}
-                      preload="intent"
-                      title={n.label}
-                      className={cn(
-                        "flex items-center justify-center h-9 w-full rounded-md transition-colors",
-                        active
-                          ? "bg-sidebar-primary text-sidebar-primary-foreground"
-                          : "text-sidebar-foreground/70 hover:bg-sidebar-accent hover:text-sidebar-accent-foreground"
-                      )}
-                    >
-                      <n.icon className="h-4 w-4" />
-                    </Link>
-                  );
-                })}
-              </div>
+            <div className="px-3 pt-3">
+              {empresas.length > 1 ? (
+                <Select value={empresaAtual?.id || ""} onValueChange={setEmpresaId}>
+                  <SelectTrigger className="h-auto py-2 px-3 bg-sidebar-accent/50 border-sidebar-border rounded-xl hover:bg-sidebar-accent">
+                    <div className="flex items-center gap-2 flex-1 min-w-0 text-left">
+                      <div className="h-8 w-8 rounded-lg bg-sidebar-primary/10 flex items-center justify-center shrink-0">
+                        <Building2 className="h-4 w-4 text-sidebar-primary" />
+                      </div>
+                      <div className="min-w-0 flex-1">
+                        <p className="text-[10px] text-sidebar-foreground/60 leading-none">Empresa selecionada</p>
+                        <p className="text-sm font-semibold text-sidebar-primary truncate mt-0.5">{empresaAtual?.nome || "Selecione"}</p>
+                      </div>
+                    </div>
+                  </SelectTrigger>
+                  <SelectContent>
+                    {empresas.map((e) => <SelectItem key={e.id} value={e.id}>{e.nome}</SelectItem>)}
+                  </SelectContent>
+                </Select>
+              ) : (
+                <div className="py-2 px-3 bg-sidebar-accent/50 border border-sidebar-border rounded-xl flex items-center gap-2">
+                  <div className="h-8 w-8 rounded-lg bg-sidebar-primary/10 flex items-center justify-center shrink-0">
+                    <Building2 className="h-4 w-4 text-sidebar-primary" />
+                  </div>
+                  <div className="min-w-0 flex-1">
+                    <p className="text-[10px] text-sidebar-foreground/60 leading-none">Empresa selecionada</p>
+                    <p className="text-sm font-semibold text-sidebar-primary truncate mt-0.5">{empresaAtual?.nome || "—"}</p>
+                  </div>
+                </div>
+              )}
+              {empresaAtual && (
+                <a href={`/e/${empresaAtual.slug}`} target="_blank" rel="noopener" className="flex items-center gap-1 text-[10px] text-sidebar-foreground/50 hover:text-sidebar-foreground mt-2 px-1">
+                  <ExternalLink className="h-3 w-3" /> /e/{empresaAtual.slug}
+                </a>
+              )}
             </div>
           )}
-          <nav className={cn("flex-1 overflow-y-auto overflow-x-hidden", compactSidebar ? "px-1.5 py-3 space-y-3" : "px-3 py-4 space-y-4") }>
+
+          {/* Busca rápida lateral */}
+          {!compactSidebar && (
+            <div className="px-3 pt-3">
+              <button
+                type="button"
+                onClick={() => setSearchOpen(true)}
+                className="w-full flex items-center gap-2 px-3 py-2 rounded-lg bg-sidebar-accent/40 hover:bg-sidebar-accent text-sidebar-foreground/60 hover:text-sidebar-foreground border border-sidebar-border text-xs transition-colors"
+              >
+                <Search className="h-3.5 w-3.5" />
+                <span className="flex-1 text-left">Buscar módulos...</span>
+                <kbd className="hidden lg:inline-flex h-5 items-center rounded border border-sidebar-border bg-sidebar px-1.5 text-[10px] font-mono">⌘K</kbd>
+              </button>
+            </div>
+          )}
+
+          {/* Navegação */}
+          <nav className={cn("flex-1 overflow-y-auto overflow-x-hidden", compactSidebar ? "px-1.5 py-3 space-y-3" : "px-3 py-3 space-y-4")}>
             {navGroupsFinal.map((g) => {
               const collapsed = !!collapsedGroups[g.label];
               return (
-                <div key={g.label} className="space-y-1">
+                <div key={g.label} className="space-y-0.5">
                   {compactSidebar ? (
                     <div className="px-1 mb-1 h-3 hidden group-hover/sidebar:block">
-                      <span className="text-[10px] uppercase tracking-wide font-medium text-sidebar-foreground/50">{g.label}</span>
+                      <span className="text-[10px] uppercase tracking-wider font-semibold text-sidebar-foreground/40">{g.label}</span>
                     </div>
                   ) : (
                     <button
                       type="button"
                       onClick={() => toggleGroup(g.label)}
-                      className="w-full flex items-center justify-between px-3 mb-1 text-sidebar-foreground/50 hover:text-sidebar-foreground transition-colors"
+                      className="w-full flex items-center justify-between px-3 mb-1.5 mt-1 text-sidebar-foreground/40 hover:text-sidebar-foreground transition-colors"
                     >
-                      <span className="text-[10px] uppercase tracking-wide font-medium">{g.label}</span>
+                      <span className="text-[10px] uppercase tracking-wider font-semibold">{g.label}</span>
                       {collapsed ? <ChevronRight className="h-3 w-3" /> : <ChevronDown className="h-3 w-3" />}
                     </button>
                   )}
@@ -438,18 +449,14 @@ export function AppLayout({ children }: { children: React.ReactNode }) {
                         preload="intent"
                         title={compactSidebar ? n.label : undefined}
                         className={cn(
-                          "flex items-center rounded-lg text-sm font-medium transition-colors whitespace-nowrap",
-                          compactSidebar
-                            ? "gap-3 px-2 py-2 border-l-2 border-transparent"
-                            : "gap-3 px-3 py-2",
+                          "flex items-center rounded-xl text-sm font-medium transition-all whitespace-nowrap",
+                          compactSidebar ? "gap-3 px-2.5 py-2" : "gap-3 px-3 py-2.5",
                           active
-                            ? compactSidebar
-                              ? "bg-sidebar-accent text-sidebar-accent-foreground border-l-2 border-sidebar-primary"
-                              : "bg-sidebar-primary text-sidebar-primary-foreground shadow-[var(--shadow-elegant)]"
-                            : "text-sidebar-foreground/70 hover:bg-sidebar-accent hover:text-sidebar-accent-foreground"
+                            ? "bg-sidebar-primary text-sidebar-primary-foreground shadow-[var(--shadow-elegant)]"
+                            : "text-sidebar-foreground/75 hover:bg-sidebar-accent hover:text-sidebar-accent-foreground"
                         )}
                       >
-                        <n.icon className="h-4 w-4 shrink-0" />
+                        <n.icon className="h-[18px] w-[18px] shrink-0" />
                         <span className={cn(compactSidebar && "opacity-0 group-hover/sidebar:opacity-100 transition-opacity")}>
                           {n.label}
                         </span>
@@ -460,20 +467,41 @@ export function AppLayout({ children }: { children: React.ReactNode }) {
               );
             })}
           </nav>
-          <div className={cn("border-t border-sidebar-border", compactSidebar ? "p-2" : "p-3") }>
-            {!compactSidebar && (
-              <>
-                <div className="px-3 py-2 mb-2 flex items-center justify-between gap-2">
-                  <div className="min-w-0">
-                    <p className="text-xs text-sidebar-foreground/60">Conectado como</p>
-                    <p className="text-sm font-medium truncate text-sidebar-foreground">{user?.email}</p>
+
+          {/* Card destaque: Mensagens / Notas */}
+          {!compactSidebar && (
+            <div className="px-3 pb-3">
+              <Link
+                to="/notas"
+                preload="intent"
+                className="block p-3 rounded-2xl bg-sidebar-primary/10 border border-sidebar-primary/20 hover:bg-sidebar-primary/15 transition-colors"
+              >
+                <div className="flex items-center gap-2">
+                  <div className="h-9 w-9 rounded-xl bg-sidebar-primary/20 flex items-center justify-center shrink-0">
+                    <MessageSquare className="h-4 w-4 text-sidebar-primary" />
                   </div>
-                  <ThemeToggle className="text-sidebar-foreground/80 hover:bg-sidebar-accent hover:text-sidebar-accent-foreground shrink-0" />
+                  <div className="min-w-0 flex-1">
+                    <p className="text-sm font-semibold text-sidebar-foreground truncate">Bloco de Notas</p>
+                    <p className="text-[10px] text-sidebar-foreground/60 truncate">Suas anotações rápidas</p>
+                  </div>
+                  <ChevronRight className="h-4 w-4 text-sidebar-foreground/40 shrink-0" />
                 </div>
-                <div className="px-3 pb-2">
-                  {!isMobile && <OnlineUsersWidget />}
+              </Link>
+            </div>
+          )}
+
+          <div className={cn("border-t border-sidebar-border", compactSidebar ? "p-2" : "p-3")}>
+            {!compactSidebar && (
+              <div className="px-2 py-1 mb-2 flex items-center justify-between gap-2">
+                <div className="min-w-0">
+                  <p className="text-[10px] text-sidebar-foreground/60">Conectado como</p>
+                  <p className="text-xs font-medium truncate text-sidebar-foreground">{user?.email}</p>
                 </div>
-              </>
+                <ThemeToggle className="text-sidebar-foreground/80 hover:bg-sidebar-accent hover:text-sidebar-accent-foreground shrink-0" />
+              </div>
+            )}
+            {!compactSidebar && !isMobile && (
+              <div className="px-2 pb-2"><OnlineUsersWidget /></div>
             )}
             <Button
               variant="ghost"
@@ -494,6 +522,30 @@ export function AppLayout({ children }: { children: React.ReactNode }) {
 
       {/* Mobile header */}
       <div className="flex-1 flex flex-col min-w-0">
+        {/* Top bar (desktop) com busca rápida */}
+        <header className="hidden md:flex h-14 border-b border-border bg-background items-center gap-3 px-6 sticky top-0 z-20">
+          <button
+            type="button"
+            onClick={() => setSearchOpen(true)}
+            className="flex-1 max-w-xl flex items-center gap-2 px-3 py-2 rounded-xl bg-muted/50 hover:bg-muted text-muted-foreground border border-border text-sm transition-colors"
+          >
+            <Search className="h-4 w-4" />
+            <span className="flex-1 text-left">Buscar pessoas, módulos, avisos...</span>
+            <kbd className="hidden lg:inline-flex h-5 items-center rounded border border-border bg-background px-1.5 text-[10px] font-mono">⌘K</kbd>
+          </button>
+          <div className="ml-auto flex items-center gap-2">
+            <Button variant="ghost" size="icon" className="relative" onClick={() => navigate({ to: "/avisos" })} title="Avisos">
+              <Bell className="h-5 w-5" />
+            </Button>
+            <div className="flex items-center gap-2 pl-2 border-l border-border">
+              <div className="h-8 w-8 rounded-full bg-primary/10 flex items-center justify-center text-primary text-xs font-bold">
+                {(user?.email || "U").slice(0, 1).toUpperCase()}
+              </div>
+              <span className="text-sm font-medium hidden lg:inline">{isAdminMestre ? "Mestre" : isGestorEmpresa ? "Gestor" : "Usuário"}</span>
+            </div>
+          </div>
+        </header>
+
         <header className="md:hidden h-14 border-b border-sidebar-border bg-sidebar text-sidebar-foreground flex items-center justify-between px-4">
           <div className="flex items-center gap-2">
             <div className="h-8 w-8 rounded-md bg-sidebar-primary flex items-center justify-center text-sidebar-primary-foreground text-xs font-bold">
@@ -502,6 +554,9 @@ export function AppLayout({ children }: { children: React.ReactNode }) {
             <span className="font-semibold text-sm">Gestão Colaboradores</span>
           </div>
           <div className="flex items-center gap-1">
+            <Button variant="ghost" size="icon" onClick={() => setSearchOpen(true)} className="text-sidebar-foreground hover:bg-sidebar-accent">
+              <Search className="h-5 w-5" />
+            </Button>
             {isMobile && <OnlineUsersWidget />}
             <ThemeToggle className="text-sidebar-foreground hover:bg-sidebar-accent hover:text-sidebar-accent-foreground" />
             <Button
