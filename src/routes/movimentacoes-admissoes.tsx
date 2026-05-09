@@ -79,6 +79,7 @@ function Page() {
   const canEdit = isAdmin || !!isGestor;
   const [rows, setRows] = useState<Mov[]>([]);
   const [colabs, setColabs] = useState<ColabLite[]>([]);
+  const [counts, setCounts] = useState<Record<string, { total: number; processo: number }>>({});
   const [loading, setLoading] = useState(true);
   const [open, setOpen] = useState(false);
   const [closeDialog, setCloseDialog] = useState<Mov | null>(null);
