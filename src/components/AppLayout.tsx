@@ -85,6 +85,7 @@ export function AppLayout({ children }: { children: React.ReactNode }) {
   const { empresas, empresaAtual, setEmpresaId, isAdminMestre, isAdminEmpresa, isGestorEmpresa, refresh } = useEmpresa();
   const desabilitados = (empresaAtual?.modulos_desabilitados || []) as string[];
   void baseNav;
+  void logoInputRef;
   const logoInputRef = useRef<HTMLInputElement>(null);
   const [uploadingLogo, setUploadingLogo] = useState(false);
   const [logoEditorOpen, setLogoEditorOpen] = useState(false);
