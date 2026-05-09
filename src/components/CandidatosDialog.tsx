@@ -203,6 +203,83 @@ export function CandidatosDialog({ vaga, canEdit, onClose }: { vaga: Vaga; canEd
         )}
 
         <div className="grid grid-cols-1 lg:grid-cols-[1fr_300px] gap-4">
+          {view === "kanban" ? (
+            <div className="overflow-x-auto -mx-2 px-2">
+              <div className="flex gap-3 min-w-max pb-2">
+                {ETAPAS.map((etapa) => {
+                  const cards = rows.filter((r) => r.etapa === etapa.v);
+                  const isOver = dragOver === etapa.v;
+                  return (
+                    <div
+                      key={etapa.v}
+                      onDragOver={(e) => { if (canEdit) { e.preventDefault(); setDragOver(etapa.v); } }}
+                      onDragLeave={() => setDragOver(null)}
+                      onDrop={(e) => {
+                        e.preventDefault();
+                        setDragOver(null);
+                        if (!canEdit) return;
+                        const id = e.dataTransfer.getData("text/plain");
+                        const cand = rows.find((r) => r.id === id);
+                        if (cand && cand.etapa !== etapa.v) moverEtapa(cand, etapa.v);
+                      }}
+                      className={`w-64 shrink-0 rounded-lg border bg-muted/20 flex flex-col ${isOver ? "ring-2 ring-primary" : ""}`}
+                    >
+                      <div className={`${etapa.color} text-white px-3 py-2 rounded-t-lg flex items-center justify-between text-xs font-semibold`}>
+                        <span>{etapa.l}</span>
+                        <Badge variant="secondary" className="h-5 text-[10px] bg-white/20 text-white border-0">{cards.length}</Badge>
+                      </div>
+                      <div className="p-2 space-y-2 min-h-[120px]">
+                        {loading ? (
+                          <div className="text-xs text-muted-foreground text-center py-4">…</div>
+                        ) : cards.length === 0 ? (
+                          <div className="text-xs text-muted-foreground text-center py-4 italic">Vazio</div>
+                        ) : cards.map((c) => {
+                          const isSel = selecionado?.id === c.id;
+                          return (
+                            <div
+                              key={c.id}
+                              draggable={canEdit}
+                              onDragStart={(e) => e.dataTransfer.setData("text/plain", c.id)}
+                              onClick={() => setSelecionado(c)}
+                              className={`bg-card border rounded-md p-2 text-xs cursor-pointer hover:shadow-sm transition ${isSel ? "ring-2 ring-primary" : ""} ${canEdit ? "active:cursor-grabbing" : ""}`}
+                            >
+                              <div className="font-medium text-sm truncate">{c.nome}</div>
+                              <div className="text-muted-foreground text-[11px] mt-0.5 flex items-center gap-1 flex-wrap">
+                                {c.cidade && <span>{c.cidade}</span>}
+                                {c.origem === "link" && <Badge variant="outline" className="text-[9px] h-4">link</Badge>}
+                              </div>
+                              <div className="flex items-center gap-2 mt-1.5 text-[11px]">
+                                {c.telefone && waLink(c.telefone) && (
+                                  <a href={waLink(c.telefone)} target="_blank" rel="noreferrer" onClick={(ev) => ev.stopPropagation()} className="text-emerald-600 hover:text-emerald-700 inline-flex items-center gap-1">
+                                    <MessageCircle className="h-3 w-3" /> WhatsApp
+                                  </a>
+                                )}
+                                {c.curriculo_url && (
+                                  <a href={c.curriculo_url} target="_blank" rel="noreferrer" onClick={(ev) => ev.stopPropagation()} className="text-primary hover:underline inline-flex items-center gap-1">
+                                    <FileText className="h-3 w-3" /> CV
+                                  </a>
+                                )}
+                              </div>
+                              {canEdit && (
+                                <div className="mt-1.5">
+                                  <Select value={c.etapa} onValueChange={(v) => moverEtapa(c, v)}>
+                                    <SelectTrigger className="h-7 text-[11px]" onClick={(ev) => ev.stopPropagation()}><SelectValue /></SelectTrigger>
+                                    <SelectContent>
+                                      {ETAPAS.map((e) => <SelectItem key={e.v} value={e.v}>{e.l}</SelectItem>)}
+                                    </SelectContent>
+                                  </Select>
+                                </div>
+                              )}
+                            </div>
+                          );
+                        })}
+                      </div>
+                    </div>
+                  );
+                })}
+              </div>
+            </div>
+          ) : (
           <div className="overflow-x-auto">
             <Table>
               <TableHeader>
