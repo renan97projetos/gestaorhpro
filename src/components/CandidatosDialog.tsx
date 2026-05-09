@@ -373,6 +373,7 @@ export function CandidatosDialog({ vaga, canEdit, onClose }: { vaga: Vaga; canEd
               </TableBody>
             </Table>
           </div>
+          )}
 
           <aside className="border rounded-lg p-4 bg-muted/30 h-fit lg:sticky lg:top-0 space-y-3">
             {!selecionado ? (
