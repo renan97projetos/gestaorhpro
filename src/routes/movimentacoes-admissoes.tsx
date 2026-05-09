@@ -364,87 +364,88 @@ function Page() {
           <Table>
             <TableHeader>
               <TableRow>
-                <TableHead>Status</TableHead>
-                <TableHead>Entrou</TableHead>
+                <TableHead>Vaga</TableHead>
+                <TableHead>Localização</TableHead>
                 <TableHead>Tipo</TableHead>
-                <TableHead>No lugar de</TableHead>
-                <TableHead>Cargo / Setor</TableHead>
-                <TableHead>Turno</TableHead>
-                <TableHead>Data abertura</TableHead>
-                <TableHead>Data final</TableHead>
-                <TableHead>Vaga Gupy</TableHead>
-                {canEdit && <TableHead></TableHead>}
+                <TableHead className="text-center">Candidatos</TableHead>
+                <TableHead className="text-center">Em processo</TableHead>
+                <TableHead>Status</TableHead>
+                <TableHead>Criada em</TableHead>
+                <TableHead className="text-right">Ações</TableHead>
               </TableRow>
             </TableHeader>
             <TableBody>
               {loading ? (
-                <TableRow><TableCell colSpan={10} className="text-center text-muted-foreground py-8">Carregando...</TableCell></TableRow>
+                <TableRow><TableCell colSpan={8} className="text-center text-muted-foreground py-8">Carregando...</TableCell></TableRow>
               ) : filtered.length === 0 ? (
-                <TableRow><TableCell colSpan={10} className="text-center text-muted-foreground py-8">Nenhum registro</TableCell></TableRow>
-              ) : filtered.map((r) => (
-                <TableRow key={r.id}>
-                  <TableCell>
-                    {r.status === "fechada" ? (
-                      <Badge className="bg-emerald-600 hover:bg-emerald-700"><CheckCircle2 className="h-3 w-3 mr-1" />Fechada</Badge>
-                    ) : (
-                      <Badge variant="outline"><Clock className="h-3 w-3 mr-1" />Aberta</Badge>
-                    )}
-                  </TableCell>
-                  <TableCell className="font-medium">{r.colaborador_nome && r.colaborador_nome !== "—" ? r.colaborador_nome : <span className="text-muted-foreground">—</span>}</TableCell>
-                  <TableCell>
-                    {r.tipo === "substituicao" ? (
-                      <Badge variant="secondary"><ArrowRightLeft className="h-3 w-3 mr-1" />Substituição</Badge>
-                    ) : (
-                      <Badge className="bg-blue-600 hover:bg-blue-700"><TrendingUp className="h-3 w-3 mr-1" />Aumento</Badge>
-                    )}
-                  </TableCell>
-                  <TableCell>{r.substituido_nome || <span className="text-muted-foreground">—</span>}</TableCell>
-                  <TableCell className="text-sm text-muted-foreground">{[r.cargo, r.setor].filter(Boolean).join(" / ") || "—"}</TableCell>
-                  <TableCell className="text-sm">{r.turno || "—"}</TableCell>
-                  <TableCell>{new Date(r.data_abertura).toLocaleDateString("pt-BR")}</TableCell>
-                  <TableCell>{r.data_final ? new Date(r.data_final).toLocaleDateString("pt-BR") : "—"}</TableCell>
-                  <TableCell className="text-sm">{r.vaga_id || "—"}</TableCell>
-                  {canEdit && (
+                <TableRow><TableCell colSpan={8} className="text-center text-muted-foreground py-8">Nenhum registro</TableCell></TableRow>
+              ) : filtered.map((r) => {
+                const cnt = counts[r.id] || { total: 0, processo: 0 };
+                const diasAtras = Math.max(0, Math.floor((Date.now() - new Date(r.created_at || r.data_abertura).getTime()) / 86400000));
+                const linkPub = r.link_token ? `${window.location.origin}/vaga/${r.link_token}` : "";
+                return (
+                  <TableRow key={r.id}>
                     <TableCell>
-                      <div className="flex gap-1 flex-wrap">
-                        <Button variant="outline" size="sm" onClick={() => setCandidatosVaga(r)}>
-                          <Users className="h-3.5 w-3.5 mr-1" /> Candidatos
-                        </Button>
-                        {r.status === "aberta" && (
-                          <Button
-                            variant={r.publicada ? "default" : "outline"}
-                            size="sm"
-                            onClick={() => togglePublicada(r)}
-                            title="Tornar visível na landing pública"
-                          >
-                            {r.publicada ? "Publicada" : "Publicar"}
+                      <div className="font-semibold">{r.cargo || "Vaga"}</div>
+                      <div className="text-xs text-muted-foreground">Criada há {diasAtras} dia(s)</div>
+                    </TableCell>
+                    <TableCell className="text-sm text-muted-foreground">
+                      {[(empresaAtual as { cidade?: string } | null)?.cidade, "Presencial"].filter(Boolean).join(" · ") || "—"}
+                    </TableCell>
+                    <TableCell className="text-sm">
+                      {r.tipo === "substituicao" ? "Substituição" : "Aumento"}
+                    </TableCell>
+                    <TableCell className="text-center font-medium text-primary">{cnt.total}</TableCell>
+                    <TableCell className="text-center font-medium text-primary">{cnt.processo}</TableCell>
+                    <TableCell>
+                      {r.status === "fechada" ? (
+                        <span className="text-emerald-600 text-sm font-medium">Fechada</span>
+                      ) : (
+                        <span className="text-emerald-600 text-sm font-medium">Ativa</span>
+                      )}
+                    </TableCell>
+                    <TableCell className="text-sm">{new Date(r.created_at || r.data_abertura).toLocaleDateString("pt-BR")}</TableCell>
+                    <TableCell>
+                      <div className="flex items-center justify-end gap-1">
+                        {linkPub && r.status === "aberta" && (
+                          <Button variant="ghost" size="sm" className="text-primary" onClick={() => window.open(linkPub, "_blank")}>
+                            <Eye className="h-4 w-4 mr-1" /> Ver vaga
                           </Button>
                         )}
-                        {r.link_token && r.status === "aberta" && (
-                          <Button variant="ghost" size="sm" title="Copiar link público de candidatura"
-                            onClick={() => {
-                              const url = `${window.location.origin}/vaga/${r.link_token}`;
-                              navigator.clipboard.writeText(url);
-                              toast.success("Link copiado!");
-                            }}>
-                            <Link2 className="h-3.5 w-3.5 mr-1" /> Link
+                        {canEdit && (
+                          <Button variant="ghost" size="sm" className="text-primary font-semibold" onClick={() => setCandidatosVaga(r)}>
+                            Ver Processo
                           </Button>
                         )}
-                        {r.status === "aberta" && (
-                          <Button variant="outline" size="sm" onClick={() => { setCloseDialog(r); setCloseForm({ colaborador_id: "", data_admissao: new Date().toISOString().slice(0, 10), turno: "", cargo_oferecido: r.cargo || "", salario: "" }); }}>
-                            Mover p/ Admissão
-                          </Button>
-                        )}
-                        {isAdmin && (
-                          <Button variant="ghost" size="icon" onClick={() => handleDelete(r.id)}>
-                            <Trash2 className="h-4 w-4 text-destructive" />
-                          </Button>
+                        {canEdit && (
+                          <DropdownMenu>
+                            <DropdownMenuTrigger asChild>
+                              <Button variant="ghost" size="icon"><MoreHorizontal className="h-4 w-4" /></Button>
+                            </DropdownMenuTrigger>
+                            <DropdownMenuContent align="end">
+                              {r.status === "aberta" && (
+                                <DropdownMenuItem onClick={() => togglePublicada(r)}>
+                                  {r.publicada ? "Despublicar" : "Publicar na landing"}
+                                </DropdownMenuItem>
+                              )}
+                              {r.status === "aberta" && (
+                                <DropdownMenuItem onClick={() => { setCloseDialog(r); setCloseForm({ colaborador_id: "", data_admissao: new Date().toISOString().slice(0, 10), turno: "", cargo_oferecido: r.cargo || "", salario: "" }); }}>
+                                  Mover para Admissão
+                                </DropdownMenuItem>
+                              )}
+                              {isAdmin && (
+                                <DropdownMenuItem onClick={() => handleDelete(r.id)} className="text-destructive">
+                                  <Trash2 className="h-3.5 w-3.5 mr-2" /> Excluir
+                                </DropdownMenuItem>
+                              )}
+                            </DropdownMenuContent>
+                          </DropdownMenu>
                         )}
                       </div>
                     </TableCell>
-                  )}
-                </TableRow>
-              ))}
+                  </TableRow>
+                );
+              })}
             </TableBody>
           </Table>
         </div>
