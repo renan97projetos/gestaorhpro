@@ -538,6 +538,12 @@ export function AppLayout({ children }: { children: React.ReactNode }) {
       <OnboardingTour />
       <AniversarioPopup />
       <AvisoPopup />
+      <LogoEditorDialog
+        open={logoEditorOpen}
+        onOpenChange={setLogoEditorOpen}
+        currentUrl={empresaAtual?.logo_url}
+        onSave={handleLogoSave}
+      />
     </div>
   );
 }
