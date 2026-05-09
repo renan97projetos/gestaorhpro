@@ -118,14 +118,9 @@ export function AppLayout({ children }: { children: React.ReactNode }) {
       if (logoInputRef.current) logoInputRef.current.value = "";
     }
   };
-  const nav = [
-    ...baseFiltrada,
-    ...(isGestorEmpresa ? [
-      { to: "/empresa-config", label: "Configurações da Empresa", icon: Settings },
-    ] : []),
-    ...(isAdminEmpresa ? [
-      { to: "/empresa-membros", label: "Usuários da Empresa", icon: UserCog },
-    ] : []),
+  const adminGroupItems: NavItem[] = [
+    ...(isGestorEmpresa ? [{ to: "/empresa-config", label: "Configurações da Empresa", icon: Settings }] : []),
+    ...(isAdminEmpresa ? [{ to: "/empresa-membros", label: "Usuários da Empresa", icon: UserCog }] : []),
     ...(isAdmin ? [
       { to: "/auditoria", label: "Histórico de Uso", icon: Activity },
       { to: "/usuarios", label: "Usuários (legado)", icon: UserCog },
@@ -135,6 +130,14 @@ export function AppLayout({ children }: { children: React.ReactNode }) {
       { to: "/crm", label: "CRM Vendas", icon: Handshake },
     ] : []),
   ];
+  const groupsFiltradas: NavGroup[] = navGroups
+    .map((g) => ({ ...g, items: isAdminMestre ? g.items : g.items.filter((i) => !desabilitados.includes(i.to)) }))
+    .filter((g) => g.items.length > 0);
+  const navGroupsFinal: NavGroup[] = [
+    ...groupsFiltradas,
+    ...(adminGroupItems.length > 0 ? [{ label: "Administração", items: adminGroupItems }] : []),
+  ];
+  const nav: NavItem[] = navGroupsFinal.flatMap((g) => g.items);
   const navigate = useNavigate();
   const location = useLocation();
   const router = useRouter();
