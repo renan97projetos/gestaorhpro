@@ -86,20 +86,18 @@ export function AppLayout({ children }: { children: React.ReactNode }) {
   void baseNav;
   const logoInputRef = useRef<HTMLInputElement>(null);
   const [uploadingLogo, setUploadingLogo] = useState(false);
+  const [logoEditorOpen, setLogoEditorOpen] = useState(false);
 
-  const handleLogoUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
-    const file = e.target.files?.[0];
-    if (!file || !empresaAtual) return;
+  const handleLogoSave = async (file: File) => {
+    if (!empresaAtual) return;
     if (!isGestorEmpresa) {
       toast.error("Apenas gestores podem alterar a logo");
       return;
     }
     setUploadingLogo(true);
     try {
-      // Auto-ajuste: detecta conteúdo, centraliza num quadrado 512x512 com padding
-      const fitted = await autoFitImage(file, { size: 512, padding: 0.1 });
-      const path = `${empresaAtual.id}/logo_url-${Date.now()}-${fitted.name}`;
-      const { error: upErr } = await supabase.storage.from("empresa-assets").upload(path, fitted, { upsert: true, contentType: fitted.type });
+      const path = `${empresaAtual.id}/logo_url-${Date.now()}-${file.name}`;
+      const { error: upErr } = await supabase.storage.from("empresa-assets").upload(path, file, { upsert: true, contentType: file.type });
       if (upErr) throw upErr;
       const { data } = supabase.storage.from("empresa-assets").getPublicUrl(path);
       const { data: updated, error: updErr } = await supabase
@@ -114,11 +112,12 @@ export function AppLayout({ children }: { children: React.ReactNode }) {
       await refresh();
     } catch (err) {
       toast.error((err as Error).message);
+      throw err;
     } finally {
       setUploadingLogo(false);
-      if (logoInputRef.current) logoInputRef.current.value = "";
     }
   };
+  void autoFitImage;
   const adminGroupItems: NavItem[] = [
     ...(isGestorEmpresa ? [{ to: "/empresa-config", label: "Configurações da Empresa", icon: Settings }] : []),
     ...(isAdminEmpresa ? [{ to: "/empresa-membros", label: "Usuários da Empresa", icon: UserCog }] : []),
