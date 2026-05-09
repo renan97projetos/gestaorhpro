@@ -14,6 +14,7 @@ import { OnboardingTour } from "@/components/OnboardingTour";
 import { AniversarioPopup } from "@/components/AniversarioPopup";
 import { AvisoPopup } from "@/components/AvisoPopup";
 import { OnlineUsersWidget } from "@/components/OnlineUsersWidget";
+import { LogoEditorDialog } from "@/components/LogoEditorDialog";
 import { useIsMobile } from "@/hooks/use-mobile";
 
 type NavItem = { to: string; label: string; icon: React.ComponentType<{ className?: string }> };
