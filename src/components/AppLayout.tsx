@@ -148,6 +148,17 @@ export function AppLayout({ children }: { children: React.ReactNode }) {
     if (typeof window === "undefined") return {};
     try { return JSON.parse(localStorage.getItem("nav:collapsedGroups") || "{}"); } catch { return {}; }
   });
+  const [compactSidebar, setCompactSidebar] = useState<boolean>(() => {
+    if (typeof window === "undefined") return false;
+    try { return localStorage.getItem("nav:compactSidebar") === "1"; } catch { return false; }
+  });
+  const toggleCompact = () => {
+    setCompactSidebar((prev) => {
+      const next = !prev;
+      try { localStorage.setItem("nav:compactSidebar", next ? "1" : "0"); } catch { /* ignore */ }
+      return next;
+    });
+  };
   const toggleGroup = (label: string) => {
     setCollapsedGroups((prev) => {
       const next = { ...prev, [label]: !prev[label] };
