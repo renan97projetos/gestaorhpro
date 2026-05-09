@@ -1,9 +1,54 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
+import { useEffect, useState } from "react";
 import { RequireAuth } from "@/components/RequireAuth";
 import { useAuth } from "@/lib/auth-context";
 import { useEmpresa } from "@/lib/empresa-context";
 import { Card } from "@/components/ui/card";
 import { AppLayout } from "@/components/AppLayout";
+
+function TypingLoop({ empresaNome }: { empresaNome: string }) {
+  const nome = empresaNome || "sua empresa";
+  const frases = [
+    `${nome}, transforme dados em decisões com o GestãoRHPro.`,
+    `${nome} centraliza pessoas, frequência e admissões em um só lugar.`,
+    `Menos planilhas, mais clareza — ${nome} no comando com GestãoRHPro.`,
+    `Engajamento, ética e talentos: ${nome} cresce com cultura forte.`,
+    `${nome}, automatize o operacional e foque no que importa: gente.`,
+  ];
+  const [fraseIdx, setFraseIdx] = useState(0);
+  const [texto, setTexto] = useState("");
+  const [apagando, setApagando] = useState(false);
+
+  useEffect(() => {
+    const atual = frases[fraseIdx];
+    if (!apagando && texto === atual) {
+      const t = setTimeout(() => setApagando(true), 2200);
+      return () => clearTimeout(t);
+    }
+    if (apagando && texto === "") {
+      setApagando(false);
+      setFraseIdx((i) => (i + 1) % frases.length);
+      return;
+    }
+    const delay = apagando ? 25 : 45;
+    const t = setTimeout(() => {
+      setTexto((prev) =>
+        apagando ? atual.slice(0, prev.length - 1) : atual.slice(0, prev.length + 1)
+      );
+    }, delay);
+    return () => clearTimeout(t);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [texto, apagando, fraseIdx]);
+
+  return (
+    <div className="mb-6 min-h-[2.5rem]">
+      <p className="text-sm md:text-base text-muted-foreground font-light">
+        <span translate="no">{texto}</span>
+        <span className="inline-block w-[1px] h-4 align-middle bg-foreground/70 ml-0.5 animate-pulse" />
+      </p>
+    </div>
+  );
+}
 import {
   Home, Users, UserPlus, FileText, ShieldCheck, ClipboardList, UserCheck, Lightbulb, CalendarClock, Sparkles, AlertTriangle, Cake, ArrowRightLeft, MapPin, MessageSquareHeart, NotebookPen, History, Activity, Settings, UserCog, Crown, Handshake, FolderArchive, Megaphone, LifeBuoy, BookOpen, Users2, Briefcase,
 } from "lucide-react";
@@ -67,6 +112,7 @@ function InicioPage() {
     <AppLayout>
       <main className="min-h-full bg-[image:var(--gradient-soft)] px-4 md:px-6 py-6 md:py-10 space-y-8">
         <div className="max-w-6xl mx-auto">
+        <TypingLoop empresaNome={empresaAtual?.nome || ""} />
         <section>
           <p className="text-xs font-semibold tracking-wider text-muted-foreground mb-4">GESTÃO</p>
           <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-3 md:gap-4">

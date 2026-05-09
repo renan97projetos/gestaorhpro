@@ -3,7 +3,7 @@ import { useAuth } from "@/lib/auth-context";
 import { useEmpresa } from "@/lib/empresa-context";
 import { Button } from "@/components/ui/button";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { LayoutDashboard, Users, History, LogOut, Menu, X, LayoutGrid, UserCog, ClipboardList, UserCheck, Lightbulb, CalendarClock, Sparkles, AlertTriangle, Cake, ArrowRightLeft, MapPin, MessageSquareHeart, NotebookPen, Activity, Building2, Crown, Settings, ExternalLink, Handshake, FolderArchive, Megaphone, LifeBuoy, BookOpen, Users2, Upload, Briefcase, ShieldCheck } from "lucide-react";
+import { LayoutDashboard, Users, History, LogOut, Menu, X, LayoutGrid, UserCog, ClipboardList, UserCheck, Lightbulb, CalendarClock, Sparkles, AlertTriangle, Cake, ArrowRightLeft, MapPin, MessageSquareHeart, NotebookPen, Activity, Building2, Crown, Settings, ExternalLink, Handshake, FolderArchive, Megaphone, LifeBuoy, BookOpen, Users2, Upload, Briefcase, ShieldCheck, ChevronDown, ChevronRight } from "lucide-react";
 import { useEffect, useRef, useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
@@ -143,6 +143,17 @@ export function AppLayout({ children }: { children: React.ReactNode }) {
   const router = useRouter();
   const isMobile = useIsMobile();
   const [open, setOpen] = useState(false);
+  const [collapsedGroups, setCollapsedGroups] = useState<Record<string, boolean>>(() => {
+    if (typeof window === "undefined") return {};
+    try { return JSON.parse(localStorage.getItem("nav:collapsedGroups") || "{}"); } catch { return {}; }
+  });
+  const toggleGroup = (label: string) => {
+    setCollapsedGroups((prev) => {
+      const next = { ...prev, [label]: !prev[label] };
+      try { localStorage.setItem("nav:collapsedGroups", JSON.stringify(next)); } catch { /* ignore */ }
+      return next;
+    });
+  };
 
   // Pré-aquece em background os chunks de TODAS as rotas do menu na 1ª montagem.
   // Assim, qualquer clique posterior é instantâneo (chunk + dados já em cache).
@@ -360,32 +371,40 @@ export function AppLayout({ children }: { children: React.ReactNode }) {
             </div>
           </div>
           <nav className="flex-1 px-3 py-4 space-y-4 overflow-y-auto">
-            {navGroupsFinal.map((g) => (
-              <div key={g.label} className="space-y-1">
-                <p className="text-[10px] uppercase tracking-wide text-sidebar-foreground/50 font-medium px-3 mb-1">
-                  {g.label}
-                </p>
-                {g.items.map((n) => {
-                  const active = location.pathname.startsWith(n.to);
-                  return (
-                    <Link
-                      key={n.to}
-                      to={n.to}
-                      preload="intent"
-                      className={cn(
-                        "flex items-center gap-3 px-3 py-2 rounded-lg text-sm font-medium transition-colors",
-                        active
-                          ? "bg-sidebar-primary text-sidebar-primary-foreground shadow-[var(--shadow-elegant)]"
-                          : "text-sidebar-foreground/70 hover:bg-sidebar-accent hover:text-sidebar-accent-foreground"
-                      )}
-                    >
-                      <n.icon className="h-4 w-4" />
-                      {n.label}
-                    </Link>
-                  );
-                })}
-              </div>
-            ))}
+            {navGroupsFinal.map((g) => {
+              const collapsed = !!collapsedGroups[g.label];
+              return (
+                <div key={g.label} className="space-y-1">
+                  <button
+                    type="button"
+                    onClick={() => toggleGroup(g.label)}
+                    className="w-full flex items-center justify-between px-3 mb-1 text-sidebar-foreground/50 hover:text-sidebar-foreground transition-colors"
+                  >
+                    <span className="text-[10px] uppercase tracking-wide font-medium">{g.label}</span>
+                    {collapsed ? <ChevronRight className="h-3 w-3" /> : <ChevronDown className="h-3 w-3" />}
+                  </button>
+                  {!collapsed && g.items.map((n) => {
+                    const active = location.pathname.startsWith(n.to);
+                    return (
+                      <Link
+                        key={n.to}
+                        to={n.to}
+                        preload="intent"
+                        className={cn(
+                          "flex items-center gap-3 px-3 py-2 rounded-lg text-sm font-medium transition-colors",
+                          active
+                            ? "bg-sidebar-primary text-sidebar-primary-foreground shadow-[var(--shadow-elegant)]"
+                            : "text-sidebar-foreground/70 hover:bg-sidebar-accent hover:text-sidebar-accent-foreground"
+                        )}
+                      >
+                        <n.icon className="h-4 w-4" />
+                        {n.label}
+                      </Link>
+                    );
+                  })}
+                </div>
+              );
+            })}
           </nav>
           <div className="p-3 border-t border-sidebar-border">
             <div className="px-3 py-2 mb-2 flex items-center justify-between gap-2">
