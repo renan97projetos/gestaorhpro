@@ -309,20 +309,20 @@ export function AppLayout({ children }: { children: React.ReactNode }) {
             <div className="flex items-center gap-2">
               <button
                 type="button"
-                onClick={() => isGestorEmpresa && logoInputRef.current?.click()}
+                onClick={() => isGestorEmpresa && setLogoEditorOpen(true)}
                 disabled={!isGestorEmpresa || uploadingLogo}
-                title={isGestorEmpresa ? "Clique para enviar a logo (PNG)" : "Logo da empresa"}
+                title={isGestorEmpresa ? "Clique para editar a logo" : "Logo da empresa"}
                 className={cn(
-                  "relative h-9 w-9 rounded-lg overflow-hidden shrink-0 group",
+                  "relative h-9 w-9 rounded-lg overflow-hidden shrink-0 group bg-sidebar-accent flex items-center justify-center",
                   isGestorEmpresa && "cursor-pointer"
                 )}
               >
                 {empresaAtual?.logo_url ? (
-                  <img src={empresaAtual.logo_url} alt={empresaAtual.nome} className="h-9 w-9 rounded-lg object-cover bg-sidebar-primary" />
+                  <img src={empresaAtual.logo_url} alt={empresaAtual.nome} className="h-9 w-9 rounded-lg object-contain" />
                 ) : (
-                  <div className="h-9 w-9 rounded-lg bg-sidebar-primary flex items-center justify-center text-sidebar-primary-foreground font-bold text-xs">
+                  <span className="text-sidebar-foreground/80 font-bold text-xs">
                     {(empresaAtual?.nome || "—").slice(0, 2).toUpperCase()}
-                  </div>
+                  </span>
                 )}
                 {isGestorEmpresa && (
                   <div className="absolute inset-0 bg-black/50 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center rounded-lg">
@@ -335,13 +335,6 @@ export function AppLayout({ children }: { children: React.ReactNode }) {
                   </div>
                 )}
               </button>
-              <input
-                ref={logoInputRef}
-                type="file"
-                accept="image/png,image/jpeg,image/webp"
-                className="hidden"
-                onChange={handleLogoUpload}
-              />
               <div className={cn("min-w-0 flex-1 whitespace-nowrap overflow-hidden", compactSidebar && "opacity-0 group-hover/sidebar:opacity-100 transition-opacity")}>
                 <p className="text-sm font-semibold leading-none text-sidebar-foreground truncate">{empresaAtual?.nome || "Selecione"}</p>
                 <p className="text-xs text-sidebar-foreground/60 mt-0.5">GestãoRHPRO</p>
