@@ -295,6 +295,32 @@ export function AppLayout({ children }: { children: React.ReactNode }) {
               </a>
             )}
           </div>
+          <div className="px-3 pt-3 pb-2 border-b border-sidebar-border">
+            <p className="text-[10px] uppercase tracking-wide text-sidebar-foreground/50 font-medium px-1 mb-2">
+              Atalhos
+            </p>
+            <div className="grid grid-cols-5 gap-1">
+              {nav.map((n) => {
+                const active = location.pathname.startsWith(n.to);
+                return (
+                  <Link
+                    key={`atalho-${n.to}`}
+                    to={n.to}
+                    preload="intent"
+                    title={n.label}
+                    className={cn(
+                      "flex items-center justify-center h-9 w-full rounded-md transition-colors",
+                      active
+                        ? "bg-sidebar-primary text-sidebar-primary-foreground"
+                        : "text-sidebar-foreground/70 hover:bg-sidebar-accent hover:text-sidebar-accent-foreground"
+                    )}
+                  >
+                    <n.icon className="h-4 w-4" />
+                  </Link>
+                );
+              })}
+            </div>
+          </div>
           <nav className="flex-1 px-3 py-4 space-y-1 overflow-y-auto">
             {nav.map((n) => {
               const active = location.pathname.startsWith(n.to);
