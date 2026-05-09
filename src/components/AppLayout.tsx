@@ -149,6 +149,17 @@ export function AppLayout({ children }: { children: React.ReactNode }) {
   const router = useRouter();
   const isMobile = useIsMobile();
   const [open, setOpen] = useState(false);
+  const [searchOpen, setSearchOpen] = useState(false);
+  useEffect(() => {
+    const onKey = (e: KeyboardEvent) => {
+      if ((e.metaKey || e.ctrlKey) && e.key.toLowerCase() === "k") {
+        e.preventDefault();
+        setSearchOpen((s) => !s);
+      }
+    };
+    window.addEventListener("keydown", onKey);
+    return () => window.removeEventListener("keydown", onKey);
+  }, []);
   const [collapsedGroups, setCollapsedGroups] = useState<Record<string, boolean>>(() => {
     if (typeof window === "undefined") return {};
     try { return JSON.parse(localStorage.getItem("nav:collapsedGroups") || "{}"); } catch { return {}; }
