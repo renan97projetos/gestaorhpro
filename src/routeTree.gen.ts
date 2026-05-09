@@ -24,6 +24,7 @@ import { Route as HistoricoAdmissoesRouteImport } from './routes/historico-admis
 import { Route as GeracoesRouteImport } from './routes/geracoes'
 import { Route as FeedbacksRouteImport } from './routes/feedbacks'
 import { Route as ExperienciaRouteImport } from './routes/experiencia'
+import { Route as EntrevistasDesligamentoRouteImport } from './routes/entrevistas-desligamento'
 import { Route as EmpresaMembrosRouteImport } from './routes/empresa-membros'
 import { Route as EmpresaConfigRouteImport } from './routes/empresa-config'
 import { Route as DocumentosAdmissaoRouteImport } from './routes/documentos-admissao'
@@ -45,6 +46,7 @@ import { Route as VagaTokenRouteImport } from './routes/vaga.$token'
 import { Route as PTokenRouteImport } from './routes/p.$token'
 import { Route as ESlugRouteImport } from './routes/e.$slug'
 import { Route as DocTokenRouteImport } from './routes/doc.$token'
+import { Route as DesligamentoTokenRouteImport } from './routes/desligamento.$token'
 import { Route as ESlugLoginRouteImport } from './routes/e.$slug.login'
 
 const UsuariosRoute = UsuariosRouteImport.update({
@@ -120,6 +122,11 @@ const FeedbacksRoute = FeedbacksRouteImport.update({
 const ExperienciaRoute = ExperienciaRouteImport.update({
   id: '/experiencia',
   path: '/experiencia',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const EntrevistasDesligamentoRoute = EntrevistasDesligamentoRouteImport.update({
+  id: '/entrevistas-desligamento',
+  path: '/entrevistas-desligamento',
   getParentRoute: () => rootRouteImport,
 } as any)
 const EmpresaMembrosRoute = EmpresaMembrosRouteImport.update({
@@ -227,6 +234,11 @@ const DocTokenRoute = DocTokenRouteImport.update({
   path: '/doc/$token',
   getParentRoute: () => rootRouteImport,
 } as any)
+const DesligamentoTokenRoute = DesligamentoTokenRouteImport.update({
+  id: '/desligamento/$token',
+  path: '/desligamento/$token',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const ESlugLoginRoute = ESlugLoginRouteImport.update({
   id: '/login',
   path: '/login',
@@ -251,6 +263,7 @@ export interface FileRoutesByFullPath {
   '/documentos-admissao': typeof DocumentosAdmissaoRoute
   '/empresa-config': typeof EmpresaConfigRoute
   '/empresa-membros': typeof EmpresaMembrosRoute
+  '/entrevistas-desligamento': typeof EntrevistasDesligamentoRoute
   '/experiencia': typeof ExperienciaRoute
   '/feedbacks': typeof FeedbacksRoute
   '/geracoes': typeof GeracoesRoute
@@ -266,6 +279,7 @@ export interface FileRoutesByFullPath {
   '/reset-password': typeof ResetPasswordRoute
   '/solicitacao-movimentacao': typeof SolicitacaoMovimentacaoRoute
   '/usuarios': typeof UsuariosRoute
+  '/desligamento/$token': typeof DesligamentoTokenRoute
   '/doc/$token': typeof DocTokenRoute
   '/e/$slug': typeof ESlugRouteWithChildren
   '/p/$token': typeof PTokenRoute
@@ -290,6 +304,7 @@ export interface FileRoutesByTo {
   '/documentos-admissao': typeof DocumentosAdmissaoRoute
   '/empresa-config': typeof EmpresaConfigRoute
   '/empresa-membros': typeof EmpresaMembrosRoute
+  '/entrevistas-desligamento': typeof EntrevistasDesligamentoRoute
   '/experiencia': typeof ExperienciaRoute
   '/feedbacks': typeof FeedbacksRoute
   '/geracoes': typeof GeracoesRoute
@@ -305,6 +320,7 @@ export interface FileRoutesByTo {
   '/reset-password': typeof ResetPasswordRoute
   '/solicitacao-movimentacao': typeof SolicitacaoMovimentacaoRoute
   '/usuarios': typeof UsuariosRoute
+  '/desligamento/$token': typeof DesligamentoTokenRoute
   '/doc/$token': typeof DocTokenRoute
   '/e/$slug': typeof ESlugRouteWithChildren
   '/p/$token': typeof PTokenRoute
@@ -330,6 +346,7 @@ export interface FileRoutesById {
   '/documentos-admissao': typeof DocumentosAdmissaoRoute
   '/empresa-config': typeof EmpresaConfigRoute
   '/empresa-membros': typeof EmpresaMembrosRoute
+  '/entrevistas-desligamento': typeof EntrevistasDesligamentoRoute
   '/experiencia': typeof ExperienciaRoute
   '/feedbacks': typeof FeedbacksRoute
   '/geracoes': typeof GeracoesRoute
@@ -345,6 +362,7 @@ export interface FileRoutesById {
   '/reset-password': typeof ResetPasswordRoute
   '/solicitacao-movimentacao': typeof SolicitacaoMovimentacaoRoute
   '/usuarios': typeof UsuariosRoute
+  '/desligamento/$token': typeof DesligamentoTokenRoute
   '/doc/$token': typeof DocTokenRoute
   '/e/$slug': typeof ESlugRouteWithChildren
   '/p/$token': typeof PTokenRoute
@@ -371,6 +389,7 @@ export interface FileRouteTypes {
     | '/documentos-admissao'
     | '/empresa-config'
     | '/empresa-membros'
+    | '/entrevistas-desligamento'
     | '/experiencia'
     | '/feedbacks'
     | '/geracoes'
@@ -386,6 +405,7 @@ export interface FileRouteTypes {
     | '/reset-password'
     | '/solicitacao-movimentacao'
     | '/usuarios'
+    | '/desligamento/$token'
     | '/doc/$token'
     | '/e/$slug'
     | '/p/$token'
@@ -410,6 +430,7 @@ export interface FileRouteTypes {
     | '/documentos-admissao'
     | '/empresa-config'
     | '/empresa-membros'
+    | '/entrevistas-desligamento'
     | '/experiencia'
     | '/feedbacks'
     | '/geracoes'
@@ -425,6 +446,7 @@ export interface FileRouteTypes {
     | '/reset-password'
     | '/solicitacao-movimentacao'
     | '/usuarios'
+    | '/desligamento/$token'
     | '/doc/$token'
     | '/e/$slug'
     | '/p/$token'
@@ -449,6 +471,7 @@ export interface FileRouteTypes {
     | '/documentos-admissao'
     | '/empresa-config'
     | '/empresa-membros'
+    | '/entrevistas-desligamento'
     | '/experiencia'
     | '/feedbacks'
     | '/geracoes'
@@ -464,6 +487,7 @@ export interface FileRouteTypes {
     | '/reset-password'
     | '/solicitacao-movimentacao'
     | '/usuarios'
+    | '/desligamento/$token'
     | '/doc/$token'
     | '/e/$slug'
     | '/p/$token'
@@ -489,6 +513,7 @@ export interface RootRouteChildren {
   DocumentosAdmissaoRoute: typeof DocumentosAdmissaoRoute
   EmpresaConfigRoute: typeof EmpresaConfigRoute
   EmpresaMembrosRoute: typeof EmpresaMembrosRoute
+  EntrevistasDesligamentoRoute: typeof EntrevistasDesligamentoRoute
   ExperienciaRoute: typeof ExperienciaRoute
   FeedbacksRoute: typeof FeedbacksRoute
   GeracoesRoute: typeof GeracoesRoute
@@ -504,6 +529,7 @@ export interface RootRouteChildren {
   ResetPasswordRoute: typeof ResetPasswordRoute
   SolicitacaoMovimentacaoRoute: typeof SolicitacaoMovimentacaoRoute
   UsuariosRoute: typeof UsuariosRoute
+  DesligamentoTokenRoute: typeof DesligamentoTokenRoute
   DocTokenRoute: typeof DocTokenRoute
   ESlugRoute: typeof ESlugRouteWithChildren
   PTokenRoute: typeof PTokenRoute
@@ -615,6 +641,13 @@ declare module '@tanstack/react-router' {
       path: '/experiencia'
       fullPath: '/experiencia'
       preLoaderRoute: typeof ExperienciaRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/entrevistas-desligamento': {
+      id: '/entrevistas-desligamento'
+      path: '/entrevistas-desligamento'
+      fullPath: '/entrevistas-desligamento'
+      preLoaderRoute: typeof EntrevistasDesligamentoRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/empresa-membros': {
@@ -764,6 +797,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof DocTokenRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/desligamento/$token': {
+      id: '/desligamento/$token'
+      path: '/desligamento/$token'
+      fullPath: '/desligamento/$token'
+      preLoaderRoute: typeof DesligamentoTokenRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/e/$slug/login': {
       id: '/e/$slug/login'
       path: '/login'
@@ -802,6 +842,7 @@ const rootRouteChildren: RootRouteChildren = {
   DocumentosAdmissaoRoute: DocumentosAdmissaoRoute,
   EmpresaConfigRoute: EmpresaConfigRoute,
   EmpresaMembrosRoute: EmpresaMembrosRoute,
+  EntrevistasDesligamentoRoute: EntrevistasDesligamentoRoute,
   ExperienciaRoute: ExperienciaRoute,
   FeedbacksRoute: FeedbacksRoute,
   GeracoesRoute: GeracoesRoute,
@@ -817,6 +858,7 @@ const rootRouteChildren: RootRouteChildren = {
   ResetPasswordRoute: ResetPasswordRoute,
   SolicitacaoMovimentacaoRoute: SolicitacaoMovimentacaoRoute,
   UsuariosRoute: UsuariosRoute,
+  DesligamentoTokenRoute: DesligamentoTokenRoute,
   DocTokenRoute: DocTokenRoute,
   ESlugRoute: ESlugRouteWithChildren,
   PTokenRoute: PTokenRoute,

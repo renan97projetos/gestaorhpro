@@ -753,6 +753,175 @@ export type Database = {
         }
         Relationships: []
       }
+      desligamento_entrevistas: {
+        Row: {
+          colaborador_id: string
+          created_at: string
+          created_by: string | null
+          empresa_id: string
+          id: string
+          modelo_id: string | null
+          modo: string
+          observacao: string | null
+          respondida_em: string | null
+          status: string
+          token: string
+          updated_at: string
+        }
+        Insert: {
+          colaborador_id: string
+          created_at?: string
+          created_by?: string | null
+          empresa_id: string
+          id?: string
+          modelo_id?: string | null
+          modo?: string
+          observacao?: string | null
+          respondida_em?: string | null
+          status?: string
+          token?: string
+          updated_at?: string
+        }
+        Update: {
+          colaborador_id?: string
+          created_at?: string
+          created_by?: string | null
+          empresa_id?: string
+          id?: string
+          modelo_id?: string | null
+          modo?: string
+          observacao?: string | null
+          respondida_em?: string | null
+          status?: string
+          token?: string
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "desligamento_entrevistas_modelo_id_fkey"
+            columns: ["modelo_id"]
+            isOneToOne: false
+            referencedRelation: "desligamento_modelos"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      desligamento_modelos: {
+        Row: {
+          ativo: boolean
+          created_at: string
+          created_by: string | null
+          descricao: string | null
+          empresa_id: string
+          id: string
+          titulo: string
+          updated_at: string
+        }
+        Insert: {
+          ativo?: boolean
+          created_at?: string
+          created_by?: string | null
+          descricao?: string | null
+          empresa_id: string
+          id?: string
+          titulo: string
+          updated_at?: string
+        }
+        Update: {
+          ativo?: boolean
+          created_at?: string
+          created_by?: string | null
+          descricao?: string | null
+          empresa_id?: string
+          id?: string
+          titulo?: string
+          updated_at?: string
+        }
+        Relationships: []
+      }
+      desligamento_perguntas: {
+        Row: {
+          created_at: string
+          id: string
+          modelo_id: string
+          obrigatoria: boolean
+          opcoes: Json | null
+          ordem: number
+          texto: string
+          tipo: string
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          modelo_id: string
+          obrigatoria?: boolean
+          opcoes?: Json | null
+          ordem?: number
+          texto: string
+          tipo?: string
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          modelo_id?: string
+          obrigatoria?: boolean
+          opcoes?: Json | null
+          ordem?: number
+          texto?: string
+          tipo?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "desligamento_perguntas_modelo_id_fkey"
+            columns: ["modelo_id"]
+            isOneToOne: false
+            referencedRelation: "desligamento_modelos"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      desligamento_respostas: {
+        Row: {
+          created_at: string
+          entrevista_id: string
+          id: string
+          pergunta_id: string
+          valor_nota: number | null
+          valor_texto: string | null
+        }
+        Insert: {
+          created_at?: string
+          entrevista_id: string
+          id?: string
+          pergunta_id: string
+          valor_nota?: number | null
+          valor_texto?: string | null
+        }
+        Update: {
+          created_at?: string
+          entrevista_id?: string
+          id?: string
+          pergunta_id?: string
+          valor_nota?: number | null
+          valor_texto?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "desligamento_respostas_entrevista_id_fkey"
+            columns: ["entrevista_id"]
+            isOneToOne: false
+            referencedRelation: "desligamento_entrevistas"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "desligamento_respostas_pergunta_id_fkey"
+            columns: ["pergunta_id"]
+            isOneToOne: false
+            referencedRelation: "desligamento_perguntas"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       domingos_especiais: {
         Row: {
           created_at: string

@@ -3,7 +3,7 @@ import { useAuth } from "@/lib/auth-context";
 import { useEmpresa } from "@/lib/empresa-context";
 import { Button } from "@/components/ui/button";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { LayoutDashboard, Users, History, LogOut, Menu, X, LayoutGrid, UserCog, ClipboardList, UserCheck, Lightbulb, CalendarClock, Sparkles, AlertTriangle, Cake, ArrowRightLeft, MapPin, MessageSquareHeart, NotebookPen, Activity, Building2, Crown, Settings, ExternalLink, Handshake, FolderArchive, Megaphone, LifeBuoy, BookOpen, Users2, Upload, Briefcase, ShieldCheck, ChevronDown, ChevronRight } from "lucide-react";
+import { LayoutDashboard, Users, History, LogOut, Menu, X, LayoutGrid, UserCog, ClipboardList, UserCheck, Lightbulb, CalendarClock, Sparkles, AlertTriangle, Cake, ArrowRightLeft, MapPin, MessageSquareHeart, NotebookPen, Activity, Building2, Crown, Settings, ExternalLink, Handshake, FolderArchive, Megaphone, LifeBuoy, BookOpen, Users2, Upload, Briefcase, ShieldCheck, ChevronDown, ChevronRight, DoorOpen } from "lucide-react";
 import { useEffect, useRef, useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
@@ -60,6 +60,7 @@ const navGroups: NavGroup[] = [
       { to: "/feedbacks", label: "Feedbacks", icon: MessageSquareHeart },
       { to: "/pesquisas", label: "Pesquisas", icon: ClipboardList },
       { to: "/ideias", label: "Ideias", icon: Lightbulb },
+      { to: "/entrevistas-desligamento", label: "Entrevista de Desligamento", icon: DoorOpen },
       { to: "/geracoes", label: "Gerações", icon: Sparkles },
       { to: "/notas", label: "Bloco de Notas", icon: NotebookPen },
     ],
