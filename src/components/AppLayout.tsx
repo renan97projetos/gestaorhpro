@@ -16,32 +16,67 @@ import { AvisoPopup } from "@/components/AvisoPopup";
 import { OnlineUsersWidget } from "@/components/OnlineUsersWidget";
 import { useIsMobile } from "@/hooks/use-mobile";
 
-const baseNav = [
-  { to: "/inicio", label: "Menu", icon: LayoutGrid },
-  { to: "/avisos", label: "Avisos", icon: Megaphone },
-  { to: "/chamados", label: "Chamados", icon: LifeBuoy },
-  { to: "/base-conhecimento", label: "Base de Conhecimento", icon: BookOpen },
-  { to: "/rede-social", label: "Rede Social (em breve)", icon: Users2 },
-  { to: "/banco-talentos", label: "Banco de Talentos PRO (em breve)", icon: Briefcase },
-  { to: "/canal-etica", label: "Canal de Ética", icon: ShieldCheck },
-  { to: "/dashboard", label: "Dashboard", icon: LayoutDashboard },
-  { to: "/cadastro", label: "Colaboradores", icon: Users },
-  { to: "/chamada", label: "Chamada", icon: UserCheck },
-  { to: "/chamada-terceiros", label: "Chamada Terceiros", icon: Handshake },
-  { to: "/analise-faltas", label: "Análise de Faltas", icon: AlertTriangle },
-  { to: "/experiencia", label: "Experiência (90 dias)", icon: CalendarClock },
-  { to: "/solicitacao-movimentacao", label: "Movimentações", icon: History },
-  { to: "/movimentacoes-admissoes", label: "Gestão de Vagas", icon: ArrowRightLeft },
-  { to: "/historico-admissoes", label: "Histórico Admissões", icon: History },
-  { to: "/documentos-admissao", label: "Documentos Admissão", icon: FolderArchive },
-  { to: "/mapa-alocacao", label: "Mapa de Alocação", icon: MapPin },
-  { to: "/feedbacks", label: "Feedbacks", icon: MessageSquareHeart },
-  { to: "/notas", label: "Bloco de Notas", icon: NotebookPen },
-  { to: "/pesquisas", label: "Pesquisas", icon: ClipboardList },
-  { to: "/ideias", label: "Ideias", icon: Lightbulb },
-  { to: "/geracoes", label: "Gerações", icon: Sparkles },
-  { to: "/aniversariantes", label: "Aniversariantes", icon: Cake },
+type NavItem = { to: string; label: string; icon: React.ComponentType<{ className?: string }> };
+type NavGroup = { label: string; items: NavItem[] };
+
+const navGroups: NavGroup[] = [
+  {
+    label: "Início",
+    items: [
+      { to: "/inicio", label: "Menu", icon: LayoutGrid },
+      { to: "/dashboard", label: "Dashboard", icon: LayoutDashboard },
+      { to: "/avisos", label: "Avisos", icon: Megaphone },
+    ],
+  },
+  {
+    label: "Pessoas",
+    items: [
+      { to: "/cadastro", label: "Colaboradores", icon: Users },
+      { to: "/aniversariantes", label: "Aniversariantes", icon: Cake },
+      { to: "/mapa-alocacao", label: "Mapa de Alocação", icon: MapPin },
+    ],
+  },
+  {
+    label: "Frequência",
+    items: [
+      { to: "/chamada", label: "Chamada", icon: UserCheck },
+      { to: "/chamada-terceiros", label: "Chamada Terceiros", icon: Handshake },
+      { to: "/analise-faltas", label: "Análise de Faltas", icon: AlertTriangle },
+    ],
+  },
+  {
+    label: "Movimentações & Admissões",
+    items: [
+      { to: "/experiencia", label: "Experiência (90 dias)", icon: CalendarClock },
+      { to: "/solicitacao-movimentacao", label: "Movimentações", icon: History },
+      { to: "/movimentacoes-admissoes", label: "Gestão de Vagas", icon: ArrowRightLeft },
+      { to: "/historico-admissoes", label: "Histórico Admissões", icon: History },
+      { to: "/documentos-admissao", label: "Documentos Admissão", icon: FolderArchive },
+    ],
+  },
+  {
+    label: "Engajamento",
+    items: [
+      { to: "/feedbacks", label: "Feedbacks", icon: MessageSquareHeart },
+      { to: "/pesquisas", label: "Pesquisas", icon: ClipboardList },
+      { to: "/ideias", label: "Ideias", icon: Lightbulb },
+      { to: "/geracoes", label: "Gerações", icon: Sparkles },
+      { to: "/notas", label: "Bloco de Notas", icon: NotebookPen },
+    ],
+  },
+  {
+    label: "Suporte & Comunidade",
+    items: [
+      { to: "/chamados", label: "Chamados", icon: LifeBuoy },
+      { to: "/base-conhecimento", label: "Base de Conhecimento", icon: BookOpen },
+      { to: "/canal-etica", label: "Canal de Ética", icon: ShieldCheck },
+      { to: "/rede-social", label: "Rede Social (em breve)", icon: Users2 },
+      { to: "/banco-talentos", label: "Banco de Talentos PRO (em breve)", icon: Briefcase },
+    ],
+  },
 ];
+
+const baseNav: NavItem[] = navGroups.flatMap((g) => g.items);
 
 export function AppLayout({ children }: { children: React.ReactNode }) {
   const { user, signOut, isAdmin } = useAuth();
