@@ -299,8 +299,13 @@ export function AppLayout({ children }: { children: React.ReactNode }) {
           </div>
         </aside>
       ) : (
-        <aside className="hidden md:flex w-64 flex-col border-r border-sidebar-border bg-sidebar text-sidebar-foreground">
-          <div className="px-4 py-3 border-b border-sidebar-border space-y-2">
+        <aside
+          className={cn(
+            "hidden md:flex flex-col border-r border-sidebar-border bg-sidebar text-sidebar-foreground transition-[width] duration-200 ease-out group/sidebar relative z-30",
+            compactSidebar ? "w-[52px] hover:w-60" : "w-64"
+          )}
+        >
+          <div className={cn("border-b border-sidebar-border", compactSidebar ? "px-2 py-3" : "px-4 py-3 space-y-2") }>
             <div className="flex items-center gap-2">
               <button
                 type="button"
@@ -337,12 +342,23 @@ export function AppLayout({ children }: { children: React.ReactNode }) {
                 className="hidden"
                 onChange={handleLogoUpload}
               />
-              <div className="min-w-0 flex-1">
+              <div className={cn("min-w-0 flex-1 whitespace-nowrap overflow-hidden", compactSidebar && "opacity-0 group-hover/sidebar:opacity-100 transition-opacity")}>
                 <p className="text-sm font-semibold leading-none text-sidebar-foreground truncate">{empresaAtual?.nome || "Selecione"}</p>
                 <p className="text-xs text-sidebar-foreground/60 mt-0.5">GestãoRHPRO</p>
               </div>
+              <button
+                type="button"
+                onClick={toggleCompact}
+                title={compactSidebar ? "Expandir menu" : "Recolher menu"}
+                className={cn(
+                  "shrink-0 h-7 w-7 inline-flex items-center justify-center rounded-md text-sidebar-foreground/70 hover:bg-sidebar-accent hover:text-sidebar-accent-foreground",
+                  compactSidebar && "opacity-0 group-hover/sidebar:opacity-100 transition-opacity"
+                )}
+              >
+                {compactSidebar ? <PanelLeftOpen className="h-4 w-4" /> : <PanelLeftClose className="h-4 w-4" />}
+              </button>
             </div>
-            {empresas.length > 1 && (
+            {!compactSidebar && empresas.length > 1 && (
               <Select value={empresaAtual?.id || ""} onValueChange={setEmpresaId}>
                 <SelectTrigger className="h-8 text-xs bg-sidebar-accent text-sidebar-foreground border-sidebar-border"><SelectValue /></SelectTrigger>
                 <SelectContent>
@@ -350,67 +366,83 @@ export function AppLayout({ children }: { children: React.ReactNode }) {
                 </SelectContent>
               </Select>
             )}
-            {empresaAtual && (
+            {!compactSidebar && empresaAtual && (
               <a href={`/e/${empresaAtual.slug}`} target="_blank" rel="noopener" className="flex items-center gap-1 text-[11px] text-sidebar-foreground/60 hover:text-sidebar-foreground">
                 <ExternalLink className="h-3 w-3" /> Página pública: /e/{empresaAtual.slug}
               </a>
             )}
           </div>
-          <div className="px-3 pt-3 pb-2 border-b border-sidebar-border">
-            <p className="text-[10px] uppercase tracking-wide text-sidebar-foreground/50 font-medium px-1 mb-2">
-              Atalhos
-            </p>
-            <div className="grid grid-cols-5 gap-1">
-              {nav.map((n) => {
-                const active = location.pathname.startsWith(n.to);
-                return (
-                  <Link
-                    key={`atalho-${n.to}`}
-                    to={n.to}
-                    preload="intent"
-                    title={n.label}
-                    className={cn(
-                      "flex items-center justify-center h-9 w-full rounded-md transition-colors",
-                      active
-                        ? "bg-sidebar-primary text-sidebar-primary-foreground"
-                        : "text-sidebar-foreground/70 hover:bg-sidebar-accent hover:text-sidebar-accent-foreground"
-                    )}
-                  >
-                    <n.icon className="h-4 w-4" />
-                  </Link>
-                );
-              })}
+          {!compactSidebar && (
+            <div className="px-3 pt-3 pb-2 border-b border-sidebar-border">
+              <p className="text-[10px] uppercase tracking-wide text-sidebar-foreground/50 font-medium px-1 mb-2">
+                Atalhos
+              </p>
+              <div className="grid grid-cols-5 gap-1">
+                {nav.map((n) => {
+                  const active = location.pathname.startsWith(n.to);
+                  return (
+                    <Link
+                      key={`atalho-${n.to}`}
+                      to={n.to}
+                      preload="intent"
+                      title={n.label}
+                      className={cn(
+                        "flex items-center justify-center h-9 w-full rounded-md transition-colors",
+                        active
+                          ? "bg-sidebar-primary text-sidebar-primary-foreground"
+                          : "text-sidebar-foreground/70 hover:bg-sidebar-accent hover:text-sidebar-accent-foreground"
+                      )}
+                    >
+                      <n.icon className="h-4 w-4" />
+                    </Link>
+                  );
+                })}
+              </div>
             </div>
-          </div>
-          <nav className="flex-1 px-3 py-4 space-y-4 overflow-y-auto">
+          )}
+          <nav className={cn("flex-1 overflow-y-auto overflow-x-hidden", compactSidebar ? "px-1.5 py-3 space-y-3" : "px-3 py-4 space-y-4") }>
             {navGroupsFinal.map((g) => {
               const collapsed = !!collapsedGroups[g.label];
               return (
                 <div key={g.label} className="space-y-1">
-                  <button
-                    type="button"
-                    onClick={() => toggleGroup(g.label)}
-                    className="w-full flex items-center justify-between px-3 mb-1 text-sidebar-foreground/50 hover:text-sidebar-foreground transition-colors"
-                  >
-                    <span className="text-[10px] uppercase tracking-wide font-medium">{g.label}</span>
-                    {collapsed ? <ChevronRight className="h-3 w-3" /> : <ChevronDown className="h-3 w-3" />}
-                  </button>
-                  {!collapsed && g.items.map((n) => {
+                  {compactSidebar ? (
+                    <div className="px-1 mb-1 h-3 hidden group-hover/sidebar:block">
+                      <span className="text-[10px] uppercase tracking-wide font-medium text-sidebar-foreground/50">{g.label}</span>
+                    </div>
+                  ) : (
+                    <button
+                      type="button"
+                      onClick={() => toggleGroup(g.label)}
+                      className="w-full flex items-center justify-between px-3 mb-1 text-sidebar-foreground/50 hover:text-sidebar-foreground transition-colors"
+                    >
+                      <span className="text-[10px] uppercase tracking-wide font-medium">{g.label}</span>
+                      {collapsed ? <ChevronRight className="h-3 w-3" /> : <ChevronDown className="h-3 w-3" />}
+                    </button>
+                  )}
+                  {(compactSidebar || !collapsed) && g.items.map((n) => {
                     const active = location.pathname.startsWith(n.to);
                     return (
                       <Link
                         key={n.to}
                         to={n.to}
                         preload="intent"
+                        title={compactSidebar ? n.label : undefined}
                         className={cn(
-                          "flex items-center gap-3 px-3 py-2 rounded-lg text-sm font-medium transition-colors",
+                          "flex items-center rounded-lg text-sm font-medium transition-colors whitespace-nowrap",
+                          compactSidebar
+                            ? "gap-3 px-2 py-2 border-l-2 border-transparent"
+                            : "gap-3 px-3 py-2",
                           active
-                            ? "bg-sidebar-primary text-sidebar-primary-foreground shadow-[var(--shadow-elegant)]"
+                            ? compactSidebar
+                              ? "bg-sidebar-accent text-sidebar-accent-foreground border-l-2 border-sidebar-primary"
+                              : "bg-sidebar-primary text-sidebar-primary-foreground shadow-[var(--shadow-elegant)]"
                             : "text-sidebar-foreground/70 hover:bg-sidebar-accent hover:text-sidebar-accent-foreground"
                         )}
                       >
-                        <n.icon className="h-4 w-4" />
-                        {n.label}
+                        <n.icon className="h-4 w-4 shrink-0" />
+                        <span className={cn(compactSidebar && "opacity-0 group-hover/sidebar:opacity-100 transition-opacity")}>
+                          {n.label}
+                        </span>
                       </Link>
                     );
                   })}
@@ -418,23 +450,33 @@ export function AppLayout({ children }: { children: React.ReactNode }) {
               );
             })}
           </nav>
-          <div className="p-3 border-t border-sidebar-border">
-            <div className="px-3 py-2 mb-2 flex items-center justify-between gap-2">
-              <div className="min-w-0">
-                <p className="text-xs text-sidebar-foreground/60">Conectado como</p>
-                <p className="text-sm font-medium truncate text-sidebar-foreground">{user?.email}</p>
-              </div>
-              <ThemeToggle className="text-sidebar-foreground/80 hover:bg-sidebar-accent hover:text-sidebar-accent-foreground shrink-0" />
-            </div>
-            <div className="px-3 pb-2">
-              {!isMobile && <OnlineUsersWidget />}
-            </div>
+          <div className={cn("border-t border-sidebar-border", compactSidebar ? "p-2" : "p-3") }>
+            {!compactSidebar && (
+              <>
+                <div className="px-3 py-2 mb-2 flex items-center justify-between gap-2">
+                  <div className="min-w-0">
+                    <p className="text-xs text-sidebar-foreground/60">Conectado como</p>
+                    <p className="text-sm font-medium truncate text-sidebar-foreground">{user?.email}</p>
+                  </div>
+                  <ThemeToggle className="text-sidebar-foreground/80 hover:bg-sidebar-accent hover:text-sidebar-accent-foreground shrink-0" />
+                </div>
+                <div className="px-3 pb-2">
+                  {!isMobile && <OnlineUsersWidget />}
+                </div>
+              </>
+            )}
             <Button
               variant="ghost"
-              className="w-full justify-start text-sidebar-foreground/80 hover:bg-sidebar-accent hover:text-sidebar-accent-foreground"
+              size={compactSidebar ? "icon" : "default"}
+              className={cn(
+                "text-sidebar-foreground/80 hover:bg-sidebar-accent hover:text-sidebar-accent-foreground",
+                compactSidebar ? "w-full h-9" : "w-full justify-start"
+              )}
               onClick={handleLogout}
+              title="Sair"
             >
-              <LogOut className="h-4 w-4 mr-2" /> Sair
+              <LogOut className={cn("h-4 w-4", !compactSidebar && "mr-2")} />
+              {!compactSidebar && "Sair"}
             </Button>
           </div>
         </aside>
