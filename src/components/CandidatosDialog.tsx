@@ -53,6 +53,8 @@ export function CandidatosDialog({ vaga, canEdit, onClose }: { vaga: Vaga; canEd
   const [adding, setAdding] = useState(false);
   const [admDialog, setAdmDialog] = useState<Cand | null>(null);
   const [selecionado, setSelecionado] = useState<Cand | null>(null);
+  const [view, setView] = useState<"kanban" | "tabela">("kanban");
+  const [dragOver, setDragOver] = useState<string | null>(null);
   const [novo, setNovo] = useState({ nome: "", email: "", telefone: "", cidade: "", endereco: "", observacao: "", curriculo_url: "" });
   const [admForm, setAdmForm] = useState({ data_inicio: new Date().toISOString().slice(0, 10), cargo_oferecido: "", salario: "" });
 
@@ -150,7 +152,7 @@ export function CandidatosDialog({ vaga, canEdit, onClose }: { vaga: Vaga; canEd
 
   return (
     <Dialog open onOpenChange={(o) => !o && onClose()}>
-      <DialogContent className="max-w-5xl max-h-[92vh] overflow-y-auto">
+      <DialogContent className="max-w-6xl max-h-[92vh] overflow-y-auto">
         <DialogHeader>
           <DialogTitle>Candidatos — {vaga.cargo || "Vaga"} {vaga.setor ? `(${vaga.setor})` : ""}</DialogTitle>
         </DialogHeader>
@@ -168,11 +170,17 @@ export function CandidatosDialog({ vaga, canEdit, onClose }: { vaga: Vaga; canEd
           <div className="text-sm text-muted-foreground">
             {rows.length} candidato(s) — {rows.filter((r) => r.origem === "link").length} via link
           </div>
-          {canEdit && (
-            <Button size="sm" onClick={() => setAdding((v) => !v)}>
-              <Plus className="h-4 w-4 mr-1" /> {adding ? "Cancelar" : "Adicionar manualmente"}
-            </Button>
-          )}
+          <div className="flex items-center gap-2">
+            <div className="inline-flex rounded-md border overflow-hidden">
+              <button type="button" onClick={() => setView("kanban")} className={`px-3 py-1 text-xs ${view === "kanban" ? "bg-primary text-primary-foreground" : "bg-background hover:bg-muted"}`}>Kanban</button>
+              <button type="button" onClick={() => setView("tabela")} className={`px-3 py-1 text-xs ${view === "tabela" ? "bg-primary text-primary-foreground" : "bg-background hover:bg-muted"}`}>Tabela</button>
+            </div>
+            {canEdit && (
+              <Button size="sm" onClick={() => setAdding((v) => !v)}>
+                <Plus className="h-4 w-4 mr-1" /> {adding ? "Cancelar" : "Adicionar"}
+              </Button>
+            )}
+          </div>
         </div>
 
         {adding && (
@@ -195,6 +203,83 @@ export function CandidatosDialog({ vaga, canEdit, onClose }: { vaga: Vaga; canEd
         )}
 
         <div className="grid grid-cols-1 lg:grid-cols-[1fr_300px] gap-4">
+          {view === "kanban" ? (
+            <div className="overflow-x-auto -mx-2 px-2">
+              <div className="flex gap-3 min-w-max pb-2">
+                {ETAPAS.map((etapa) => {
+                  const cards = rows.filter((r) => r.etapa === etapa.v);
+                  const isOver = dragOver === etapa.v;
+                  return (
+                    <div
+                      key={etapa.v}
+                      onDragOver={(e) => { if (canEdit) { e.preventDefault(); setDragOver(etapa.v); } }}
+                      onDragLeave={() => setDragOver(null)}
+                      onDrop={(e) => {
+                        e.preventDefault();
+                        setDragOver(null);
+                        if (!canEdit) return;
+                        const id = e.dataTransfer.getData("text/plain");
+                        const cand = rows.find((r) => r.id === id);
+                        if (cand && cand.etapa !== etapa.v) moverEtapa(cand, etapa.v);
+                      }}
+                      className={`w-64 shrink-0 rounded-lg border bg-muted/20 flex flex-col ${isOver ? "ring-2 ring-primary" : ""}`}
+                    >
+                      <div className={`${etapa.color} text-white px-3 py-2 rounded-t-lg flex items-center justify-between text-xs font-semibold`}>
+                        <span>{etapa.l}</span>
+                        <Badge variant="secondary" className="h-5 text-[10px] bg-white/20 text-white border-0">{cards.length}</Badge>
+                      </div>
+                      <div className="p-2 space-y-2 min-h-[120px]">
+                        {loading ? (
+                          <div className="text-xs text-muted-foreground text-center py-4">…</div>
+                        ) : cards.length === 0 ? (
+                          <div className="text-xs text-muted-foreground text-center py-4 italic">Vazio</div>
+                        ) : cards.map((c) => {
+                          const isSel = selecionado?.id === c.id;
+                          return (
+                            <div
+                              key={c.id}
+                              draggable={canEdit}
+                              onDragStart={(e) => e.dataTransfer.setData("text/plain", c.id)}
+                              onClick={() => setSelecionado(c)}
+                              className={`bg-card border rounded-md p-2 text-xs cursor-pointer hover:shadow-sm transition ${isSel ? "ring-2 ring-primary" : ""} ${canEdit ? "active:cursor-grabbing" : ""}`}
+                            >
+                              <div className="font-medium text-sm truncate">{c.nome}</div>
+                              <div className="text-muted-foreground text-[11px] mt-0.5 flex items-center gap-1 flex-wrap">
+                                {c.cidade && <span>{c.cidade}</span>}
+                                {c.origem === "link" && <Badge variant="outline" className="text-[9px] h-4">link</Badge>}
+                              </div>
+                              <div className="flex items-center gap-2 mt-1.5 text-[11px]">
+                                {c.telefone && waLink(c.telefone) && (
+                                  <a href={waLink(c.telefone)} target="_blank" rel="noreferrer" onClick={(ev) => ev.stopPropagation()} className="text-emerald-600 hover:text-emerald-700 inline-flex items-center gap-1">
+                                    <MessageCircle className="h-3 w-3" /> WhatsApp
+                                  </a>
+                                )}
+                                {c.curriculo_url && (
+                                  <a href={c.curriculo_url} target="_blank" rel="noreferrer" onClick={(ev) => ev.stopPropagation()} className="text-primary hover:underline inline-flex items-center gap-1">
+                                    <FileText className="h-3 w-3" /> CV
+                                  </a>
+                                )}
+                              </div>
+                              {canEdit && (
+                                <div className="mt-1.5">
+                                  <Select value={c.etapa} onValueChange={(v) => moverEtapa(c, v)}>
+                                    <SelectTrigger className="h-7 text-[11px]" onClick={(ev) => ev.stopPropagation()}><SelectValue /></SelectTrigger>
+                                    <SelectContent>
+                                      {ETAPAS.map((e) => <SelectItem key={e.v} value={e.v}>{e.l}</SelectItem>)}
+                                    </SelectContent>
+                                  </Select>
+                                </div>
+                              )}
+                            </div>
+                          );
+                        })}
+                      </div>
+                    </div>
+                  );
+                })}
+              </div>
+            </div>
+          ) : (
           <div className="overflow-x-auto">
             <Table>
               <TableHeader>
@@ -288,6 +373,7 @@ export function CandidatosDialog({ vaga, canEdit, onClose }: { vaga: Vaga; canEd
               </TableBody>
             </Table>
           </div>
+          )}
 
           <aside className="border rounded-lg p-4 bg-muted/30 h-fit lg:sticky lg:top-0 space-y-3">
             {!selecionado ? (
