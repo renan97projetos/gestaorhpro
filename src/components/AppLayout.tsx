@@ -14,6 +14,7 @@ import { OnboardingTour } from "@/components/OnboardingTour";
 import { AniversarioPopup } from "@/components/AniversarioPopup";
 import { AvisoPopup } from "@/components/AvisoPopup";
 import { OnlineUsersWidget } from "@/components/OnlineUsersWidget";
+import { LogoEditorDialog } from "@/components/LogoEditorDialog";
 import { useIsMobile } from "@/hooks/use-mobile";
 
 type NavItem = { to: string; label: string; icon: React.ComponentType<{ className?: string }> };
@@ -85,21 +86,20 @@ export function AppLayout({ children }: { children: React.ReactNode }) {
   const desabilitados = (empresaAtual?.modulos_desabilitados || []) as string[];
   void baseNav;
   const logoInputRef = useRef<HTMLInputElement>(null);
+  void logoInputRef;
   const [uploadingLogo, setUploadingLogo] = useState(false);
+  const [logoEditorOpen, setLogoEditorOpen] = useState(false);
 
-  const handleLogoUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
-    const file = e.target.files?.[0];
-    if (!file || !empresaAtual) return;
+  const handleLogoSave = async (file: File) => {
+    if (!empresaAtual) return;
     if (!isGestorEmpresa) {
       toast.error("Apenas gestores podem alterar a logo");
       return;
     }
     setUploadingLogo(true);
     try {
-      // Auto-ajuste: detecta conteúdo, centraliza num quadrado 512x512 com padding
-      const fitted = await autoFitImage(file, { size: 512, padding: 0.1 });
-      const path = `${empresaAtual.id}/logo_url-${Date.now()}-${fitted.name}`;
-      const { error: upErr } = await supabase.storage.from("empresa-assets").upload(path, fitted, { upsert: true, contentType: fitted.type });
+      const path = `${empresaAtual.id}/logo_url-${Date.now()}-${file.name}`;
+      const { error: upErr } = await supabase.storage.from("empresa-assets").upload(path, file, { upsert: true, contentType: file.type });
       if (upErr) throw upErr;
       const { data } = supabase.storage.from("empresa-assets").getPublicUrl(path);
       const { data: updated, error: updErr } = await supabase
@@ -114,11 +114,12 @@ export function AppLayout({ children }: { children: React.ReactNode }) {
       await refresh();
     } catch (err) {
       toast.error((err as Error).message);
+      throw err;
     } finally {
       setUploadingLogo(false);
-      if (logoInputRef.current) logoInputRef.current.value = "";
     }
   };
+  void autoFitImage;
   const adminGroupItems: NavItem[] = [
     ...(isGestorEmpresa ? [{ to: "/empresa-config", label: "Configurações da Empresa", icon: Settings }] : []),
     ...(isAdminEmpresa ? [{ to: "/empresa-membros", label: "Usuários da Empresa", icon: UserCog }] : []),
@@ -310,20 +311,20 @@ export function AppLayout({ children }: { children: React.ReactNode }) {
             <div className="flex items-center gap-2">
               <button
                 type="button"
-                onClick={() => isGestorEmpresa && logoInputRef.current?.click()}
+                onClick={() => isGestorEmpresa && setLogoEditorOpen(true)}
                 disabled={!isGestorEmpresa || uploadingLogo}
-                title={isGestorEmpresa ? "Clique para enviar a logo (PNG)" : "Logo da empresa"}
+                title={isGestorEmpresa ? "Clique para editar a logo" : "Logo da empresa"}
                 className={cn(
-                  "relative h-9 w-9 rounded-lg overflow-hidden shrink-0 group",
+                  "relative h-9 w-9 rounded-lg overflow-hidden shrink-0 group bg-sidebar-accent flex items-center justify-center",
                   isGestorEmpresa && "cursor-pointer"
                 )}
               >
                 {empresaAtual?.logo_url ? (
-                  <img src={empresaAtual.logo_url} alt={empresaAtual.nome} className="h-9 w-9 rounded-lg object-cover bg-sidebar-primary" />
+                  <img src={empresaAtual.logo_url} alt={empresaAtual.nome} className="h-9 w-9 rounded-lg object-contain" />
                 ) : (
-                  <div className="h-9 w-9 rounded-lg bg-sidebar-primary flex items-center justify-center text-sidebar-primary-foreground font-bold text-xs">
+                  <span className="text-sidebar-foreground/80 font-bold text-xs">
                     {(empresaAtual?.nome || "—").slice(0, 2).toUpperCase()}
-                  </div>
+                  </span>
                 )}
                 {isGestorEmpresa && (
                   <div className="absolute inset-0 bg-black/50 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center rounded-lg">
@@ -336,13 +337,6 @@ export function AppLayout({ children }: { children: React.ReactNode }) {
                   </div>
                 )}
               </button>
-              <input
-                ref={logoInputRef}
-                type="file"
-                accept="image/png,image/jpeg,image/webp"
-                className="hidden"
-                onChange={handleLogoUpload}
-              />
               <div className={cn("min-w-0 flex-1 whitespace-nowrap overflow-hidden", compactSidebar && "opacity-0 group-hover/sidebar:opacity-100 transition-opacity")}>
                 <p className="text-sm font-semibold leading-none text-sidebar-foreground truncate">{empresaAtual?.nome || "Selecione"}</p>
                 <p className="text-xs text-sidebar-foreground/60 mt-0.5">GestãoRHPRO</p>
@@ -545,6 +539,12 @@ export function AppLayout({ children }: { children: React.ReactNode }) {
       <OnboardingTour />
       <AniversarioPopup />
       <AvisoPopup />
+      <LogoEditorDialog
+        open={logoEditorOpen}
+        onOpenChange={setLogoEditorOpen}
+        currentUrl={empresaAtual?.logo_url}
+        onSave={handleLogoSave}
+      />
     </div>
   );
 }
