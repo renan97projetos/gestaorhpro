@@ -10,8 +10,11 @@ import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from "@/components/ui/dialog";
 import { toast } from "sonner";
-import { Plus, Pin, Trash2, Pencil, NotebookPen } from "lucide-react";
+import { Plus, Pin, Trash2, Pencil, NotebookPen, StickyNote } from "lucide-react";
 import { logAudit } from "@/lib/audit";
+import { useFloatingNotes } from "@/components/FloatingNotes";
+import { Switch } from "@/components/ui/switch";
+import { Label } from "@/components/ui/label";
 
 export const Route = createFileRoute("/notas")({
   component: () => (
