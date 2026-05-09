@@ -146,6 +146,15 @@ function Page() {
               <div className="flex items-center justify-between text-xs text-slate-700 pt-2 border-t border-black/10">
                 <span>{new Date(n.updated_at).toLocaleString("pt-BR")}</span>
                 <div className="flex gap-1">
+                  <Button
+                    variant="ghost"
+                    size="icon"
+                    className={`h-7 w-7 hover:bg-black/10 ${isFloating(n.id) ? "text-amber-700" : "text-slate-700"}`}
+                    onClick={() => toggleFloating(n)}
+                    title={isFloating(n.id) ? "Remover da tela" : "Fixar na tela (flutuante)"}
+                  >
+                    <StickyNote className={`h-3.5 w-3.5 ${isFloating(n.id) ? "fill-amber-400" : ""}`} />
+                  </Button>
                   <Button variant="ghost" size="icon" className="h-7 w-7 text-slate-700 hover:bg-black/10" onClick={() => openEdit(n)}><Pencil className="h-3.5 w-3.5" /></Button>
                   <Button variant="ghost" size="icon" className="h-7 w-7 text-red-600 hover:bg-black/10" onClick={() => remover(n)}><Trash2 className="h-3.5 w-3.5" /></Button>
                 </div>
