@@ -432,22 +432,29 @@ export function AppLayout({ children }: { children: React.ReactNode }) {
           </div>
         </header>
         {open && (
-          <nav className="md:hidden border-b border-sidebar-border bg-sidebar text-sidebar-foreground px-3 py-3 space-y-1">
-            {nav.map((n) => (
-              <Link
-                key={n.to}
-                to={n.to}
-                preload="intent"
-                onClick={() => setOpen(false)}
-                className={cn(
-                  "flex items-center gap-3 px-3 py-2 rounded-lg text-sm font-medium",
-                  location.pathname.startsWith(n.to)
-                    ? "bg-sidebar-primary text-sidebar-primary-foreground"
-                    : "text-sidebar-foreground/70 hover:bg-sidebar-accent hover:text-sidebar-accent-foreground"
-                )}
-              >
-                <n.icon className="h-4 w-4" /> {n.label}
-              </Link>
+          <nav className="md:hidden border-b border-sidebar-border bg-sidebar text-sidebar-foreground px-3 py-3 space-y-3">
+            {navGroupsFinal.map((g) => (
+              <div key={g.label} className="space-y-1">
+                <p className="text-[10px] uppercase tracking-wide text-sidebar-foreground/50 font-medium px-2">
+                  {g.label}
+                </p>
+                {g.items.map((n) => (
+                  <Link
+                    key={n.to}
+                    to={n.to}
+                    preload="intent"
+                    onClick={() => setOpen(false)}
+                    className={cn(
+                      "flex items-center gap-3 px-3 py-2 rounded-lg text-sm font-medium",
+                      location.pathname.startsWith(n.to)
+                        ? "bg-sidebar-primary text-sidebar-primary-foreground"
+                        : "text-sidebar-foreground/70 hover:bg-sidebar-accent hover:text-sidebar-accent-foreground"
+                    )}
+                  >
+                    <n.icon className="h-4 w-4" /> {n.label}
+                  </Link>
+                ))}
+              </div>
             ))}
             <Button
               variant="ghost"
