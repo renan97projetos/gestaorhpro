@@ -98,15 +98,28 @@ function Page() {
   });
 
   const load = async () => {
-    if (!empresaAtual) { setRows([]); setColabs([]); setLoading(false); return; }
+    if (!empresaAtual) { setRows([]); setColabs([]); setCounts({}); setLoading(false); return; }
     setLoading(true);
     const [m, c] = await Promise.all([
       supabase.from("admissoes_movimentacao").select("*").eq("empresa_id", empresaAtual.id).order("data_abertura", { ascending: false }),
       supabase.from("colaboradores").select("id,colaborador,cargo,setor,status").eq("empresa_id", empresaAtual.id).order("colaborador"),
     ]);
     if (m.error) toast.error(m.error.message);
-    setRows((m.data as Mov[]) || []);
+    const movs = (m.data as Mov[]) || [];
+    setRows(movs);
     setColabs((c.data as ColabLite[]) || []);
+    // contagem de candidatos por vaga
+    const ids = movs.map((r) => r.id);
+    if (ids.length) {
+      const { data: cands } = await supabase.from("vaga_candidatos").select("vaga_id,etapa").in("vaga_id", ids);
+      const map: Record<string, { total: number; processo: number }> = {};
+      (cands as { vaga_id: string; etapa: string }[] | null || []).forEach((k) => {
+        if (!map[k.vaga_id]) map[k.vaga_id] = { total: 0, processo: 0 };
+        map[k.vaga_id].total++;
+        if (k.etapa && !["reprovado", "admissao"].includes(k.etapa)) map[k.vaga_id].processo++;
+      });
+      setCounts(map);
+    } else setCounts({});
     setLoading(false);
   };
 
