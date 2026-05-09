@@ -158,11 +158,30 @@ export function CandidatosDialog({ vaga, canEdit, onClose }: { vaga: Vaga; canEd
         </DialogHeader>
 
         {linkPublico && vaga.status === "aberta" && (
-          <div className="flex items-center gap-2 p-3 rounded-lg border bg-muted/40">
-            <Link2 className="h-4 w-4 text-primary shrink-0" />
-            <Input readOnly value={linkPublico} className="text-xs" />
-            <Button size="sm" variant="outline" onClick={copiarLink}>Copiar</Button>
-            <Button size="sm" variant="ghost" onClick={() => window.open(linkPublico, "_blank")}><ExternalLink className="h-3.5 w-3.5" /></Button>
+          <div className="rounded-lg border bg-muted/40 p-3 space-y-2">
+            <div className="flex items-center gap-2 text-sm font-medium">
+              <Link2 className="h-4 w-4 text-primary" /> Divulgar vaga
+            </div>
+            <div className="flex flex-wrap gap-2">
+              <a
+                href={`https://wa.me/?text=${encodeURIComponent(
+                  `Vaga: ${vaga.cargo || "Oportunidade"}${vaga.setor ? ` (${vaga.setor})` : ""}\nInscreva-se: ${linkPublico}`
+                )}`}
+                target="_blank"
+                rel="noreferrer"
+              >
+                <Button size="sm" className="bg-emerald-600 hover:bg-emerald-700 text-white">
+                  <MessageCircle className="h-4 w-4 mr-1.5" /> WhatsApp
+                </Button>
+              </a>
+              <Button size="sm" variant="outline" onClick={copiarLink}>
+                <Link2 className="h-4 w-4 mr-1.5" /> Copiar link
+              </Button>
+              <Button size="sm" variant="ghost" onClick={() => window.open(linkPublico, "_blank")}>
+                <ExternalLink className="h-4 w-4 mr-1.5" /> Abrir
+              </Button>
+            </div>
+            <p className="text-[11px] text-muted-foreground truncate">{linkPublico}</p>
           </div>
         )}
 
