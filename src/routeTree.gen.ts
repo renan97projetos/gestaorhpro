@@ -28,6 +28,7 @@ import { Route as EntrevistasDesligamentoRouteImport } from './routes/entrevista
 import { Route as EmpresaMembrosRouteImport } from './routes/empresa-membros'
 import { Route as EmpresaConfigRouteImport } from './routes/empresa-config'
 import { Route as DocumentosAdmissaoRouteImport } from './routes/documentos-admissao'
+import { Route as DocumentacaoProdutoRouteImport } from './routes/documentacao-produto'
 import { Route as DashboardRouteImport } from './routes/dashboard'
 import { Route as CrmRouteImport } from './routes/crm'
 import { Route as ChamadosRouteImport } from './routes/chamados'
@@ -142,6 +143,11 @@ const EmpresaConfigRoute = EmpresaConfigRouteImport.update({
 const DocumentosAdmissaoRoute = DocumentosAdmissaoRouteImport.update({
   id: '/documentos-admissao',
   path: '/documentos-admissao',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const DocumentacaoProdutoRoute = DocumentacaoProdutoRouteImport.update({
+  id: '/documentacao-produto',
+  path: '/documentacao-produto',
   getParentRoute: () => rootRouteImport,
 } as any)
 const DashboardRoute = DashboardRouteImport.update({
@@ -260,6 +266,7 @@ export interface FileRoutesByFullPath {
   '/chamados': typeof ChamadosRoute
   '/crm': typeof CrmRoute
   '/dashboard': typeof DashboardRoute
+  '/documentacao-produto': typeof DocumentacaoProdutoRoute
   '/documentos-admissao': typeof DocumentosAdmissaoRoute
   '/empresa-config': typeof EmpresaConfigRoute
   '/empresa-membros': typeof EmpresaMembrosRoute
@@ -301,6 +308,7 @@ export interface FileRoutesByTo {
   '/chamados': typeof ChamadosRoute
   '/crm': typeof CrmRoute
   '/dashboard': typeof DashboardRoute
+  '/documentacao-produto': typeof DocumentacaoProdutoRoute
   '/documentos-admissao': typeof DocumentosAdmissaoRoute
   '/empresa-config': typeof EmpresaConfigRoute
   '/empresa-membros': typeof EmpresaMembrosRoute
@@ -343,6 +351,7 @@ export interface FileRoutesById {
   '/chamados': typeof ChamadosRoute
   '/crm': typeof CrmRoute
   '/dashboard': typeof DashboardRoute
+  '/documentacao-produto': typeof DocumentacaoProdutoRoute
   '/documentos-admissao': typeof DocumentosAdmissaoRoute
   '/empresa-config': typeof EmpresaConfigRoute
   '/empresa-membros': typeof EmpresaMembrosRoute
@@ -386,6 +395,7 @@ export interface FileRouteTypes {
     | '/chamados'
     | '/crm'
     | '/dashboard'
+    | '/documentacao-produto'
     | '/documentos-admissao'
     | '/empresa-config'
     | '/empresa-membros'
@@ -427,6 +437,7 @@ export interface FileRouteTypes {
     | '/chamados'
     | '/crm'
     | '/dashboard'
+    | '/documentacao-produto'
     | '/documentos-admissao'
     | '/empresa-config'
     | '/empresa-membros'
@@ -468,6 +479,7 @@ export interface FileRouteTypes {
     | '/chamados'
     | '/crm'
     | '/dashboard'
+    | '/documentacao-produto'
     | '/documentos-admissao'
     | '/empresa-config'
     | '/empresa-membros'
@@ -510,6 +522,7 @@ export interface RootRouteChildren {
   ChamadosRoute: typeof ChamadosRoute
   CrmRoute: typeof CrmRoute
   DashboardRoute: typeof DashboardRoute
+  DocumentacaoProdutoRoute: typeof DocumentacaoProdutoRoute
   DocumentosAdmissaoRoute: typeof DocumentosAdmissaoRoute
   EmpresaConfigRoute: typeof EmpresaConfigRoute
   EmpresaMembrosRoute: typeof EmpresaMembrosRoute
@@ -669,6 +682,13 @@ declare module '@tanstack/react-router' {
       path: '/documentos-admissao'
       fullPath: '/documentos-admissao'
       preLoaderRoute: typeof DocumentosAdmissaoRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/documentacao-produto': {
+      id: '/documentacao-produto'
+      path: '/documentacao-produto'
+      fullPath: '/documentacao-produto'
+      preLoaderRoute: typeof DocumentacaoProdutoRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/dashboard': {
@@ -839,6 +859,7 @@ const rootRouteChildren: RootRouteChildren = {
   ChamadosRoute: ChamadosRoute,
   CrmRoute: CrmRoute,
   DashboardRoute: DashboardRoute,
+  DocumentacaoProdutoRoute: DocumentacaoProdutoRoute,
   DocumentosAdmissaoRoute: DocumentosAdmissaoRoute,
   EmpresaConfigRoute: EmpresaConfigRoute,
   EmpresaMembrosRoute: EmpresaMembrosRoute,
