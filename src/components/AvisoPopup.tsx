@@ -4,6 +4,8 @@ import { useAuth } from "@/lib/auth-context";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
+import { Checkbox } from "@/components/ui/checkbox";
+import { Label } from "@/components/ui/label";
 import { AlertTriangle, Info, CheckCircle2, Megaphone } from "lucide-react";
 import { Link } from "@tanstack/react-router";
 
@@ -23,6 +25,7 @@ const critIcon = (c: string) =>
 export function AvisoPopup() {
   const { user } = useAuth();
   const [aviso, setAviso] = useState<Aviso | null>(null);
+  const [naoMostrar, setNaoMostrar] = useState(true);
 
   useEffect(() => {
     if (!user) return;
@@ -41,13 +44,18 @@ export function AvisoPopup() {
         .in("aviso_id", avisos.map(a => a.id));
       const lidosSet = new Set((lidos || []).map(l => l.aviso_id));
       const naoLido = avisos.find(a => !lidosSet.has(a.id));
-      if (naoLido) setAviso(naoLido as Aviso);
+      if (naoLido) {
+        setAviso(naoLido as Aviso);
+        setNaoMostrar(true);
+      }
     })();
   }, [user]);
 
   const fechar = async () => {
     if (!aviso || !user) return;
-    await supabase.from("avisos_leituras").insert({ aviso_id: aviso.id, user_id: user.id });
+    if (naoMostrar) {
+      await supabase.from("avisos_leituras").insert({ aviso_id: aviso.id, user_id: user.id });
+    }
     setAviso(null);
   };
 
@@ -69,6 +77,16 @@ export function AvisoPopup() {
         <div className="space-y-2">
           <p className="text-sm">{aviso.resumo}</p>
           {aviso.conteudo && <p className="text-xs text-muted-foreground whitespace-pre-wrap">{aviso.conteudo}</p>}
+        </div>
+        <div className="flex items-center gap-2 pt-2">
+          <Checkbox
+            id="nao-mostrar-aviso"
+            checked={naoMostrar}
+            onCheckedChange={(v) => setNaoMostrar(v === true)}
+          />
+          <Label htmlFor="nao-mostrar-aviso" className="text-sm cursor-pointer">
+            Não mostrar este aviso novamente
+          </Label>
         </div>
         <DialogFooter className="gap-2 sm:gap-2">
           <Link to="/avisos" onClick={fechar}>
