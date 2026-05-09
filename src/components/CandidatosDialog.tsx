@@ -152,7 +152,7 @@ export function CandidatosDialog({ vaga, canEdit, onClose }: { vaga: Vaga; canEd
 
   return (
     <Dialog open onOpenChange={(o) => !o && onClose()}>
-      <DialogContent className="max-w-5xl max-h-[92vh] overflow-y-auto">
+      <DialogContent className="max-w-6xl max-h-[92vh] overflow-y-auto">
         <DialogHeader>
           <DialogTitle>Candidatos — {vaga.cargo || "Vaga"} {vaga.setor ? `(${vaga.setor})` : ""}</DialogTitle>
         </DialogHeader>
