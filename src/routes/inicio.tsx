@@ -112,6 +112,7 @@ function InicioPage() {
     <AppLayout>
       <main className="min-h-full bg-[image:var(--gradient-soft)] px-4 md:px-6 py-6 md:py-10 space-y-8">
         <div className="max-w-6xl mx-auto">
+        <TypingLoop empresaNome={empresaAtual?.nome || ""} />
         <section>
           <p className="text-xs font-semibold tracking-wider text-muted-foreground mb-4">GESTÃO</p>
           <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-3 md:gap-4">
