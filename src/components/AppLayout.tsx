@@ -191,6 +191,7 @@ export function AppLayout({ children }: { children: React.ReactNode }) {
   };
 
   return (
+    <FloatingNotesProvider>
     <div className="min-h-screen bg-background flex">
       {/* Sidebar desktop */}
       {isAdminMestre ? (
