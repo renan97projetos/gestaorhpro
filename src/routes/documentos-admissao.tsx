@@ -13,6 +13,8 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from "
 import { toast } from "sonner";
 import { FileText, Link2, Copy, ExternalLink, CheckCircle2, Upload, Trash2, Search } from "lucide-react";
 import { DOC_TIPOS } from "@/lib/doc-tipos";
+import { useServerFn } from "@tanstack/react-start";
+import { getDocSignedUrl } from "@/lib/admissao-docs.functions";
 
 export const Route = createFileRoute("/documentos-admissao")({
   component: () => <RequireAuth><Page /></RequireAuth>,
