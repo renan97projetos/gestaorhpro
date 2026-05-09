@@ -170,11 +170,17 @@ export function CandidatosDialog({ vaga, canEdit, onClose }: { vaga: Vaga; canEd
           <div className="text-sm text-muted-foreground">
             {rows.length} candidato(s) — {rows.filter((r) => r.origem === "link").length} via link
           </div>
-          {canEdit && (
-            <Button size="sm" onClick={() => setAdding((v) => !v)}>
-              <Plus className="h-4 w-4 mr-1" /> {adding ? "Cancelar" : "Adicionar manualmente"}
-            </Button>
-          )}
+          <div className="flex items-center gap-2">
+            <div className="inline-flex rounded-md border overflow-hidden">
+              <button type="button" onClick={() => setView("kanban")} className={`px-3 py-1 text-xs ${view === "kanban" ? "bg-primary text-primary-foreground" : "bg-background hover:bg-muted"}`}>Kanban</button>
+              <button type="button" onClick={() => setView("tabela")} className={`px-3 py-1 text-xs ${view === "tabela" ? "bg-primary text-primary-foreground" : "bg-background hover:bg-muted"}`}>Tabela</button>
+            </div>
+            {canEdit && (
+              <Button size="sm" onClick={() => setAdding((v) => !v)}>
+                <Plus className="h-4 w-4 mr-1" /> {adding ? "Cancelar" : "Adicionar"}
+              </Button>
+            )}
+          </div>
         </div>
 
         {adding && (
