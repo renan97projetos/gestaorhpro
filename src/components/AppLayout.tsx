@@ -16,38 +16,73 @@ import { AvisoPopup } from "@/components/AvisoPopup";
 import { OnlineUsersWidget } from "@/components/OnlineUsersWidget";
 import { useIsMobile } from "@/hooks/use-mobile";
 
-const baseNav = [
-  { to: "/inicio", label: "Menu", icon: LayoutGrid },
-  { to: "/avisos", label: "Avisos", icon: Megaphone },
-  { to: "/chamados", label: "Chamados", icon: LifeBuoy },
-  { to: "/base-conhecimento", label: "Base de Conhecimento", icon: BookOpen },
-  { to: "/rede-social", label: "Rede Social (em breve)", icon: Users2 },
-  { to: "/banco-talentos", label: "Banco de Talentos PRO (em breve)", icon: Briefcase },
-  { to: "/canal-etica", label: "Canal de Ética", icon: ShieldCheck },
-  { to: "/dashboard", label: "Dashboard", icon: LayoutDashboard },
-  { to: "/cadastro", label: "Colaboradores", icon: Users },
-  { to: "/chamada", label: "Chamada", icon: UserCheck },
-  { to: "/chamada-terceiros", label: "Chamada Terceiros", icon: Handshake },
-  { to: "/analise-faltas", label: "Análise de Faltas", icon: AlertTriangle },
-  { to: "/experiencia", label: "Experiência (90 dias)", icon: CalendarClock },
-  { to: "/solicitacao-movimentacao", label: "Movimentações", icon: History },
-  { to: "/movimentacoes-admissoes", label: "Gestão de Vagas", icon: ArrowRightLeft },
-  { to: "/historico-admissoes", label: "Histórico Admissões", icon: History },
-  { to: "/documentos-admissao", label: "Documentos Admissão", icon: FolderArchive },
-  { to: "/mapa-alocacao", label: "Mapa de Alocação", icon: MapPin },
-  { to: "/feedbacks", label: "Feedbacks", icon: MessageSquareHeart },
-  { to: "/notas", label: "Bloco de Notas", icon: NotebookPen },
-  { to: "/pesquisas", label: "Pesquisas", icon: ClipboardList },
-  { to: "/ideias", label: "Ideias", icon: Lightbulb },
-  { to: "/geracoes", label: "Gerações", icon: Sparkles },
-  { to: "/aniversariantes", label: "Aniversariantes", icon: Cake },
+type NavItem = { to: string; label: string; icon: React.ComponentType<{ className?: string }> };
+type NavGroup = { label: string; items: NavItem[] };
+
+const navGroups: NavGroup[] = [
+  {
+    label: "Início",
+    items: [
+      { to: "/inicio", label: "Menu", icon: LayoutGrid },
+      { to: "/dashboard", label: "Dashboard", icon: LayoutDashboard },
+      { to: "/avisos", label: "Avisos", icon: Megaphone },
+    ],
+  },
+  {
+    label: "Pessoas",
+    items: [
+      { to: "/cadastro", label: "Colaboradores", icon: Users },
+      { to: "/aniversariantes", label: "Aniversariantes", icon: Cake },
+      { to: "/mapa-alocacao", label: "Mapa de Alocação", icon: MapPin },
+    ],
+  },
+  {
+    label: "Frequência",
+    items: [
+      { to: "/chamada", label: "Chamada", icon: UserCheck },
+      { to: "/chamada-terceiros", label: "Chamada Terceiros", icon: Handshake },
+      { to: "/analise-faltas", label: "Análise de Faltas", icon: AlertTriangle },
+    ],
+  },
+  {
+    label: "Movimentações & Admissões",
+    items: [
+      { to: "/experiencia", label: "Experiência (90 dias)", icon: CalendarClock },
+      { to: "/solicitacao-movimentacao", label: "Movimentações", icon: History },
+      { to: "/movimentacoes-admissoes", label: "Gestão de Vagas", icon: ArrowRightLeft },
+      { to: "/historico-admissoes", label: "Histórico Admissões", icon: History },
+      { to: "/documentos-admissao", label: "Documentos Admissão", icon: FolderArchive },
+    ],
+  },
+  {
+    label: "Engajamento",
+    items: [
+      { to: "/feedbacks", label: "Feedbacks", icon: MessageSquareHeart },
+      { to: "/pesquisas", label: "Pesquisas", icon: ClipboardList },
+      { to: "/ideias", label: "Ideias", icon: Lightbulb },
+      { to: "/geracoes", label: "Gerações", icon: Sparkles },
+      { to: "/notas", label: "Bloco de Notas", icon: NotebookPen },
+    ],
+  },
+  {
+    label: "Suporte & Comunidade",
+    items: [
+      { to: "/chamados", label: "Chamados", icon: LifeBuoy },
+      { to: "/base-conhecimento", label: "Base de Conhecimento", icon: BookOpen },
+      { to: "/canal-etica", label: "Canal de Ética", icon: ShieldCheck },
+      { to: "/rede-social", label: "Rede Social (em breve)", icon: Users2 },
+      { to: "/banco-talentos", label: "Banco de Talentos PRO (em breve)", icon: Briefcase },
+    ],
+  },
 ];
+
+const baseNav: NavItem[] = navGroups.flatMap((g) => g.items);
 
 export function AppLayout({ children }: { children: React.ReactNode }) {
   const { user, signOut, isAdmin } = useAuth();
   const { empresas, empresaAtual, setEmpresaId, isAdminMestre, isAdminEmpresa, isGestorEmpresa, refresh } = useEmpresa();
   const desabilitados = (empresaAtual?.modulos_desabilitados || []) as string[];
-  const baseFiltrada = isAdminMestre ? baseNav : baseNav.filter((n) => !desabilitados.includes(n.to));
+  void baseNav;
   const logoInputRef = useRef<HTMLInputElement>(null);
   const [uploadingLogo, setUploadingLogo] = useState(false);
 
@@ -83,14 +118,9 @@ export function AppLayout({ children }: { children: React.ReactNode }) {
       if (logoInputRef.current) logoInputRef.current.value = "";
     }
   };
-  const nav = [
-    ...baseFiltrada,
-    ...(isGestorEmpresa ? [
-      { to: "/empresa-config", label: "Configurações da Empresa", icon: Settings },
-    ] : []),
-    ...(isAdminEmpresa ? [
-      { to: "/empresa-membros", label: "Usuários da Empresa", icon: UserCog },
-    ] : []),
+  const adminGroupItems: NavItem[] = [
+    ...(isGestorEmpresa ? [{ to: "/empresa-config", label: "Configurações da Empresa", icon: Settings }] : []),
+    ...(isAdminEmpresa ? [{ to: "/empresa-membros", label: "Usuários da Empresa", icon: UserCog }] : []),
     ...(isAdmin ? [
       { to: "/auditoria", label: "Histórico de Uso", icon: Activity },
       { to: "/usuarios", label: "Usuários (legado)", icon: UserCog },
@@ -100,6 +130,14 @@ export function AppLayout({ children }: { children: React.ReactNode }) {
       { to: "/crm", label: "CRM Vendas", icon: Handshake },
     ] : []),
   ];
+  const groupsFiltradas: NavGroup[] = navGroups
+    .map((g) => ({ ...g, items: isAdminMestre ? g.items : g.items.filter((i) => !desabilitados.includes(i.to)) }))
+    .filter((g) => g.items.length > 0);
+  const navGroupsFinal: NavGroup[] = [
+    ...groupsFiltradas,
+    ...(adminGroupItems.length > 0 ? [{ label: "Administração", items: adminGroupItems }] : []),
+  ];
+  const nav: NavItem[] = navGroupsFinal.flatMap((g) => g.items);
   const navigate = useNavigate();
   const location = useLocation();
   const router = useRouter();
@@ -321,26 +359,33 @@ export function AppLayout({ children }: { children: React.ReactNode }) {
               })}
             </div>
           </div>
-          <nav className="flex-1 px-3 py-4 space-y-1 overflow-y-auto">
-            {nav.map((n) => {
-              const active = location.pathname.startsWith(n.to);
-              return (
-                <Link
-                  key={n.to}
-                  to={n.to}
-                  preload="intent"
-                  className={cn(
-                    "flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium transition-colors",
-                    active
-                      ? "bg-sidebar-primary text-sidebar-primary-foreground shadow-[var(--shadow-elegant)]"
-                      : "text-sidebar-foreground/70 hover:bg-sidebar-accent hover:text-sidebar-accent-foreground"
-                  )}
-                >
-                  <n.icon className="h-4 w-4" />
-                  {n.label}
-                </Link>
-              );
-            })}
+          <nav className="flex-1 px-3 py-4 space-y-4 overflow-y-auto">
+            {navGroupsFinal.map((g) => (
+              <div key={g.label} className="space-y-1">
+                <p className="text-[10px] uppercase tracking-wide text-sidebar-foreground/50 font-medium px-3 mb-1">
+                  {g.label}
+                </p>
+                {g.items.map((n) => {
+                  const active = location.pathname.startsWith(n.to);
+                  return (
+                    <Link
+                      key={n.to}
+                      to={n.to}
+                      preload="intent"
+                      className={cn(
+                        "flex items-center gap-3 px-3 py-2 rounded-lg text-sm font-medium transition-colors",
+                        active
+                          ? "bg-sidebar-primary text-sidebar-primary-foreground shadow-[var(--shadow-elegant)]"
+                          : "text-sidebar-foreground/70 hover:bg-sidebar-accent hover:text-sidebar-accent-foreground"
+                      )}
+                    >
+                      <n.icon className="h-4 w-4" />
+                      {n.label}
+                    </Link>
+                  );
+                })}
+              </div>
+            ))}
           </nav>
           <div className="p-3 border-t border-sidebar-border">
             <div className="px-3 py-2 mb-2 flex items-center justify-between gap-2">
@@ -387,22 +432,29 @@ export function AppLayout({ children }: { children: React.ReactNode }) {
           </div>
         </header>
         {open && (
-          <nav className="md:hidden border-b border-sidebar-border bg-sidebar text-sidebar-foreground px-3 py-3 space-y-1">
-            {nav.map((n) => (
-              <Link
-                key={n.to}
-                to={n.to}
-                preload="intent"
-                onClick={() => setOpen(false)}
-                className={cn(
-                  "flex items-center gap-3 px-3 py-2 rounded-lg text-sm font-medium",
-                  location.pathname.startsWith(n.to)
-                    ? "bg-sidebar-primary text-sidebar-primary-foreground"
-                    : "text-sidebar-foreground/70 hover:bg-sidebar-accent hover:text-sidebar-accent-foreground"
-                )}
-              >
-                <n.icon className="h-4 w-4" /> {n.label}
-              </Link>
+          <nav className="md:hidden border-b border-sidebar-border bg-sidebar text-sidebar-foreground px-3 py-3 space-y-3">
+            {navGroupsFinal.map((g) => (
+              <div key={g.label} className="space-y-1">
+                <p className="text-[10px] uppercase tracking-wide text-sidebar-foreground/50 font-medium px-2">
+                  {g.label}
+                </p>
+                {g.items.map((n) => (
+                  <Link
+                    key={n.to}
+                    to={n.to}
+                    preload="intent"
+                    onClick={() => setOpen(false)}
+                    className={cn(
+                      "flex items-center gap-3 px-3 py-2 rounded-lg text-sm font-medium",
+                      location.pathname.startsWith(n.to)
+                        ? "bg-sidebar-primary text-sidebar-primary-foreground"
+                        : "text-sidebar-foreground/70 hover:bg-sidebar-accent hover:text-sidebar-accent-foreground"
+                    )}
+                  >
+                    <n.icon className="h-4 w-4" /> {n.label}
+                  </Link>
+                ))}
+              </div>
             ))}
             <Button
               variant="ghost"
