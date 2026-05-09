@@ -548,5 +548,6 @@ export function AppLayout({ children }: { children: React.ReactNode }) {
         onSave={handleLogoSave}
       />
     </div>
+    </FloatingNotesProvider>
   );
 }
