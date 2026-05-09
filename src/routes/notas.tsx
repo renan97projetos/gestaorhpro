@@ -119,7 +119,15 @@ function Page() {
             <p className="text-sm text-muted-foreground">Suas anotações privadas — só você consegue ver.</p>
           </div>
         </div>
-        <Button onClick={openNew}><Plus className="h-4 w-4 mr-2" />Nova nota</Button>
+        <div className="flex items-center gap-3 flex-wrap">
+          <div className="flex items-center gap-2 px-3 py-1.5 rounded-md bg-muted/50 border">
+            <Switch id="scope-notes" checked={scope === "global"} onCheckedChange={(v) => setScope(v ? "global" : "modulo")} />
+            <Label htmlFor="scope-notes" className="text-xs cursor-pointer">
+              {scope === "global" ? "Notas flutuantes em todas as telas" : "Apenas dentro deste módulo"}
+            </Label>
+          </div>
+          <Button onClick={openNew}><Plus className="h-4 w-4 mr-2" />Nova nota</Button>
+        </div>
       </div>
 
       {rows.length === 0 ? (
