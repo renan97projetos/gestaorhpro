@@ -82,7 +82,7 @@ export function AppLayout({ children }: { children: React.ReactNode }) {
   const { user, signOut, isAdmin } = useAuth();
   const { empresas, empresaAtual, setEmpresaId, isAdminMestre, isAdminEmpresa, isGestorEmpresa, refresh } = useEmpresa();
   const desabilitados = (empresaAtual?.modulos_desabilitados || []) as string[];
-  const baseFiltrada = isAdminMestre ? baseNav : baseNav.filter((n) => !desabilitados.includes(n.to));
+  void baseNav;
   const logoInputRef = useRef<HTMLInputElement>(null);
   const [uploadingLogo, setUploadingLogo] = useState(false);
 
