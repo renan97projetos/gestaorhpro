@@ -52,8 +52,17 @@ export function CandidatosDialog({ vaga, canEdit, onClose }: { vaga: Vaga; canEd
   const [loading, setLoading] = useState(true);
   const [adding, setAdding] = useState(false);
   const [admDialog, setAdmDialog] = useState<Cand | null>(null);
+  const [selecionado, setSelecionado] = useState<Cand | null>(null);
   const [novo, setNovo] = useState({ nome: "", email: "", telefone: "", cidade: "", endereco: "", observacao: "", curriculo_url: "" });
   const [admForm, setAdmForm] = useState({ data_inicio: new Date().toISOString().slice(0, 10), cargo_oferecido: "", salario: "" });
+
+  const waLink = (tel?: string | null) => {
+    if (!tel) return "";
+    const digits = tel.replace(/\D/g, "");
+    if (!digits) return "";
+    const full = digits.startsWith("55") ? digits : `55${digits}`;
+    return `https://wa.me/${full}`;
+  };
 
   const linkPublico = vaga.link_token ? `${window.location.origin}/vaga/${vaga.link_token}` : "";
 
