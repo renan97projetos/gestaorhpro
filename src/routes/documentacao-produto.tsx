@@ -699,7 +699,7 @@ function Page() {
               );
             })}
           </div>
-        </ScrollArea>
+        </div>
       </div>
 
       <Card className="p-4 bg-muted/30">
