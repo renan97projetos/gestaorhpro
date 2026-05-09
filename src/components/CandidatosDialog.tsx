@@ -9,7 +9,7 @@ import { Badge } from "@/components/ui/badge";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { toast } from "sonner";
-import { Plus, Link2, Trash2, FileText, ExternalLink } from "lucide-react";
+import { Plus, Link2, Trash2, FileText, ExternalLink, MessageCircle, Phone, Mail, MapPin, User as UserIcon } from "lucide-react";
 import { logAudit } from "@/lib/audit";
 
 const ETAPAS = [
@@ -52,8 +52,17 @@ export function CandidatosDialog({ vaga, canEdit, onClose }: { vaga: Vaga; canEd
   const [loading, setLoading] = useState(true);
   const [adding, setAdding] = useState(false);
   const [admDialog, setAdmDialog] = useState<Cand | null>(null);
+  const [selecionado, setSelecionado] = useState<Cand | null>(null);
   const [novo, setNovo] = useState({ nome: "", email: "", telefone: "", cidade: "", endereco: "", observacao: "", curriculo_url: "" });
   const [admForm, setAdmForm] = useState({ data_inicio: new Date().toISOString().slice(0, 10), cargo_oferecido: "", salario: "" });
+
+  const waLink = (tel?: string | null) => {
+    if (!tel) return "";
+    const digits = tel.replace(/\D/g, "");
+    if (!digits) return "";
+    const full = digits.startsWith("55") ? digits : `55${digits}`;
+    return `https://wa.me/${full}`;
+  };
 
   const linkPublico = vaga.link_token ? `${window.location.origin}/vaga/${vaga.link_token}` : "";
 
@@ -185,88 +194,166 @@ export function CandidatosDialog({ vaga, canEdit, onClose }: { vaga: Vaga; canEd
           </div>
         )}
 
-        <div className="overflow-x-auto">
-          <Table>
-            <TableHeader>
-              <TableRow>
-                <TableHead>Candidato</TableHead>
-                <TableHead>Contato</TableHead>
-                <TableHead>Cidade</TableHead>
-                <TableHead>Inscrição</TableHead>
-                <TableHead>CV</TableHead>
-                <TableHead>Etapa</TableHead>
-                {canEdit && <TableHead></TableHead>}
-              </TableRow>
-            </TableHeader>
-            <TableBody>
-              {loading ? (
-                <TableRow><TableCell colSpan={7} className="text-center py-6 text-muted-foreground">Carregando...</TableCell></TableRow>
-              ) : rows.length === 0 ? (
-                <TableRow><TableCell colSpan={7} className="text-center py-6 text-muted-foreground">Nenhum candidato ainda.</TableCell></TableRow>
-              ) : rows.map((c) => {
-                const et = ETAPAS.find((e) => e.v === c.etapa) || ETAPAS[0];
-                return (
-                  <TableRow key={c.id}>
-                    <TableCell>
-                      <div className="font-medium">{c.nome}</div>
-                      <div className="text-xs text-muted-foreground">
-                        {c.origem === "link" ? <Badge variant="outline" className="text-[10px] h-4">via link</Badge> : <Badge variant="secondary" className="text-[10px] h-4">manual</Badge>}
-                      </div>
-                    </TableCell>
-                    <TableCell className="text-xs">
-                      {c.email && <div>{c.email}</div>}
-                      {c.telefone && <div>{c.telefone}</div>}
-                    </TableCell>
-                    <TableCell className="text-xs">{c.cidade || "—"}</TableCell>
-                    <TableCell className="text-xs">{new Date(c.created_at).toLocaleDateString("pt-BR")}</TableCell>
-                    <TableCell>
-                      {c.curriculo_url ? (
-                        <a href={c.curriculo_url} target="_blank" rel="noreferrer" className="text-primary hover:underline text-xs flex items-center gap-1">
-                          <FileText className="h-3.5 w-3.5" /> Ver
-                        </a>
-                      ) : <span className="text-xs text-muted-foreground">—</span>}
-                    </TableCell>
-                    <TableCell>
-                      {canEdit ? (
-                        <Select value={c.etapa} onValueChange={(v) => moverEtapa(c, v)}>
-                          <SelectTrigger className="h-8 w-32"><SelectValue /></SelectTrigger>
-                          <SelectContent>
-                            {ETAPAS.map((e) => <SelectItem key={e.v} value={e.v}>{e.l}</SelectItem>)}
-                          </SelectContent>
-                        </Select>
-                      ) : (
-                        <Badge className={`${et.color} text-white`}>{et.l}</Badge>
-                      )}
-                      {c.etapa === "admissao" && (
-                        <div className="text-[11px] text-emerald-700 dark:text-emerald-400 mt-1 space-y-0.5">
-                          {c.data_inicio && <div>Início: {new Date(c.data_inicio).toLocaleDateString("pt-BR")}</div>}
-                          <div>{c.cargo_oferecido}{c.salario != null && <> — R$ {Number(c.salario).toFixed(2)}</>}</div>
-                          <button
-                            type="button"
-                            className="text-primary hover:underline inline-flex items-center gap-1"
-                            onClick={() => {
-                              const link = `${window.location.origin}/doc/${(c as unknown as { doc_token?: string }).doc_token}`;
-                              navigator.clipboard.writeText(link);
-                              toast.success("Link de coleta de documentos copiado!");
-                            }}
-                          >
-                            <Link2 className="h-3 w-3" /> Copiar link de documentos
-                          </button>
-                        </div>
-                      )}
-                    </TableCell>
-                    {canEdit && (
+        <div className="grid grid-cols-1 lg:grid-cols-[1fr_300px] gap-4">
+          <div className="overflow-x-auto">
+            <Table>
+              <TableHeader>
+                <TableRow>
+                  <TableHead>Candidato</TableHead>
+                  <TableHead>Contato</TableHead>
+                  <TableHead>Cidade</TableHead>
+                  <TableHead>Inscrição</TableHead>
+                  <TableHead>CV</TableHead>
+                  <TableHead>Etapa</TableHead>
+                  {canEdit && <TableHead></TableHead>}
+                </TableRow>
+              </TableHeader>
+              <TableBody>
+                {loading ? (
+                  <TableRow><TableCell colSpan={7} className="text-center py-6 text-muted-foreground">Carregando...</TableCell></TableRow>
+                ) : rows.length === 0 ? (
+                  <TableRow><TableCell colSpan={7} className="text-center py-6 text-muted-foreground">Nenhum candidato ainda.</TableCell></TableRow>
+                ) : rows.map((c) => {
+                  const et = ETAPAS.find((e) => e.v === c.etapa) || ETAPAS[0];
+                  const isSel = selecionado?.id === c.id;
+                  return (
+                    <TableRow key={c.id} onClick={() => setSelecionado(c)} className={`cursor-pointer ${isSel ? "bg-muted/60" : ""}`}>
                       <TableCell>
-                        <Button variant="ghost" size="icon" onClick={() => remover(c)}>
-                          <Trash2 className="h-4 w-4 text-destructive" />
-                        </Button>
+                        <div className="font-medium">{c.nome}</div>
+                        <div className="text-xs text-muted-foreground">
+                          {c.origem === "link" ? <Badge variant="outline" className="text-[10px] h-4">via link</Badge> : <Badge variant="secondary" className="text-[10px] h-4">manual</Badge>}
+                        </div>
                       </TableCell>
-                    )}
-                  </TableRow>
-                );
-              })}
-            </TableBody>
-          </Table>
+                      <TableCell className="text-xs">
+                        {c.email && <div>{c.email}</div>}
+                        {c.telefone && (
+                          <div className="flex items-center gap-1">
+                            <span>{c.telefone}</span>
+                            {waLink(c.telefone) && (
+                              <a href={waLink(c.telefone)} target="_blank" rel="noreferrer" onClick={(e) => e.stopPropagation()} className="text-emerald-600 hover:text-emerald-700" title="Abrir WhatsApp">
+                                <MessageCircle className="h-3.5 w-3.5" />
+                              </a>
+                            )}
+                          </div>
+                        )}
+                      </TableCell>
+                      <TableCell className="text-xs">{c.cidade || "—"}</TableCell>
+                      <TableCell className="text-xs">{new Date(c.created_at).toLocaleDateString("pt-BR")}</TableCell>
+                      <TableCell>
+                        {c.curriculo_url ? (
+                          <a href={c.curriculo_url} target="_blank" rel="noreferrer" onClick={(e) => e.stopPropagation()} className="text-primary hover:underline text-xs flex items-center gap-1">
+                            <FileText className="h-3.5 w-3.5" /> Ver
+                          </a>
+                        ) : <span className="text-xs text-muted-foreground">—</span>}
+                      </TableCell>
+                      <TableCell onClick={(e) => e.stopPropagation()}>
+                        {canEdit ? (
+                          <Select value={c.etapa} onValueChange={(v) => moverEtapa(c, v)}>
+                            <SelectTrigger className="h-8 w-32"><SelectValue /></SelectTrigger>
+                            <SelectContent>
+                              {ETAPAS.map((e) => <SelectItem key={e.v} value={e.v}>{e.l}</SelectItem>)}
+                            </SelectContent>
+                          </Select>
+                        ) : (
+                          <Badge className={`${et.color} text-white`}>{et.l}</Badge>
+                        )}
+                        {c.etapa === "admissao" && (
+                          <div className="text-[11px] text-emerald-700 dark:text-emerald-400 mt-1 space-y-0.5">
+                            {c.data_inicio && <div>Início: {new Date(c.data_inicio).toLocaleDateString("pt-BR")}</div>}
+                            <div>{c.cargo_oferecido}{c.salario != null && <> — R$ {Number(c.salario).toFixed(2)}</>}</div>
+                            <button
+                              type="button"
+                              className="text-primary hover:underline inline-flex items-center gap-1"
+                              onClick={() => {
+                                const link = `${window.location.origin}/doc/${(c as unknown as { doc_token?: string }).doc_token}`;
+                                navigator.clipboard.writeText(link);
+                                toast.success("Link de coleta de documentos copiado!");
+                              }}
+                            >
+                              <Link2 className="h-3 w-3" /> Copiar link de documentos
+                            </button>
+                          </div>
+                        )}
+                      </TableCell>
+                      {canEdit && (
+                        <TableCell onClick={(e) => e.stopPropagation()}>
+                          <Button variant="ghost" size="icon" onClick={() => remover(c)}>
+                            <Trash2 className="h-4 w-4 text-destructive" />
+                          </Button>
+                        </TableCell>
+                      )}
+                    </TableRow>
+                  );
+                })}
+              </TableBody>
+            </Table>
+          </div>
+
+          <aside className="border rounded-lg p-4 bg-muted/30 h-fit lg:sticky lg:top-0 space-y-3">
+            {!selecionado ? (
+              <div className="text-sm text-muted-foreground text-center py-8">
+                <UserIcon className="h-8 w-8 mx-auto mb-2 opacity-40" />
+                Selecione um candidato para ver o resumo
+              </div>
+            ) : (
+              <>
+                <div>
+                  <div className="font-bold text-base">{selecionado.nome}</div>
+                  <div className="mt-1">
+                    {(() => {
+                      const et = ETAPAS.find((e) => e.v === selecionado.etapa) || ETAPAS[0];
+                      return <Badge className={`${et.color} text-white text-[10px]`}>{et.l}</Badge>;
+                    })()}
+                  </div>
+                </div>
+
+                <div className="space-y-1.5 text-xs">
+                  {selecionado.email && (
+                    <div className="flex items-center gap-2"><Mail className="h-3.5 w-3.5 text-muted-foreground" /> <span className="truncate">{selecionado.email}</span></div>
+                  )}
+                  {selecionado.telefone && (
+                    <div className="flex items-center gap-2"><Phone className="h-3.5 w-3.5 text-muted-foreground" /> <span>{selecionado.telefone}</span></div>
+                  )}
+                  {selecionado.cidade && (
+                    <div className="flex items-center gap-2"><MapPin className="h-3.5 w-3.5 text-muted-foreground" /> <span>{selecionado.cidade}</span></div>
+                  )}
+                  {selecionado.endereco && (
+                    <div className="text-muted-foreground pl-5">{selecionado.endereco}</div>
+                  )}
+                  <div className="text-muted-foreground pt-1">Inscrição: {new Date(selecionado.created_at).toLocaleDateString("pt-BR")}</div>
+                  <div className="text-muted-foreground">Origem: {selecionado.origem === "link" ? "Via link" : "Manual"}</div>
+                </div>
+
+                {selecionado.observacao && (
+                  <div className="text-xs border-t pt-2">
+                    <div className="font-medium mb-1">Observação</div>
+                    <p className="text-muted-foreground whitespace-pre-wrap">{selecionado.observacao}</p>
+                  </div>
+                )}
+
+                <div className="flex flex-col gap-2 pt-2 border-t">
+                  {waLink(selecionado.telefone) ? (
+                    <Button asChild size="sm" className="w-full bg-emerald-600 hover:bg-emerald-700 text-white">
+                      <a href={waLink(selecionado.telefone)} target="_blank" rel="noreferrer">
+                        <MessageCircle className="h-4 w-4 mr-1" /> Chamar no WhatsApp
+                      </a>
+                    </Button>
+                  ) : (
+                    <Button size="sm" disabled className="w-full" title="Sem telefone cadastrado">
+                      <MessageCircle className="h-4 w-4 mr-1" /> Sem telefone
+                    </Button>
+                  )}
+                  {selecionado.curriculo_url && (
+                    <Button asChild size="sm" variant="outline" className="w-full">
+                      <a href={selecionado.curriculo_url} target="_blank" rel="noreferrer">
+                        <FileText className="h-4 w-4 mr-1" /> Ver currículo
+                      </a>
+                    </Button>
+                  )}
+                </div>
+              </>
+            )}
+          </aside>
         </div>
 
         <DialogFooter>
