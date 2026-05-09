@@ -1,6 +1,6 @@
 import { createFileRoute, useParams } from "@tanstack/react-router";
 import { useEffect, useState } from "react";
-import { supabase } from "@/integrations/supabase/client";
+import { useServerFn } from "@tanstack/react-start";
 import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -9,122 +9,138 @@ import { Badge } from "@/components/ui/badge";
 import { toast } from "sonner";
 import { CheckCircle2, Upload, FileText, Lock, ShieldCheck } from "lucide-react";
 import { DOC_TIPOS } from "@/lib/doc-tipos";
+import {
+  getCandidatePublicInfo,
+  validateCandidateAccess,
+  initCandidateIdentity,
+  listCandidateDocs,
+  uploadCandidateDoc,
+} from "@/lib/admissao-docs.functions";
 
 export const Route = createFileRoute("/doc/$token")({
   component: DocCollectPage,
 });
 
-type Candidato = {
-  id: string;
+type PublicInfo = {
   nome: string;
-  cpf: string | null;
-  data_nascimento: string | null;
   cargo_oferecido: string | null;
   data_inicio: string | null;
-  vaga_id: string;
+  hasIdentity: boolean;
 };
 
 type Doc = {
   id: string;
   tipo: string;
-  url: string;
+  url: string | null;
   nome_arquivo: string | null;
   uploaded_at: string;
 };
 
-function onlyDigits(s: string) {
-  return (s || "").replace(/\D/g, "");
+function fileToBase64(file: File): Promise<string> {
+  return new Promise((res, rej) => {
+    const r = new FileReader();
+    r.onload = () => {
+      const result = r.result as string;
+      res(result.split(",")[1] || "");
+    };
+    r.onerror = rej;
+    r.readAsDataURL(file);
+  });
 }
 
 function DocCollectPage() {
   const { token } = useParams({ from: "/doc/$token" });
+  const getInfo = useServerFn(getCandidatePublicInfo);
+  const validate = useServerFn(validateCandidateAccess);
+  const initId = useServerFn(initCandidateIdentity);
+  const listDocs = useServerFn(listCandidateDocs);
+  const uploadDoc = useServerFn(uploadCandidateDoc);
+
   const [loading, setLoading] = useState(true);
-  const [cand, setCand] = useState<Candidato | null>(null);
+  const [info, setInfo] = useState<PublicInfo | null>(null);
   const [authed, setAuthed] = useState(false);
   const [cpf, setCpf] = useState("");
   const [nasc, setNasc] = useState("");
+  const [creds, setCreds] = useState<{ cpf: string; dob: string } | null>(null);
   const [docs, setDocs] = useState<Doc[]>([]);
   const [uploading, setUploading] = useState<string | null>(null);
+  const [submitting, setSubmitting] = useState(false);
 
   useEffect(() => {
     (async () => {
-      const { data } = await supabase
-        .from("vaga_candidatos")
-        .select("id, nome, cpf, data_nascimento, cargo_oferecido, data_inicio, vaga_id")
-        .eq("doc_token", token)
-        .maybeSingle();
-      setCand((data as Candidato) || null);
-      setLoading(false);
-      // tenta auto-login se já validou nessa sessão
-      const saved = sessionStorage.getItem(`doc_auth_${token}`);
-      if (saved && data) {
-        setAuthed(true);
-        await loadDocs((data as Candidato).id);
+      try {
+        const i = await getInfo({ data: { token } });
+        setInfo(i);
+      } catch {
+        setInfo(null);
       }
+      setLoading(false);
     })();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [token]);
 
-  const loadDocs = async (candId: string) => {
-    const { data } = await supabase
-      .from("admissao_documentos")
-      .select("*")
-      .eq("candidato_id", candId)
-      .order("uploaded_at", { ascending: false });
-    setDocs((data as Doc[]) || []);
+  const refresh = async (c: { cpf: string; dob: string }) => {
+    const { docs } = await listDocs({ data: { token, cpf: c.cpf, dob: c.dob } });
+    setDocs(docs);
   };
 
   const validar = async () => {
-    if (!cand) return;
-    const cpfOk = cand.cpf ? onlyDigits(cand.cpf) === onlyDigits(cpf) : true;
-    const nascOk = cand.data_nascimento ? cand.data_nascimento === nasc : true;
-    if (!cand.cpf && !cand.data_nascimento) {
-      // primeira vez — grava o que foi informado
-      await supabase
-        .from("vaga_candidatos")
-        .update({ cpf: onlyDigits(cpf) || null, data_nascimento: nasc || null } as never)
-        .eq("id", cand.id);
-    } else if (!cpfOk || !nascOk) {
-      return toast.error("CPF ou data de nascimento incorretos");
+    if (!info) return;
+    setSubmitting(true);
+    try {
+      if (!info.hasIdentity) {
+        // First time: register CPF + DOB
+        await initId({ data: { token, cpf, dob: nasc } });
+      }
+      await validate({ data: { token, cpf, dob: nasc } });
+      const c = { cpf, dob: nasc };
+      setCreds(c);
+      setAuthed(true);
+      await refresh(c);
+      toast.success("Acesso liberado");
+    } catch (e) {
+      toast.error(e instanceof Error ? e.message : "Falha na validação");
+    } finally {
+      setSubmitting(false);
     }
-    sessionStorage.setItem(`doc_auth_${token}`, "1");
-    setAuthed(true);
-    await loadDocs(cand.id);
-    toast.success("Acesso liberado");
   };
 
   const upload = async (tipo: string, file: File) => {
-    if (!cand) return;
+    if (!creds) return;
+    if (file.size > 15 * 1024 * 1024) return toast.error("Arquivo maior que 15MB");
     setUploading(tipo);
-    const ext = file.name.split(".").pop();
-    const path = `${cand.id}/${tipo}-${Date.now()}.${ext}`;
-    const { error: upErr } = await supabase.storage.from("documentos-admissao").upload(path, file);
-    if (upErr) {
+    try {
+      const fileBase64 = await fileToBase64(file);
+      await uploadDoc({
+        data: {
+          token,
+          cpf: creds.cpf,
+          dob: creds.dob,
+          tipo,
+          filename: file.name,
+          contentType: file.type || "application/octet-stream",
+          fileBase64,
+        },
+      });
+      toast.success("Documento enviado!");
+      await refresh(creds);
+    } catch (e) {
+      toast.error(e instanceof Error ? e.message : "Falha no envio");
+    } finally {
       setUploading(null);
-      return toast.error(upErr.message);
     }
-    const { data: pub } = supabase.storage.from("documentos-admissao").getPublicUrl(path);
-    const { error } = await supabase.from("admissao_documentos").insert({
-      candidato_id: cand.id,
-      tipo,
-      nome_arquivo: file.name,
-      url: pub.publicUrl,
-      storage_path: path,
-    } as never);
-    setUploading(null);
-    if (error) return toast.error(error.message);
-    toast.success("Documento enviado!");
-    await loadDocs(cand.id);
   };
 
   if (loading) return <div className="min-h-screen flex items-center justify-center">Carregando...</div>;
-  if (!cand) return (
-    <div className="min-h-screen flex items-center justify-center p-6">
-      <Card className="p-8 max-w-md text-center">
-        <h1 className="text-xl font-bold">Link inválido</h1>
-        <p className="text-sm text-muted-foreground mt-2">Este link de coleta de documentos não foi encontrado.</p>
-      </Card>
-    </div>
-  );
+  if (!info)
+    return (
+      <div className="min-h-screen flex items-center justify-center p-6">
+        <Card className="p-8 max-w-md text-center">
+          <h1 className="text-xl font-bold">Link inválido</h1>
+          <p className="text-sm text-muted-foreground mt-2">Este link de coleta de documentos não foi encontrado.</p>
+        </Card>
+      </div>
+    );
 
   if (!authed) {
     return (
@@ -132,10 +148,15 @@ function DocCollectPage() {
         <Card className="w-full max-w-md p-6 space-y-4">
           <div className="flex items-center gap-2">
             <Lock className="h-5 w-5 text-primary" />
-            <h1 className="text-xl font-bold">Validação de identidade</h1>
+            <h1 className="text-xl font-bold">
+              {info.hasIdentity ? "Validação de identidade" : "Cadastro inicial"}
+            </h1>
           </div>
           <p className="text-sm text-muted-foreground">
-            Olá, <b>{cand.nome}</b>. Para acessar o envio de documentos da sua admissão, confirme seus dados:
+            Olá, <b>{info.nome}</b>.{" "}
+            {info.hasIdentity
+              ? "Para acessar o envio de documentos, confirme seus dados:"
+              : "Este é seu primeiro acesso. Defina seu CPF e data de nascimento — eles serão usados nos próximos acessos."}
           </p>
           <div>
             <Label>CPF</Label>
@@ -145,11 +166,11 @@ function DocCollectPage() {
             <Label>Data de nascimento</Label>
             <Input type="date" value={nasc} onChange={(e) => setNasc(e.target.value)} />
           </div>
-          <Button className="w-full" onClick={validar}>
-            <ShieldCheck className="h-4 w-4 mr-2" /> Validar e acessar
+          <Button className="w-full" onClick={validar} disabled={submitting || !cpf || !nasc}>
+            <ShieldCheck className="h-4 w-4 mr-2" /> {submitting ? "Validando..." : "Validar e acessar"}
           </Button>
           <p className="text-[11px] text-muted-foreground text-center">
-            Seus dados ficam salvos e você pode voltar a este link a qualquer momento para anexar mais documentos.
+            Seus dados ficam salvos com segurança e você pode voltar a este link a qualquer momento para anexar mais documentos.
           </p>
         </Card>
       </div>
@@ -157,7 +178,9 @@ function DocCollectPage() {
   }
 
   const enviadosPorTipo = new Map<string, Doc>();
-  docs.forEach((d) => { if (!enviadosPorTipo.has(d.tipo)) enviadosPorTipo.set(d.tipo, d); });
+  docs.forEach((d) => {
+    if (!enviadosPorTipo.has(d.tipo)) enviadosPorTipo.set(d.tipo, d);
+  });
   const totalReq = DOC_TIPOS.length;
   const totalOk = DOC_TIPOS.filter((t) => enviadosPorTipo.has(t.key)).length;
   const pct = Math.round((totalOk / totalReq) * 100);
@@ -168,10 +191,10 @@ function DocCollectPage() {
         <Card className="p-6">
           <div className="flex items-start justify-between flex-wrap gap-2">
             <div>
-              <h1 className="text-2xl font-bold">{cand.nome}</h1>
+              <h1 className="text-2xl font-bold">{info.nome}</h1>
               <p className="text-sm text-muted-foreground">
-                {cand.cargo_oferecido || "—"}
-                {cand.data_inicio && ` • Início: ${new Date(cand.data_inicio).toLocaleDateString("pt-BR")}`}
+                {info.cargo_oferecido || "—"}
+                {info.data_inicio && ` • Início: ${new Date(info.data_inicio).toLocaleDateString("pt-BR")}`}
               </p>
             </div>
             <Badge className={pct === 100 ? "bg-emerald-600" : "bg-amber-600"}>
@@ -193,7 +216,7 @@ function DocCollectPage() {
                     {d ? <CheckCircle2 className="h-5 w-5 text-emerald-600" /> : <FileText className="h-5 w-5 text-muted-foreground" />}
                     <div>
                       <p className="font-medium text-sm">{t.label}</p>
-                      {d && (
+                      {d && d.url && (
                         <a href={d.url} target="_blank" rel="noreferrer" className="text-xs text-primary hover:underline">
                           {d.nome_arquivo || "Ver arquivo"} • {new Date(d.uploaded_at).toLocaleDateString("pt-BR")}
                         </a>
