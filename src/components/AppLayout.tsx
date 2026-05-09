@@ -129,6 +129,7 @@ export function AppLayout({ children }: { children: React.ReactNode }) {
     ...(isAdminMestre ? [
       { to: "/mestre", label: "Painel Mestre (SaaS)", icon: Crown },
       { to: "/crm", label: "CRM Vendas", icon: Handshake },
+      { to: "/documentacao-produto", label: "Documentação do Produto", icon: BookOpen },
     ] : []),
   ];
   const groupsFiltradas: NavGroup[] = navGroups
